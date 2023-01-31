@@ -14,7 +14,7 @@ class TextAdapter(val strings: List<String>): RecyclerView.Adapter<TextAdapter.T
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextViewHolder {
         return TextViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.zman_card, parent, false)
+            TextView(parent.context)
         )
     }
 

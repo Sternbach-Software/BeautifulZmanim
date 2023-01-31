@@ -3,8 +3,8 @@ package sternbach.software.beautifulzmanim.ui.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SimpleAdapter
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import sternbach.software.beautifulzmanim.R
 
@@ -23,7 +23,10 @@ class ZmanimListAdapter(val models: List<ZmanCardModel>): RecyclerView.Adapter<Z
         val model = models[position]
         holder.text1.text = model.text1
         holder.text2.text = model.text2
-        holder.otherOpinionsList.adapter = TextAdapter(model.otherOpinions)
+        holder.otherOpinionsList.apply {
+            adapter = TextAdapter(model.otherOpinions)
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     override fun getItemCount(): Int {

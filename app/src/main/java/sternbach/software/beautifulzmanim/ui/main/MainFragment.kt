@@ -24,12 +24,10 @@ class MainFragment : Fragment() {
     companion object {
         const val LATITUDE_KEY = "latitude"
         const val LONGITUDE_KEY = "longitude"
-        const val LOCATION_KEY = "location"
-        fun newInstance(location: String, latitude: Double?, longitude: Double?) = MainFragment().apply {
+        fun newInstance(latitude: Double?, longitude: Double?) = MainFragment().apply {
             arguments = Bundle().apply {
                 if (latitude != null) putDouble(LATITUDE_KEY, latitude)
                 if (longitude != null) putDouble(LONGITUDE_KEY, longitude)
-                if (location != null) putString(LOCATION_KEY, location)
             }
         }
     }
@@ -40,7 +38,8 @@ class MainFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        zmanim = viewModel.getZmanim()
+        val args = requireArguments()
+        zmanim = viewModel.getZmanim(args.getDouble(LATITUDE_KEY), args.getDouble(LONGITUDE_KEY))
     }
 
     override fun onCreateView(
@@ -50,10 +49,10 @@ class MainFragment : Fragment() {
         root.findViewById<RecyclerView>(R.id.zmanim_recycler_view).apply {
             layoutManager = LinearLayoutManager(this@MainFragment.context)
             val dayZmanis: (Int) -> String =
-                { "Day is $it זמניות minutes before sunris / after sunset" }
-            val accTo: (String) -> String = { "According to $it" }
-            val dayReg: (Int) -> String = { "Day is $it minutes before sunrise / after sunset" }
-            val dayDeg: (String) -> String = { "Day is $it˚ below sunrise / sunset" }
+                { "Day is $it זמניות minutes before sunrise / after sunset: \n" }
+            val accTo: (String) -> String = { "According to $it: \n" }
+            val dayReg: (Int) -> String = { "Day is $it minutes before sunrise / after sunset: \n" }
+            val dayDeg: (String) -> String = { "Day is $it˚ below sunrise / sunset: \n" }
             adapter = ZmanimListAdapter(
                 listOf(
                     ZmanCardModel(

@@ -7,12 +7,8 @@ import com.kosherjava.zmanim.util.GeoLocation
 import java.util.*
 
 class MainViewModel : ViewModel() {
-    fun getZmanim(_location: Location): ComplexZmanimCalendar {
-
-
+    fun getZmanim(latitude: Double, longitude: Double): ComplexZmanimCalendar {
         val locationName = "Lakewood, NJ";
-        val latitude = _location.latitude
-        val longitude = _location.longitude
         val elevation = 0.0; //optional elevation
         val timeZone = TimeZone.getTimeZone("America/New_York");
         val location =  GeoLocation(locationName, latitude, longitude, elevation, timeZone);
