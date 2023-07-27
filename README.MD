@@ -12,6 +12,7 @@ A multi-platform zmanim app that uses Google Material Design, written in Kotlin 
 Coming soon!
 
 ## Building from source
+Note: to build Apple platform targets, you must be using a Mac.
 
 ### Before running!
  - check your system with [KDoctor](https://github.com/Kotlin/kdoctor)
