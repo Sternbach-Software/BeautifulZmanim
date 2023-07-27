@@ -7,6 +7,10 @@ A multi-platform zmanim app that uses Google Material Design, written in Kotlin 
  - WearOS
  - watchOS
 
+## Executables
+
+Coming soon!
+
 ## Building from source
 
 ### Before running!
