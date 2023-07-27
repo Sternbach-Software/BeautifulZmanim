@@ -1,0 +1,10 @@
+unique_name=kotlin-test
+depends=kotlin
+metadata_version=1.4.1
+serializedKlibFingerprint=3d9njnbhs35hd.2qqsv4j0mi0oy
+builtins_platform=JS
+compiler_version=1.8.20-dev-5197
+serializedIrFileFingerprints=SerializedIrFileFingerprint(fileFingerprint\=1n6twj84wis3b.1uytms110y4sm) SerializedIrFileFingerprint(fileFingerprint\=eaaebr2qiipf.2uava5jq3juz9) SerializedIrFileFingerprint(fileFingerprint\=273cw8uob5o75.10uowzu1an6zl) SerializedIrFileFingerprint(fileFingerprint\=ntz27aw74j6.1pwfrxvba0e3n) SerializedIrFileFingerprint(fileFingerprint\=3bcleigt3f0ku.ea7excundt7a) SerializedIrFileFingerprint(fileFingerprint\=20e7ji7pf8skj.gp6udrzmjkzb) SerializedIrFileFingerprint(fileFingerprint\=l7g8yrw4vct6.1q5qxalhl0830) SerializedIrFileFingerprint(fileFingerprint\=1jwghw18xoe1o.2vvjy4g50ez6m) SerializedIrFileFingerprint(fileFingerprint\=37gf08nmfgc7c.1b3fksnqw5gbm) SerializedIrFileFingerprint(fileFingerprint\=3ol9c9qdktml.69ahivyshd1l) SerializedIrFileFingerprint(fileFingerprint\=3dvirevk28qju.qynmikna9xw9) SerializedIrFileFingerprint(fileFingerprint\=1mly14ovsd7f7.1gb2k95vk264l) SerializedIrFileFingerprint(fileFingerprint\=3mff51wlpfvwr.gx3q1aq8744v) SerializedIrFileFingerprint(fileFingerprint\=3t7mjkr82hqw8.3131rfiv7vi4p) SerializedIrFileFingerprint(fileFingerprint\=1zmjaiavp3926.1yfzt8gd2z832) SerializedIrFileFingerprint(fileFingerprint\=2k1vd3jlcwvcw.2hmajo2j6yvhy)
+abi_version=1.7.0
+ir_version=1.0.0
+jsOutputName=kotlin-kotlin-test-js-ir

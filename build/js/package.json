@@ -1,0 +1,21 @@
+{
+  "name": "Compose-Template",
+  "version": "unspecified",
+  "private": true,
+  "workspaces": [
+    "packages/Compose-Template-composeApp",
+    "packages/Compose-Template-composeApp-test",
+    "packages_imported/kotlin/1.8.21",
+    "packages_imported/skiko-js/0.7.58",
+    "packages_imported/ktor-ktor-client-core/2.3.0",
+    "packages_imported/Kotlin-DateTime-library-kotlinx-datetime-js-ir/0.4.0",
+    "packages_imported/kotlin-test-js-runner/0.0.1",
+    "packages_imported/kotlin-test/1.8.20"
+  ],
+  "resolutions": {},
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}

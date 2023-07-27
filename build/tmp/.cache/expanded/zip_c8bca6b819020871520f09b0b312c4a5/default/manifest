@@ -1,0 +1,10 @@
+builtins_platform=JS
+unique_name=org.jetbrains.compose.html\:internal-html-core-runtime
+compiler_version=1.8.20
+depends=org.jetbrains.compose.runtime\:runtime org.jetbrains.kotlinx\:kotlinx-coroutines-core org.jetbrains.kotlinx\:atomicfu kotlin org.jetbrains.kotlin\:kotlinx-atomicfu-runtime
+serializedKlibFingerprint=khc4j3dypgnu.xsx6lxiqk82q
+serializedIrFileFingerprints=SerializedIrFileFingerprint(fileFingerprint\=2tbxbir9dlhka.fmmbffmkrhrl) SerializedIrFileFingerprint(fileFingerprint\=9ud5qxu7mx4c.1p47wtryy8p7u) SerializedIrFileFingerprint(fileFingerprint\=18f5a8u33krk3.3tadfjodl55aq) SerializedIrFileFingerprint(fileFingerprint\=97sd3lw4b9iv.1mtrxn5wo7yvf) SerializedIrFileFingerprint(fileFingerprint\=rh7jlw9g3r46.2r6o77e0occcw) SerializedIrFileFingerprint(fileFingerprint\=mrycjmo5uxp3.3olh48495i6p5)
+jsOutputName=html-internal-html-core-runtime
+abi_version=1.7.0
+metadata_version=1.4.1
+ir_version=1.0.0

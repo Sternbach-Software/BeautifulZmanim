@@ -1,0 +1,10 @@
+builtins_platform=JS
+unique_name=cafe.adriel.voyager\:voyager-navigator
+compiler_version=1.8.20
+depends=cafe.adriel.voyager\:voyager-core org.jetbrains.compose.runtime\:runtime-saveable org.jetbrains.compose.runtime\:runtime org.jetbrains.kotlinx\:kotlinx-coroutines-core com.benasher44\:uuid org.jetbrains.kotlinx\:atomicfu kotlin org.jetbrains.kotlin\:kotlinx-atomicfu-runtime
+serializedKlibFingerprint=rahkyfmuchu9.bf3aclpjprze
+serializedIrFileFingerprints=SerializedIrFileFingerprint(fileFingerprint\=2e6fc973dhizi.cqr8t0149hpn) SerializedIrFileFingerprint(fileFingerprint\=2xqyj3zrg1vxv.1j12tqcxzfji7) SerializedIrFileFingerprint(fileFingerprint\=i011vy7dhs2n.3iocllfb3lh3y) SerializedIrFileFingerprint(fileFingerprint\=bk9efsysxby4.3fehh7tz3les9) SerializedIrFileFingerprint(fileFingerprint\=3n99uq1nm3ver.3ex7k0bjduwn5) SerializedIrFileFingerprint(fileFingerprint\=32lkcwjkfaz7t.a2w4m82tj00o)
+jsOutputName=voyager-voyager-navigator
+abi_version=1.7.0
+metadata_version=1.4.1
+ir_version=1.0.0

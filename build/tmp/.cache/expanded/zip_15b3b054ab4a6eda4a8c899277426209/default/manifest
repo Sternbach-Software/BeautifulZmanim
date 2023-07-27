@@ -1,0 +1,10 @@
+unique_name=org.jetbrains.kotlin\:kotlinx-atomicfu-runtime
+depends=kotlin
+metadata_version=1.4.1
+serializedKlibFingerprint=icq8m0odrwoe.2554942mgvv2e
+builtins_platform=JS
+compiler_version=1.8.20-dev-5197
+serializedIrFileFingerprints=SerializedIrFileFingerprint(fileFingerprint\=3k1gxwf3xei47.1aymn90n23cee)
+abi_version=1.7.0
+ir_version=1.0.0
+jsOutputName=kotlin-kotlinx-atomicfu-runtime-js-ir

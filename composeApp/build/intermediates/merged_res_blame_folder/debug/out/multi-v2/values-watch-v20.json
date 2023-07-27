@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "sternbach.software.composeApp-mergeDebugResources-49:/values-watch-v20/values-watch-v20.xml",
+            "map": [
+                {
+                    "source": "/Users/shmuel/.gradle/caches/transforms-3/f19de2c2050dbd8eb7e6a548d5eeb6a1/transformed/appcompat-1.6.1/res/values-watch-v20/values-watch-v20.xml",
+                    "from": {
+                        "startLines": "2,5,8",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,214,385",
+                        "endLines": "4,7,10",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "209,380,553"
+                    }
+                }
+            ]
+        }
+    ]
+}
