@@ -20,7 +20,7 @@ Note: to build Apple platform targets, you must be using a Mac.
  - add `local.properties` file to the project root and set a path to Android SDK there
  - run `./gradlew podInstall` in the project root
 
-#### Android
+### Android
 To run the application on android device/emulator:  
  - open project in Android Studio and run imported android run configuration
 
@@ -28,15 +28,15 @@ To build the application bundle:
  - run `./gradlew :composeApp:assembleDebug`
  - find `.apk` file in `composeApp/build/outputs/apk/debug/composeApp-debug.apk`
 
-#### Desktop
+### Desktop
 Run the desktop application: `./gradlew :composeApp:run`
 
-#### iOS
+### iOS
 To run the application on iPhone device/simulator:
  - Open `iosApp/iosApp.xcworkspace` in Xcode and run standard configuration
  - Or use [Kotlin Multiplatform Mobile plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) for Android Studio
 
-#### Browser
+### Browser
 Run the browser application: `./gradlew :composeApp:jsBrowserDevelopmentRun`
 
 # License
