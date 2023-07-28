@@ -1,8 +1,0 @@
-builtins_platform=JS
-unique_name=io.insert-koin\:koin-core
-compiler_version=1.8.10
-depends=kotlin
-jsOutputName=core-koin-core-js-ir
-abi_version=1.7.0
-metadata_version=1.4.1
-ir_version=1.0.0

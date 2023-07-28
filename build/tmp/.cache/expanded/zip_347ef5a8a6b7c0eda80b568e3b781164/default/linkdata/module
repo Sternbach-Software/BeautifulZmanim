@@ -1,2 +1,0 @@
-
-!<io.github.qdsfdhvh:image-loader>:com.seiko.imageloader:com.seiko.imageloader.cache: com.seiko.imageloader.cache.disk:"com.seiko.imageloader.cache.memory:com.seiko.imageloader.component:'com.seiko.imageloader.component.decoder:'com.seiko.imageloader.component.fetcher:%com.seiko.imageloader.component.keyer:&com.seiko.imageloader.component.mapper:com.seiko.imageloader.intercept:com.seiko.imageloader.model:com.seiko.imageloader.option:com.seiko.imageloader.util

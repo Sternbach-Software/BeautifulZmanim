@@ -1,8 +1,0 @@
-builtins_platform=JS
-unique_name=com.squareup.okio\:okio-fakefilesystem
-compiler_version=1.8.0
-depends=com.squareup.okio\:okio org.jetbrains.kotlinx\:kotlinx-datetime org.jetbrains.kotlinx\:kotlinx-serialization-core kotlin
-jsOutputName=okio-parent-okio-fakefilesystem-js-ir
-abi_version=1.7.0
-metadata_version=1.4.1
-ir_version=1.0.0

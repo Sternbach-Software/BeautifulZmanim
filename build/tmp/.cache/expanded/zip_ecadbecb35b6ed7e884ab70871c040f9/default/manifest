@@ -1,8 +1,0 @@
-builtins_platform=JS
-unique_name=com.russhwolf\:multiplatform-settings
-compiler_version=1.8.0
-depends=kotlin
-jsOutputName=MultiplatformSettings-multiplatform-settings
-abi_version=1.7.0
-metadata_version=1.4.1
-ir_version=1.0.0
