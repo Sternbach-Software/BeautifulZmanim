@@ -1,11 +1,17 @@
 # BeautifulZmanim
 A multi-platform zmanim app that uses Google Material Design, written in Kotlin Multiplatform. Compiles to Android, iOS, web, and desktop (through the JVM).
 
-## Future build targets 
+## Future 
+### Future supported platforms 
  - Android-based flip-phones
  - Native desktop (currently only supports Desktop/JVM)
  - WearOS
  - watchOS
+### Future features
+ - Multi-platform way to get location instead of having to type in long. and lat
+   - Currently existing libraries only support Android and iOS:
+     - https://github.com/line/abc-kmm-location
+     - https://github.com/icerockdev/moko-geo
 
 ## Executables
 
