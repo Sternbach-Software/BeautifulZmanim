@@ -9,7 +9,7 @@ A multi-platform zmanim app that uses Google Material Design, written in Kotlin 
  - watchOS
 ### Future features
  - Multi-platform way to get location instead of having to type in long. and lat
-   - Currently existing libraries only support Android and iOS:
+   - Currently existing libraries only support Android and iOS, not web and desktop:
      - https://github.com/line/abc-kmm-location
      - https://github.com/icerockdev/moko-geo
 
