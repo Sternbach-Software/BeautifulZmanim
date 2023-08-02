@@ -76,16 +76,15 @@ object YerushalmiYomiCalculator {
     fun getDafYomiYerushalmi(calendar: JewishCalendar): Daf? {
         val requested = LocalDateTime(
             calendar.gregorianLocalDate,
-            LocalTime(0, 0, 0)
+            LocalTime(1, 0, 0)
         )
-            .toInstant(timeZone)
+            .toInstant(timeZone)// + 1.days/*to account for year 0?*/
         var masechta = 0
         var dafYomi: Daf? = null
 
         // There isn't Daf Yomi on Yom Kippur or Tisha B'Av.
-        if (calendar.yomTovIndex == JewishCalendar.YOM_KIPPUR ||
-            calendar.yomTovIndex == JewishCalendar.TISHA_BEAV
-        ) {
+        val yomTovIndex = calendar.yomTovIndex
+        if (yomTovIndex == JewishCalendar.YOM_KIPPUR || yomTovIndex == JewishCalendar.TISHA_BEAV) {
             return null
         }
         require(requested >= DAF_YOMI_START_DAY) { "$requested is prior to organized Daf Yomi Yerushalmi cycles that started on $DAF_YOMI_START_DAY" }
@@ -133,8 +132,8 @@ object YerushalmiYomiCalculator {
     private fun getNumOfSpecialDays(start: Instant, end: Instant): Int {
 
         // Find the start and end Jewish years
-        val startYear = JewishCalendar(start).jewishYear
-        val endYear = JewishCalendar(end).jewishYear
+        val startYear = JewishCalendar(start, timeZone).hebrewLocalDate.year
+        val endYear = JewishCalendar(end, timeZone).hebrewLocalDate.year
 
         // Value to return
         var specialDays = 0
@@ -145,9 +144,8 @@ object YerushalmiYomiCalculator {
 
         // Go over the years and find special dates
         for (i in startYear..endYear) {
-            yom_kippur.setJewishYear(i)
-            tisha_beav.setJewishYear(i)
-            val timeZone = TimeZone.currentSystemDefault()
+            yom_kippur.jewishYear = i
+            tisha_beav.jewishYear = i
             val startToEnd = start..end
             if (yom_kippur.gregorianLocalDate.atStartOfDayIn(timeZone) in startToEnd) specialDays++
             if (tisha_beav.gregorianLocalDate.atStartOfDayIn(timeZone) in startToEnd) specialDays++

@@ -500,17 +500,17 @@ class HebrewDateFormatter {
         if (!jewishCalendar.isRoshChodesh) {
             return ""
         }
-        var month = jewishCalendar.jewishMonth
+        var month = jewishCalendar.hebrewLocalDate.month
         if (jewishCalendar.jewishDayOfMonth == 30) {
-            if (month < JewishDate.ADAR || (month == JewishDate.ADAR && jewishCalendar.isJewishLeapYear)) {
-                month++
+            month = if (month < HebrewMonth.ADAR || (month == HebrewMonth.ADAR && jewishCalendar.isJewishLeapYear)) {
+                month.nextMonth
             } else { // roll to Nissan
-                month = JewishDate.NISSAN
+                HebrewMonth.NISSAN
             }
         }
 
         // This method is only about formatting, so we shouldn't make any changes to the params passed in...
-        val copy = jewishCalendar.copy(inIsrael = jewishCalendar.inIsrael) //force JewishCalendar.copy, not JewishDate.copy
+        val copy = jewishCalendar.copy(jewishMonth = jewishCalendar.hebrewLocalDate.month, inIsrael = jewishCalendar.inIsrael) //force JewishCalendar.copy, not JewishDate.copy
         copy.setJewishMonth(month)
         return "${
             if (isHebrewFormat) hebrewHolidays[JewishCalendar.ROSH_CHODESH]
@@ -535,7 +535,7 @@ class HebrewDateFormatter {
                 hebrewDaysOfWeek[jewishDayOfWeek - 1]
             else
                 if (jewishDayOfWeek == 7) formatHebrewNumber(300)
-                else formatHebrewNumber(jewishDayOfWeek)
+                else formatHebrewNumber(jewishDayOfWeek.toLong())
         else
             if (jewishDayOfWeek == 7)
                 if (isLongWeekFormat) transliteratedShabbosDayOfWeek
@@ -556,12 +556,12 @@ class HebrewDateFormatter {
      * "21 Shevat, 5729" if not.
      */
     fun format(jewishDate: JewishDate): String =
-        if (isHebrewFormat) "${formatHebrewNumber(jewishDate.jewishDayOfMonth)} ${formatMonth(jewishDate)} ${
+        if (isHebrewFormat) "${formatHebrewNumber(jewishDate.jewishDayOfMonth.toLong())} ${formatMonth(jewishDate)} ${
             formatHebrewNumber(
-                jewishDate.jewishYear
+                jewishDate.hebrewLocalDate.year
             )
         }"
-        else "${jewishDate.jewishDayOfMonth} ${formatMonth(jewishDate)}, ${jewishDate.jewishYear}"
+        else "${jewishDate.jewishDayOfMonth} ${formatMonth(jewishDate)}, ${jewishDate.hebrewLocalDate.year}"
 
     /**
      * Returns a string of the current Hebrew month such as "Tishrei". Returns a string of the current Hebrew month such
@@ -574,14 +574,14 @@ class HebrewDateFormatter {
      * @see transliteratedMonthList
      */
     fun formatMonth(jewishDate: JewishDate): String {
-        val month = jewishDate.jewishMonth
+        val month = jewishDate.hebrewLocalDate.month
         return if (isHebrewFormat)
-            if (jewishDate.isJewishLeapYear && month == JewishDate.ADAR) "${hebrewMonths[13]}${if (isUseGershGershayim) GERESH else ""}" // return Adar I, not Adar in a leap year
-            else if (jewishDate.isJewishLeapYear && month == JewishDate.ADAR_II) "${hebrewMonths[12]}${if (isUseGershGershayim) GERESH else ""}"
-            else hebrewMonths[month - 1]
+            if (jewishDate.isJewishLeapYear && month == HebrewMonth.ADAR) "${hebrewMonths[13]}${if (isUseGershGershayim) GERESH else ""}" // return Adar I, not Adar in a leap year
+            else if (jewishDate.isJewishLeapYear && month == HebrewMonth.ADAR_II) "${hebrewMonths[12]}${if (isUseGershGershayim) GERESH else ""}"
+            else hebrewMonths[month.value - 1]
         else
-            if (jewishDate.isJewishLeapYear && month == JewishDate.ADAR) transliteratedMonthList[13] // return Adar I, not Adar in a leap year
-            else transliteratedMonthList[month - 1]
+            if (jewishDate.isJewishLeapYear && month == HebrewMonth.ADAR) transliteratedMonthList[13] // return Adar I, not Adar in a leap year
+            else transliteratedMonthList[month.value - 1]
     }
 
     /**
@@ -602,14 +602,14 @@ class HebrewDateFormatter {
         val omer = jewishCalendar.dayOfOmer
         if (omer == -1) return ""
         return if (isHebrewFormat)
-            "${formatHebrewNumber(omer)} $hebrewOmerPrefix\u05E2\u05D5\u05DE\u05E8"
+            "${formatHebrewNumber(omer.toLong())} $hebrewOmerPrefix\u05E2\u05D5\u05DE\u05E8"
         else if (omer == 33) transliteratedHolidayList[33] // if Lag B'Omer
         else "Omer $omer"
     }
 
     /**
      * Returns the kviah in the traditional 3 letter Hebrew format where the first letter represents the day of week of
-     * Rosh Hashana, the second letter represents the lengths of Cheshvan and Kislev ([Shelaimim][JewishDate.SHELAIMIM] , [Kesidran][JewishDate.KESIDRAN] or [Chaserim][JewishDate.CHASERIM]) and the 3rd letter
+     * Rosh Hashana, the second letter represents the lengths of Cheshvan and Kislev ([Shelaimim][JewishDate.SHELAIMIM] , [Kesidran][JewishDate.KESIDRAN] or [Chaserim][JewishDate.CHASEIRIM]) and the 3rd letter
      * represents the day of week of Pesach. For example 5729 (1969) would return בשה (Rosh Hashana on
      * Monday, Shelaimim, and Pesach on Thursday), while 5771 (2011) would return השג (Rosh Hashana on
      * Thursday, Shelaimim, and Pesach on Tuesday).
@@ -619,11 +619,12 @@ class HebrewDateFormatter {
      * @return the Hebrew String such as בשה for 5729 (1969) and השג for 5771
      * (2011).
      */
-    fun getFormattedKviah(jewishYear: Int): String {
-        val jewishDate = JewishDate(jewishYear, JewishDate.TISHREI, 1) // set date to Rosh Hashana
+    fun getFormattedKviah(jewishYear: Int): String = getFormattedKviah(jewishYear.toLong())
+    fun getFormattedKviah(jewishYear: Long): String {
+        val jewishDate = JewishDate(jewishYear, HebrewMonth.TISHREI, 1) // set date to Rosh Hashana
         val kviah = jewishDate.cheshvanKislevKviah
         val roshHashanaDayOfweek = jewishDate.gregorianLocalDate.dayOfWeek.toJewishDayOfWeek()
-        val returnValue = StringBuilder(formatHebrewNumber(roshHashanaDayOfweek))
+        val returnValue = StringBuilder(formatHebrewNumber(roshHashanaDayOfweek.toLong()))
         returnValue.append(
             when (kviah) {
                 JewishDate.CHASERIM -> "\u05D7"
@@ -631,9 +632,9 @@ class HebrewDateFormatter {
                 else -> "\u05DB"
             }
         )
-        jewishDate.setJewishDate(jewishYear, JewishDate.NISSAN, 15) // set to Pesach of the given year
+        jewishDate.setJewishDate(jewishYear, HebrewMonth.NISSAN, 15) // set to Pesach of the given year
         val pesachDayOfweek = jewishDate.gregorianLocalDate.dayOfWeek.toJewishDayOfWeek()
-        returnValue.append(formatHebrewNumber(pesachDayOfweek))
+        returnValue.append(formatHebrewNumber(pesachDayOfweek.toLong()))
         return returnValue.replace(GERESH.toRegex(), "") // geresh is never used in the kviah format
         // boolean isLeapYear = JewishDate.isJewishLeapYear(jewishYear);
         // for efficiency we can avoid the expensive recalculation of the pesach day of week by adding 1 day to Rosh
@@ -650,7 +651,7 @@ class HebrewDateFormatter {
      */
     fun formatDafYomiBavli(daf: Daf): String =
         if (isHebrewFormat)
-            "${daf.masechta} ${formatHebrewNumber(daf.daf)}"
+            "${daf.masechta} ${formatHebrewNumber(daf.daf.toLong())}"
         else "${daf.masechtaTransliterated} ${daf.daf}"
 
     /**
@@ -663,10 +664,10 @@ class HebrewDateFormatter {
      */
     fun formatDafYomiYerushalmi(daf: Daf?): String {
         if (daf == null)
-            return if (isHebrewFormat) Daf.yerushlmiMasechtos[39]
-            else Daf.yerushlmiMasechtosTransliterated[39]
+            return if (isHebrewFormat) Daf.yerushalmiMasechtos[39]
+            else Daf.yerushalmiMasechtosTransliterated[39]
         return if (isHebrewFormat) "${daf.yerushalmiMasechta} ${formatHebrewNumber(daf.daf)}"
-        else "${daf.yerushlmiMasechtaTransliterated} ${daf.daf}"
+        else "${daf.yerushalmiMasechtaTransliterated} ${daf.daf}"
     }
 
     /**
@@ -689,7 +690,8 @@ class HebrewDateFormatter {
      * @see isUseGershGershayim
      * @see isHebrewFormat
      */
-    fun formatHebrewNumber(number: Int): String {
+    fun formatHebrewNumber(number: Int): String = formatHebrewNumber(number.toLong())
+    fun formatHebrewNumber(number: Long): String {
         var num = number
         val range = 0..9999
         require(num in range) { "${if (num < range.first) "negative numbers" else "numbers > ${range.last}"} can't be formatted" }
@@ -712,44 +714,44 @@ class HebrewDateFormatter {
             "", "\u05D0", "\u05D1", "\u05D2", "\u05D3", "\u05D4", "\u05D5", "\u05D6",
             "\u05D7", "\u05D8"
         )
-        if (num == 0) return EFES // do we really need this? Should it be applicable to a date?
+        if (num == 0L) return EFES // do we really need this? Should it be applicable to a date?
         val shortNumber = num % 1000 // discard thousands
         // next check for all possible single Hebrew digit years
         val singleDigitNumber =
             shortNumber < 11 ||
-                    (shortNumber < 100 && shortNumber % 10 == 0) ||
-                    (shortNumber <= 400 && shortNumber % 100 == 0)
+                    (shortNumber < 100L && shortNumber % 10L == 0L) ||
+                    (shortNumber <= 400L && shortNumber % 100L == 0L)
         val thousands = num / 1000 // get # thousands
         val sb = StringBuilder()
         // append thousands to String
-        if (num % 1000 == 0) { // in year is 5000, 4000 etc
-            sb.append(jOnes[thousands])
+        if (num % 1000L == 0L) { // in year is 5000, 4000 etc
+            sb.append(jOnes[thousands.toInt()])
             if (isUseGershGershayim) sb.append(GERESH)
             sb.append(" ")
             sb.append(ALAFIM) // add # of thousands plus word thousand (overide alafim boolean)
             return sb.toString()
         } else if (isUseLongHebrewYears && num >= 1000) { // if alafim boolean display thousands
-            sb.append(jOnes[thousands])
+            sb.append(jOnes[thousands.toInt()])
             if (isUseGershGershayim) sb.append(GERESH) // append thousands quote
             sb.append(" ")
         }
         num %= 1000 // remove 1000s
         val hundreds = num / 100 // # of hundreds
-        sb.append(jHundreds[hundreds]) // add hundreds to String
+        sb.append(jHundreds[hundreds.toInt()]) // add hundreds to String
         num %= 100 // remove 100s
-        if (num == 15) sb.append(tavTaz[0])  // special case 15
-        else if (num == 16) sb.append(tavTaz[1]) // special case 16
+        if (num == 15L) sb.append(tavTaz[0])  // special case 15
+        else if (num == 16L) sb.append(tavTaz[1]) // special case 16
         else {
             val tens = num / 10
-            if (num % 10 == 0) { // if evenly divisable by 10
+            if (num % 10 == 0L) { // if evenly divisable by 10
                 if (!singleDigitNumber) {
-                    if (isUseFinalFormLetters) sb.append(jTenEnds[tens])  // years like 5780 will end with a final form &#x05E3;
-                    else sb.append(jTens[tens]) // years like 5780 will end with a regular &#x05E4;
-                } else sb.append(jTens[tens]) // standard letters so years like 5050 will end with a regular nun
+                    if (isUseFinalFormLetters) sb.append(jTenEnds[tens.toInt()])  // years like 5780 will end with a final form &#x05E3;
+                    else sb.append(jTens[tens.toInt()]) // years like 5780 will end with a regular &#x05E4;
+                } else sb.append(jTens[tens.toInt()]) // standard letters so years like 5050 will end with a regular nun
             } else {
-                sb.append(jTens[tens])
+                sb.append(jTens[tens.toInt()])
                 num %= 10
-                sb.append(jOnes[num])
+                sb.append(jOnes[num.toInt()])
             }
         }
         if (isUseGershGershayim) {

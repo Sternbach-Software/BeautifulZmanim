@@ -17,15 +17,7 @@ package com.kosherjava.zmanim
 
 import com.kosherjava.zmanim.util.AstronomicalCalculator
 import com.kosherjava.zmanim.util.GeoLocation
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.DateTimePeriod
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -94,7 +86,7 @@ open class AstronomicalCalendar(
     /**
      * The Java Calendar encapsulated by this class to track the current date used by the class
      */
-    var localDate: LocalDateTime = Clock.System.now().toLocalDateTime(geoLocation.timeZone)
+    var localDateTime: LocalDateTime = Clock.System.now().toLocalDateTime(geoLocation.timeZone)
 
     /**
      * The internal [AstronomicalCalculator] used for calculating solar based times.
@@ -469,7 +461,7 @@ open class AstronomicalCalendar(
         }
         var calculatedTime: Double = time
         val adjustedLocalDate = this.adjustedLocalDate
-        val timeZone = TimeZone.currentSystemDefault()
+        val timeZone = TimeZone.UTC
         var cal = adjustedLocalDate.toInstant(timeZone)
         val hours = calculatedTime.toInt() // retain only the hours
         calculatedTime -= hours.toDouble()
@@ -561,11 +553,11 @@ open class AstronomicalCalendar(
      * @see GeoLocation.antimeridianAdjustment
      * @return the adjusted LocalDate
      */
-    private val adjustedLocalDate: LocalDateTime
+    internal val adjustedLocalDate: LocalDateTime
         get() {
             val offset = geoLocation.antimeridianAdjustment
-            return if (offset == 0) localDate
-            else localDate
+            return if (offset == 0) localDateTime
+            else localDateTime
                 .toInstant(geoLocation.timeZone)
                 .plus(DatePeriod(days = offset), geoLocation.timeZone)
                 .toLocalDateTime(geoLocation.timeZone)
@@ -593,7 +585,7 @@ open class AstronomicalCalendar(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is AstronomicalCalendar) return false
-        return localDate == other.localDate &&
+        return localDateTime == other.localDateTime &&
                 geoLocation == other.geoLocation &&
                 astronomicalCalculator == other.astronomicalCalculator
     }
@@ -605,7 +597,7 @@ open class AstronomicalCalendar(
         var result = 17
         result =
             37 * result + this::class.hashCode() // needed or this and subclasses will return identical hash
-        result += 37 * result + localDate.hashCode()
+        result += 37 * result + localDateTime.hashCode()
         result += 37 * result + geoLocation.hashCode()
         result += 37 * result + astronomicalCalculator.hashCode()
         return result

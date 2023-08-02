@@ -362,7 +362,7 @@ class JewishCalendar : JewishDate {
      * @param date
      * the `Date` to set the calendar to
      */
-    constructor(date: Instant) : super(date.toLocalDateTime(TimeZone.currentSystemDefault()).date)
+    constructor(date: Instant, tz: TimeZone) : super(date.toLocalDateTime(tz).date)
 
     /**
      * A constructor that initializes the date to the [date] parameter.
@@ -375,9 +375,9 @@ class JewishCalendar : JewishDate {
     /**
      * Creates a Jewish date based on a Jewish year, month and day of month.
      *
-     * @param jewishYear
+     * @param hebrewLocalDate.year
      * the Jewish year
-     * @param jewishMonth
+     * @param hebrewLocalDate.month
      * the Jewish month. The method expects a 1 for Nissan ... 12 for Adar and 13 for Adar II. Use the
      * constants [.NISSAN] ... [.ADAR] (or [.ADAR_II] for a leap year Adar II) to avoid any
      * confusion.
@@ -390,16 +390,24 @@ class JewishCalendar : JewishDate {
      */
     constructor(jewishYear: Int, jewishMonth: Int, jewishDayOfMonth: Int) : super(
         jewishYear,
-        jewishMonth,
+        HebrewMonth.getMonthForValue(jewishMonth),
         jewishDayOfMonth
     )
+    constructor(jewishYear: Long, jewishMonth: Int, jewishDayOfMonth: Int) : super(
+        jewishYear,
+        HebrewMonth.getMonthForValue(jewishMonth),
+        jewishDayOfMonth
+    )
+
+    constructor(hebrewYear: Int, hebrewMonth: HebrewMonth, hebrewDayOfMonth: Int) : super(hebrewYear, hebrewMonth, hebrewDayOfMonth)
+    constructor(hebrewYear: Long, hebrewMonth: HebrewMonth, hebrewDayOfMonth: Int) : super(hebrewYear, hebrewMonth, hebrewDayOfMonth)
 
     /**
      * Creates a Jewish date based on a Jewish date and whether in Israel
      *
-     * @param jewishYear
+     * @param hebrewLocalDate.year
      * the Jewish year
-     * @param jewishMonth
+     * @param hebrewLocalDate.month
      * the Jewish month. The method expects a 1 for *Nissan* ... 12 for *Adar* and 13 for
      * *Adar II*. Use the constants [.NISSAN] ... [.ADAR] (or [.ADAR_II] for a
      * leap year Adar II) to avoid any confusion.
@@ -413,6 +421,46 @@ class JewishCalendar : JewishDate {
     constructor(
         jewishYear: Int,
         jewishMonth: Int,
+        jewishDayOfMonth: Int,
+        inIsrael: Boolean,
+    ): this(jewishYear.toLong(), jewishMonth, jewishDayOfMonth, inIsrael)
+    constructor(
+        jewishYear: Long,
+        jewishMonth: Int,
+        jewishDayOfMonth: Int,
+        inIsrael: Boolean,
+    ) : super(
+        jewishYear,
+        HebrewMonth.getMonthForValue(jewishMonth),
+        jewishDayOfMonth
+    ) {
+        this.inIsrael = inIsrael
+    }
+    /**
+     * Creates a Jewish date based on a Jewish date and whether in Israel
+     *
+     * @param hebrewLocalDate.year
+     * the Jewish year
+     * @param hebrewLocalDate.month
+     * the Jewish month. The method expects a 1 for *Nissan* ... 12 for *Adar* and 13 for
+     * *Adar II*. Use the constants [.NISSAN] ... [.ADAR] (or [.ADAR_II] for a
+     * leap year Adar II) to avoid any confusion.
+     * @param jewishDayOfMonth
+     * the Jewish day of month. If 30 is passed in for a month with only 29 days (for example [.IYAR],
+     * or [.KISLEV] in a year that [.isKislevShort]), the 29th (last valid date of the month)
+     * will be set.
+     * @param inIsrael
+     * whether in Israel. This affects *Yom Tov* calculations
+     */
+    constructor(
+        jewishYear: Int,
+        jewishMonth: HebrewMonth,
+        jewishDayOfMonth: Int,
+        inIsrael: Boolean,
+    ): this(jewishYear.toLong(), jewishMonth, jewishDayOfMonth, inIsrael)
+    constructor(
+        jewishYear: Long,
+        jewishMonth: HebrewMonth,
         jewishDayOfMonth: Int,
         inIsrael: Boolean,
     ) : super(
@@ -440,7 +488,7 @@ class JewishCalendar : JewishDate {
     val isBirkasHachamah: Boolean
         get() {
             val elapsedDays =
-                getJewishCalendarElapsedDays(jewishYear) + //elapsed days since molad ToHu
+                getJewishCalendarElapsedDays(hebrewLocalDate.year) + //elapsed days since molad ToHu
                 daysSinceStartOfJewishYear //elapsed days to the current LocalDate date
 
             /* Molad Nissan year 1 was 177 days after molad tohu of Tishrei. We multiply 29.5 days * 6 months from Tishrei
@@ -459,7 +507,7 @@ class JewishCalendar : JewishDate {
     private val parshaYearType: Int
         get() {
             var roshHashanaDayOfWeek =
-                (getJewishCalendarElapsedDays(jewishYear) + 1) % 7 // plus one to the original Rosh Hashana of year 1 to get a week starting on Sunday
+                ((getJewishCalendarElapsedDays(hebrewLocalDate.year) + 1) % 7).toInt() // plus one to the original Rosh Hashana of year 1 to get a week starting on Sunday
             if (roshHashanaDayOfWeek == 0) {
                 roshHashanaDayOfWeek = 7 // convert 0 to 7 for Shabbos for readability
             }
@@ -524,8 +572,8 @@ class JewishCalendar : JewishDate {
                 return NONE
             }
             val yearType = parshaYearType
-            val roshHashanaDayOfWeek = getJewishCalendarElapsedDays(jewishYear) % 7
-            val day = roshHashanaDayOfWeek + daysSinceStartOfJewishYear
+            val roshHashanaDayOfWeek = getJewishCalendarElapsedDays(hebrewLocalDate.year) % 7
+            val day = (roshHashanaDayOfWeek + daysSinceStartOfJewishYear).toInt()
             if (yearType >= 0) { // negative year should be impossible, but let's cover all bases
                 return parshalist[yearType][day / 7]
             }
@@ -542,7 +590,7 @@ class JewishCalendar : JewishDate {
      */
     val upcomingParshah: Parsha
         get() {
-            val copy = copy(inIsrael = inIsrael) //force JewishCalendar.copy, not JewishDate.copy
+            val copy = copy(jewishMonth = hebrewLocalDate.month, inIsrael = inIsrael) //force JewishCalendar.copy, not JewishDate.copy
             val daysToShabbos =
                 (DayOfWeek.SATURDAY.toJewishDayOfWeek() - gregorianLocalDate.dayOfWeek.toJewishDayOfWeek() + 7) % 7
             if (gregorianLocalDate.dayOfWeek != DayOfWeek.SATURDAY) {
@@ -564,12 +612,12 @@ class JewishCalendar : JewishDate {
     val specialShabbos: Parsha
         get() {
             if (gregorianLocalDate.dayOfWeek == DayOfWeek.SATURDAY) {
-                if ((jewishMonth == SHEVAT && !isJewishLeapYear) || (jewishMonth == ADAR && isJewishLeapYear)) {
+                if ((hebrewLocalDate.month == HebrewMonth.SHEVAT && !isJewishLeapYear) || (hebrewLocalDate.month == HebrewMonth.ADAR && isJewishLeapYear)) {
                     if ((jewishDayOfMonth == 25) || (jewishDayOfMonth == 27) || (jewishDayOfMonth == 29)) {
                         return Parsha.SHKALIM
                     }
                 }
-                if ((jewishMonth == ADAR && !isJewishLeapYear) || jewishMonth == ADAR_II) {
+                if ((hebrewLocalDate.month == HebrewMonth.ADAR && !isJewishLeapYear) || hebrewLocalDate.month == HebrewMonth.ADAR_II) {
                     if (jewishDayOfMonth == 1) {
                         return Parsha.SHKALIM
                     }
@@ -583,7 +631,7 @@ class JewishCalendar : JewishDate {
                         return Parsha.HACHODESH
                     }
                 }
-                if (jewishMonth == NISSAN) {
+                if (hebrewLocalDate.month == HebrewMonth.NISSAN) {
                     if (jewishDayOfMonth == 1) {
                         return Parsha.HACHODESH
                     }
@@ -591,7 +639,7 @@ class JewishCalendar : JewishDate {
                         return Parsha.HAGADOL
                     }
                 }
-                if (jewishMonth == AV) {
+                if (hebrewLocalDate.month == HebrewMonth.AV) {
                     if (jewishDayOfMonth >= 4 && jewishDayOfMonth <= 9) {
                         return Parsha.CHAZON
                     }
@@ -599,7 +647,7 @@ class JewishCalendar : JewishDate {
                         return Parsha.NACHAMU
                     }
                 }
-                if (jewishMonth == TISHREI) {
+                if (hebrewLocalDate.month == HebrewMonth.TISHREI) {
                     if (jewishDayOfMonth >= 3 && jewishDayOfMonth <= 8) {
                         return Parsha.SHUVA
                     }
@@ -631,8 +679,8 @@ class JewishCalendar : JewishDate {
         get() {
             val day = jewishDayOfMonth
             val dayOfWeek = gregorianLocalDate.dayOfWeek
-            when (jewishMonth) {
-                NISSAN -> {
+            when (hebrewLocalDate.month) {
+                HebrewMonth.NISSAN -> {
                     return when {
                         day == 14 -> EREV_PESACH
                         day == 15 || day == 21 || !inIsrael && (day == 16 || day == 22) -> PESACH
@@ -651,7 +699,7 @@ class JewishCalendar : JewishDate {
 
                 }
 
-                IYAR -> {
+                HebrewMonth.IYAR -> {
                     return when {
                         isUseModernHolidays &&
                                 (
@@ -675,7 +723,7 @@ class JewishCalendar : JewishDate {
                     }
                 }
 
-                SIVAN -> {
+                HebrewMonth.SIVAN -> {
                     return when {
                         day == 5 -> EREV_SHAVUOS
                         day == 6 || day == 7 && !inIsrael -> SHAVUOS
@@ -684,7 +732,7 @@ class JewishCalendar : JewishDate {
                     }
                 }
 
-                TAMMUZ ->            // push off the fast day if it falls on Shabbos// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
+                HebrewMonth.TAMMUZ ->            // push off the fast day if it falls on Shabbos// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
                     // return EREV_CHANUKAH;
                     // } else
 // push off Tzom Gedalia if it falls on Shabbos// if Tisha B'av falls on Shabbos, push off until Sunday
@@ -698,7 +746,7 @@ class JewishCalendar : JewishDate {
                     ) return SEVENTEEN_OF_TAMMUZ
                 }
 
-                AV -> {
+                HebrewMonth.AV -> {
                     // if Tisha B'av falls on Shabbos, push off until Sunday
                     return when {
                         day == 10 && dayOfWeek == DayOfWeek.SUNDAY || day == 9 && dayOfWeek != DayOfWeek.SATURDAY -> TISHA_BEAV
@@ -707,7 +755,7 @@ class JewishCalendar : JewishDate {
                     }
                 }
 
-                ELUL ->// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
+                HebrewMonth.ELUL ->// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
                     // return EREV_CHANUKAH;
                     // } else
 // push off Tzom Gedalia if it falls on Shabbos// if Tisha B'av falls on Shabbos, push off until Sunday// push off the fast day if it falls on Shabbos// push off the fast day if it falls on Shabbos// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
@@ -722,7 +770,7 @@ class JewishCalendar : JewishDate {
                     if (day == 29) return EREV_ROSH_HASHANA
                 }
 
-                TISHREI -> {
+                HebrewMonth.TISHREI -> {
                     return when {
                         day == 1 || day == 2 -> ROSH_HASHANA
                         day == 3 && dayOfWeek != DayOfWeek.SATURDAY || day == 4 && dayOfWeek == DayOfWeek.SUNDAY -> FAST_OF_GEDALYAH // push off Tzom Gedalia if it falls on Shabbos
@@ -739,7 +787,7 @@ class JewishCalendar : JewishDate {
                     }
                 }
 
-                KISLEV ->            // if (day == 24) {
+                HebrewMonth.KISLEV ->            // if (day == 24) {
                     // return EREV_CHANUKAH;
                     // } else// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// push off Tzom Gedalia if it falls on Shabbos// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
                     // return EREV_CHANUKAH;
@@ -767,12 +815,12 @@ class JewishCalendar : JewishDate {
                     if (day >= 25) return CHANUKAH
                 }
 
-                TEVES -> {
+                HebrewMonth.TEVES -> {
                     if (day in 1..(if (isKislevShort) 3 else 2)) return CHANUKAH
                     if (day == 10) return TENTH_OF_TEVES
                 }
 
-                SHEVAT ->// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
+                HebrewMonth.SHEVAT ->// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
                     // return EREV_CHANUKAH;
                     // } else
 // if (day == 24) {
@@ -819,7 +867,7 @@ class JewishCalendar : JewishDate {
                     if (day == 15) return TU_BESHVAT
                 }
 
-                ADAR ->// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
+                HebrewMonth.ADAR ->// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if 13th Adar falls on Friday or Shabbos, push back to Thursday// else if a leap year// if 13th Adar falls on Friday or Shabbos, push back to Thursday// if (day == 24) {
                     // return EREV_CHANUKAH;
                     // } else
 // if (day == 24) {
@@ -924,7 +972,7 @@ class JewishCalendar : JewishDate {
                     }
                 }
 
-                ADAR_II -> {
+                HebrewMonth.ADAR_II -> {
                     // if 13th Adar falls on Friday or Shabbos, push back to Thursday
                     return when {
                         (day in 11..12 && dayOfWeek == DayOfWeek.THURSDAY) ||
@@ -1030,13 +1078,13 @@ class JewishCalendar : JewishDate {
      * @return  if the day is the second day of *Yom Tov*.
      */
     val isErevYomTovSheni: Boolean
-        get() = (jewishMonth == TISHREI && jewishDayOfMonth == 1) ||
+        get() = (hebrewLocalDate.month == HebrewMonth.TISHREI && jewishDayOfMonth == 1) ||
                 (
                         !inIsrael && (
                                 (
-                                        (jewishMonth == NISSAN && (jewishDayOfMonth == 15 || jewishDayOfMonth == 21)) ||
-                                                (jewishMonth == TISHREI && (jewishDayOfMonth == 15 || jewishDayOfMonth == 22)) ||
-                                                (jewishMonth == SIVAN && jewishDayOfMonth == 6)
+                                        (hebrewLocalDate.month == HebrewMonth.NISSAN && (jewishDayOfMonth == 15 || jewishDayOfMonth == 21)) ||
+                                                (hebrewLocalDate.month == HebrewMonth.TISHREI && (jewishDayOfMonth == 15 || jewishDayOfMonth == 22)) ||
+                                                (hebrewLocalDate.month == HebrewMonth.SIVAN && jewishDayOfMonth == 6)
                                         )
                                 )
                         )
@@ -1048,7 +1096,7 @@ class JewishCalendar : JewishDate {
      * @return if the current day is *Aseres Yemei Teshuvah*
      */
     val isAseresYemeiTeshuva: Boolean
-        get() = jewishMonth == TISHREI && jewishDayOfMonth <= 10
+        get() = hebrewLocalDate.month == HebrewMonth.TISHREI && jewishDayOfMonth <= 10
 
     /**
      * Returns true if the current day is *Pesach* (either  the *Yom Tov* of *Pesach* or*Chol Hamoed Pesach*).
@@ -1216,7 +1264,7 @@ class JewishCalendar : JewishDate {
      */
     val isErevRoshChodesh: Boolean
         get() = // Erev Rosh Hashana is not Erev Rosh Chodesh.
-            jewishDayOfMonth == 29 && jewishMonth != ELUL
+            jewishDayOfMonth == 29 && hebrewLocalDate.month != HebrewMonth.ELUL
 
     /**
      * Returns true if the current day is *Yom Kippur Katan*. Returns false for *Erev Rosh Hashana*,
@@ -1229,10 +1277,10 @@ class JewishCalendar : JewishDate {
     val isYomKippurKatan: Boolean
         get() {
             val dayOfWeek = gregorianLocalDate.dayOfWeek
-            val month = jewishMonth
+            val month = hebrewLocalDate.month
             val day = jewishDayOfMonth
             return when {
-                month == ELUL || month == TISHREI || month == KISLEV || month == NISSAN -> false
+                month == HebrewMonth.ELUL || month == HebrewMonth.TISHREI || month == HebrewMonth.KISLEV || month == HebrewMonth.NISSAN -> false
                 day == 29 && dayOfWeek != DayOfWeek.FRIDAY && dayOfWeek != DayOfWeek.SATURDAY -> true
                 day in 27..28 && dayOfWeek == DayOfWeek.THURSDAY -> true
                 else -> false
@@ -1241,7 +1289,7 @@ class JewishCalendar : JewishDate {
 
     /**
      * The Monday, Thursday and Monday after the first *Shabbos* after [<em>Rosh Chodesh</em>][isRoshChodesh]
-     * [<em>Cheshvan</em>][JewishDate.CHESHVAN] and [<em>Iyar</em>][JewishDate.IYAR] are [*BeHaB*](https://outorah.org/p/41334/) days.
+     * [<em>Cheshvan</em>][HebrewMonth.CHESHVAN] and [<em>Iyar</em>][HebrewMonth.IYAR] are [*BeHaB*](https://outorah.org/p/41334/) days.
      * If the last Monday of Iyar's BeHaB coincides with [PESACH_SHENI], the method currently considers it both *Pesach Sheni* and *BeHaB*.
      * As seen in an Ohr Sameach  article on the subject [The unknown Days: BeHaB Vs. Pesach Sheini?](https://ohr.edu/this_week/insights_into_halacha/9340)
      * there are some customs that delay the day to various points in the future.
@@ -1250,9 +1298,9 @@ class JewishCalendar : JewishDate {
     val isBeHaB: Boolean
         get() {
             val dayOfWeek = gregorianLocalDate.dayOfWeek
-            val month = jewishMonth
+            val month = hebrewLocalDate.month
             val day = jewishDayOfMonth
-            return (month == CHESHVAN || month == IYAR) &&
+            return (month == HebrewMonth.CHESHVAN || month == HebrewMonth.IYAR) &&
                     (
                             dayOfWeek == DayOfWeek.MONDAY && day in 5..17/*4 < day < 18*/ ||
                                     dayOfWeek == DayOfWeek.THURSDAY && day in 8..13/*7 < day < 14*/
@@ -1287,7 +1335,7 @@ class JewishCalendar : JewishDate {
             val day = jewishDayOfMonth
             val dayOfWeek = gregorianLocalDate.dayOfWeek
             // on 14 Nissan unless that is Shabbos where the fast is moved back to Thursday
-            return jewishMonth == NISSAN && (
+            return hebrewLocalDate.month == HebrewMonth.NISSAN && (
                     (day == 14 && dayOfWeek != DayOfWeek.SATURDAY) ||
                             (day == 12 && dayOfWeek == DayOfWeek.THURSDAY)
                     )
@@ -1301,7 +1349,7 @@ class JewishCalendar : JewishDate {
      */
     val dayOfChanukah: Int
         get() = if (isChanukah)
-            if (jewishMonth == KISLEV) jewishDayOfMonth - 24
+            if (hebrewLocalDate.month == HebrewMonth.KISLEV) jewishDayOfMonth - 24
             else /*teves*/ if (isKislevShort) jewishDayOfMonth + 5 else jewishDayOfMonth + 6
         else -1
 
@@ -1334,7 +1382,7 @@ class JewishCalendar : JewishDate {
      */
     val isRoshChodesh: Boolean
         get() = // Rosh Hashana is not rosh chodesh. Elul never has 30 days
-            (jewishDayOfMonth == 1 && jewishMonth != TISHREI) || jewishDayOfMonth == 30
+            (jewishDayOfMonth == 1 && hebrewLocalDate.month != HebrewMonth.TISHREI) || jewishDayOfMonth == 30
 
     /**
      * Returns if the day is *Shabbos* and Sunday is *Rosh Chodesh* and the *haftorah* of Machar Chodesh is read.
@@ -1354,7 +1402,7 @@ class JewishCalendar : JewishDate {
         get() = gregorianLocalDate.dayOfWeek == DayOfWeek.SATURDAY &&
                 jewishDayOfMonth >= 23 &&
                 jewishDayOfMonth <= 29 &&
-                jewishMonth != ELUL
+                hebrewLocalDate.month != HebrewMonth.ELUL
     // if Sivan and before Shavuos// if Iyar// not a day of the Omer
 
     // if Nissan and second day of Pesach and on
@@ -1365,13 +1413,13 @@ class JewishCalendar : JewishDate {
      */
     val dayOfOmer: Int
         get() {
-            val month = jewishMonth
+            val month = hebrewLocalDate.month
             val day = jewishDayOfMonth
 
             // if Nissan and second day of Pesach and on
-            return if (month == NISSAN && day >= 16) day - 15
-            else if (month == IYAR) day + 15             // if Iyar
-            else if (month == SIVAN && day < 6) day + 44 // if Sivan and before Shavuos
+            return if (month == HebrewMonth.NISSAN && day >= 16) day - 15
+            else if (month == HebrewMonth.IYAR) day + 15             // if Iyar
+            else if (month == HebrewMonth.SIVAN && day < 6) day + 44 // if Sivan and before Shavuos
             else -1 // not a day of the Omer
         }
 
@@ -1407,7 +1455,7 @@ class JewishCalendar : JewishDate {
             // The raw molad Instant (point in time) must be generated using standard time. Using "Asia/Jerusalem" timezone will result in the time
             // being incorrectly off by an hour in the summer due to DST. Proper adjustment for the actual time in DST will be done by the date
             // formatter class used to display the Instant.
-            val yerushalayimStandardTZ = TimeZone.of("GMT+2")
+            val yerushalayimStandardTZ = TimeZone.of("Etc/GMT+2")
             val geo = GeoLocation(locationName, latitude, longitude, yerushalayimStandardTZ)
             val localDate = molad.gregorianLocalDate
             val moladSeconds = molad.moladChalakim * 10 / 3.0
@@ -1417,7 +1465,7 @@ class JewishCalendar : JewishDate {
                     molad.moladHours,
                     molad.moladMinutes,
                     moladSeconds.toInt(),
-                    (1000 * (moladSeconds - moladSeconds.toInt())).toInt()
+                    (1000 * (moladSeconds - moladSeconds.toInt())).toInt().milliseconds.inWholeNanoseconds.toInt()
                 )
             )
                 .toInstant(yerushalayimStandardTZ)
@@ -1534,162 +1582,13 @@ class JewishCalendar : JewishDate {
             // Days since Rosh Hashana year 1. Add 1/2 day as the first tekufas tishrei was 9 hours into the day. This allows all
             // 4 years of the secular leap year cycle to share 47 days. Truncate 47D and 9H to 47D for simplicity.
             val days: Double =
-                getJewishCalendarElapsedDays(jewishYear) + (daysSinceStartOfJewishYear - 1) + 0.5
+                getJewishCalendarElapsedDays(hebrewLocalDate.year) + (daysSinceStartOfJewishYear - 1) + 0.5
             // days of completed solar years
-            val solar: Double = (jewishYear - 1) * 365.25
+            val solar: Double = (hebrewLocalDate.year - 1) * 365.25
             return floor(days - solar).toInt()
         }// When starting on Sunday, it can be the start date or delayed from Shabbos
     // keep the compiler happy
 //Not recited on Friday night// The 7th Cheshvan can't occur on Shabbos, so always return true for 7 Cheshvan
-    /**
-     * Returns if it is the Jewish day (starting the evening before) to start reciting *Vesein Tal Umatar
-     * Livracha* (*Sheailas Geshamim*). In Israel this is the 7th day of *Marcheshvan*. Outside
-     * Israel recitation starts on the evening of December 4th (or 5th if it is the year before a civil leap year)
-     * in the 21st century and shifts a day forward every century not evenly divisible by 400. This method will
-     * return true if *vesein tal umatar* on the current Jewish date that starts on the previous night, so
-     * Dec 5/6 will be returned by this method in the 21st century. *vesein tal umatar* is not recited on
-     * *Shabbos* and the start date will be delayed a day when the start day is on a *Shabbos* (this
-     * can only occur out of Israel).
-     *
-     * @return true if it is the first Jewish day (starting the prior evening of reciting *Vesein Tal Umatar
-     * Livracha* (*Sheailas Geshamim*)).
-     *
-     * @see isVeseinTalUmatarStartingTonight
-     * @see isVeseinTalUmatarRecited
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isVeseinTalUmatarStartDate(JewishCalendar)} instead. This method will be\n" + "	          removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isVeseinTalUmatarStartDate: Boolean
-        get() {
-            if (inIsrael) {
-                // The 7th Cheshvan can't occur on Shabbos, so always return true for 7 Cheshvan
-                if (jewishMonth == CHESHVAN && jewishDayOfMonth == 7) {
-                    return true
-                }
-            } else {
-                return when (gregorianLocalDate.dayOfWeek) {
-                    DayOfWeek.SATURDAY -> false //Not recited on Friday night
-                    DayOfWeek.SUNDAY -> tekufasTishreiElapsedDays == 48 || tekufasTishreiElapsedDays == 47 // When starting on Sunday, it can be the start date or delayed from Shabbos
-                    else -> tekufasTishreiElapsedDays == 47
-                }
-            }
-            return false // keep the compiler happy
-        }// When starting on motzai Shabbos, it can be the start date or delayed from Friday night//Not recited on Friday night// The 7th Cheshvan can't occur on Shabbos, so always return true for 6 Cheshvan
-
-    /**
-     * Returns true if tonight is the first night to start reciting *Vesein Tal Umatar Livracha* (
-     * *Sheailas Geshamim*). In Israel this is the 7th day of *Marcheshvan* (so the 6th will return
-     * true). Outside Israel recitation starts on the evening of December 4th (or 5th if it is the year before a
-     * civil leap year) in the 21st century and shifts a day forward every century not evenly divisible by 400.
-     * *Vesein tal umatar* is not recited on *Shabbos* and the start date will be delayed a day when
-     * the start day is on a *Shabbos* (this can only occur out of Israel).
-     *
-     * @return true if it is the first Jewish day (starting the prior evening of reciting *Vesein Tal Umatar
-     * Livracha* (*Sheailas Geshamim*)).
-     *
-     * @see isVeseinTalUmatarStartDate
-     * @see isVeseinTalUmatarRecited
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isVeseinTalUmatarStartingTonight(JewishCalendar)} instead. This method\n" + "	          will be removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isVeseinTalUmatarStartingTonight: Boolean
-        get() {
-            if (inIsrael) {
-                // The 7th Cheshvan can't occur on Shabbos, so always return true for 6 Cheshvan
-                if (jewishMonth == CHESHVAN && jewishDayOfMonth == 6) {
-                    return true
-                }
-            } else {
-                return when (gregorianLocalDate.dayOfWeek) {
-                    DayOfWeek.FRIDAY -> false //Not recited on Friday night
-                    DayOfWeek.SATURDAY -> tekufasTishreiElapsedDays == 47 || tekufasTishreiElapsedDays == 46 // When starting on motzai Shabbos, it can be the start date or delayed from Friday night
-                    else -> tekufasTishreiElapsedDays == 46
-                }
-            }
-            return false
-        }
-
-    /**
-     * Returns if *Vesein Tal Umatar Livracha* (*Sheailas Geshamim*) is recited. This will return
-     * true for the entire season, even on *Shabbos* when it is not recited.
-     *
-     * @return true if *Vesein Tal Umatar Livracha* (*Sheailas Geshamim*) is recited.
-     *
-     * @see isVeseinTalUmatarStartDate
-     * @see isVeseinTalUmatarStartingTonight
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isVeseinTalUmatarRecited(JewishCalendar)} instead. This method will\n" + "	          be removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isVeseinTalUmatarRecited: Boolean
-        get() {
-            if (jewishMonth == NISSAN && jewishDayOfMonth < 15) return true
-            if (jewishMonth < CHESHVAN) return false
-            return if (inIsrael) jewishMonth != CHESHVAN || jewishDayOfMonth >= 7 else tekufasTishreiElapsedDays >= 47
-        }
-
-    /**
-     * Returns if *Vesein Beracha* is recited. It is recited from 15 *Nissan* to the point that [isVeseinTalUmatarRecited].
-     *
-     * @return true if *Vesein Beracha* is recited.
-     *
-     * @see isVeseinTalUmatarRecited
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isVeseinBerachaRecited(JewishCalendar)} instead. This method will be\n" + "	          removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isVeseinBerachaRecited: Boolean
-        get() = !isVeseinTalUmatarRecited
-
-    /**
-     * Returns if the date is the start date for reciting *Mashiv Haruach Umorid Hageshem*. The date is 22 *Tishrei*.
-     *
-     * @return true if the date is the start date for reciting *Mashiv Haruach Umorid Hageshem*.
-     *
-     * @see isMashivHaruachEndDate
-     * @see isMashivHaruachRecited
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isMashivHaruachStartDate(JewishCalendar)} instead. This method will be\n" + "	          removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isMashivHaruachStartDate: Boolean
-        get() = jewishMonth == TISHREI && jewishDayOfMonth == 22
-
-    /**
-     * Returns if the date is the end date for reciting *Mashiv Haruach Umorid Hageshem*. The date is 15 *Nissan*.
-     *
-     * @return true if the date is the end date for reciting *Mashiv Haruach Umorid Hageshem*.
-     *
-     * @see isMashivHaruachStartDate
-     * @see isMashivHaruachRecited
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isMashivHaruachEndDate(JewishCalendar)} instead. This method will be\n" + "	          removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isMashivHaruachEndDate: Boolean
-        get() {
-            return jewishMonth == NISSAN && jewishDayOfMonth == 15
-        }
-
-    /**
-     * Returns if *Mashiv Haruach Umorid Hageshem* is recited. This period starts on 22 *Tishrei* and ends
-     * on the 15th day of *Nissan*.
-     *
-     * @return true if *Mashiv Haruach Umorid Hageshem* is recited.
-     *
-     * @see isMashivHaruachStartDate
-     * @see isMashivHaruachEndDate
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isMashivHaruachRecited(JewishCalendar)} instead. This method will be\n" + "	          removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isMashivHaruachRecited: Boolean
-        get() = compareTo(JewishDate(jewishYear, TISHREI, 22)) > 0 && compareTo(
-            JewishDate(
-                jewishYear,
-                NISSAN,
-                15
-            )
-        ) < 0
-
-    /**
-     * Returns if *Morid Hatal* (or the lack of reciting *Mashiv Haruach* following *nussach Ashkenaz*) is recited.
-     * This period starts on 22 *Tishrei* and ends on the 15th day of
-     * *Nissan*.
-     *
-     * @return true if *Morid Hatal* (or the lack of reciting *Mashiv Haruach* following *nussach Ashkenaz*) is recited.
-     */  // (forRemoval=true) // add back once Java 9 is the minimum supported version
-    @get:Deprecated("Use {@link TefilaRules#isMoridHatalRecited(JewishCalendar)} instead. This method will be\n" + "	          removed in the v3.0 release.\n" + "	  \n" + "	  ")
-    val isMoridHatalRecited: Boolean
-        get() = !isMashivHaruachRecited || isMashivHaruachStartDate || isMashivHaruachEndDate
 
     /**
      * Returns true if the current day is *Isru Chag*. The method returns true for the day following *Pesach*
@@ -1708,7 +1607,7 @@ class JewishCalendar : JewishDate {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is JewishCalendar) return false
-        return absDate == other.absDate && inIsrael == other.inIsrael
+        return gregorianLocalDate == other.gregorianLocalDate && inIsrael == other.inIsrael
     }
 
     /**
@@ -1719,12 +1618,19 @@ class JewishCalendar : JewishDate {
         var result = 17
         result =
             37 * result + this::class.hashCode() // needed or this and subclasses will return identical hash
-        result += (37 * result) + absDate + (if (inIsrael) 1 else 3)
+        result += (37 * result) + gregorianLocalDate.hashCode() + (if (inIsrael) 1 else 3)
         return result
     }
     fun copy(
-        jewishYear: Int = this.jewishYear,
-        jewishMonth: Int = this.jewishMonth,
+        jewishYear: Long = this.hebrewLocalDate.year,
+        jewishMonth: Int = this.hebrewLocalDate.month.value,
+        jewishDayOfMonth: Int = this.jewishDayOfMonth,
+        inIsrael: Boolean = this.inIsrael,
+    ): JewishCalendar = JewishCalendar(jewishYear, jewishMonth, jewishDayOfMonth, inIsrael)
+
+    fun copy(
+        jewishYear: Long = this.hebrewLocalDate.year,
+        jewishMonth: HebrewMonth = this.hebrewLocalDate.month,
         jewishDayOfMonth: Int = this.jewishDayOfMonth,
         inIsrael: Boolean = this.inIsrael,
     ): JewishCalendar = JewishCalendar(jewishYear, jewishMonth, jewishDayOfMonth, inIsrael)
