@@ -53,7 +53,7 @@ internal fun App() = AppTheme {
     var zmanim by remember { mutableStateOf<ZmanCardModel?>(null) }
     var shaaZmanisValues by remember { mutableStateOf<List<Pair<Duration, String>>>(emptyList()) }
     var allZmanim: List<Pair<Instant?, String>> by remember { mutableStateOf(emptyList()) }
-//    var passwordVisibility by remember { mutableStateOf(false) }
+    var now by remember { mutableStateOf(Clock.System.now()) }
 
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -281,10 +281,22 @@ internal fun App() = AppTheme {
             }
         }
 
+
+        LaunchedEffect(Unit) {
+            launch(Dispatchers.Default) {
+                while (isActive) {
+                    delay(1_000)
+                    withContext(Dispatchers.Main.immediate) {
+                        now = Clock.System.now()
+                    }
+                }
+            }
+        }
         LazyColumn(Modifier.fillMaxWidth()) {
             val otherOpinions = emptyMap<String, String>()
             items(shaaZmanisValues) {
                 ZmanCard(
+                    now,
                     ZmanCardModel(
                         "",
                         it.second,
@@ -296,6 +308,7 @@ internal fun App() = AppTheme {
             items(allZmanim) {
 
                 ZmanCard(
+                    now,
                     ZmanCardModel(
                         "",
                         it.second,
@@ -329,22 +342,17 @@ internal fun App() = AppTheme {
 }
 
 @Composable
-fun ZmanCard(model: ZmanCardModel, content: @Composable (now: Instant) -> Unit = {}) {
-    var now by remember { mutableStateOf(Clock.System.now()) }
+fun ZmanCard(
+    currentTime: Instant,
+    model: ZmanCardModel,
+    content: @Composable (now: Instant) -> Unit = {}
+) {
     Card(
         Modifier.fillMaxWidth().padding(8.dp)
     ) {
         Text(model.mainZmanOpinion, Modifier.padding(start = 8.dp, bottom = 4.dp))
         Text(model.mainZmanTime, Modifier.padding(start = 8.dp))
-        content(now)
-    }
-    if (model.mainZmanTime != "null"/*TODO standardize this - is it "N/A"? null? Something else?*/) LaunchedEffect(
-        Unit
-    ) {
-        while (isActive) {
-            now = Clock.System.now()
-            delay(1_000)
-        }
+        content(currentTime)
     }
 }
 
