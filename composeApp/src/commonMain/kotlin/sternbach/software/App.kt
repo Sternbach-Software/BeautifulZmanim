@@ -244,7 +244,7 @@ internal fun App() = AppTheme {
                                 sofZmanKidushLevana15Days to "sofZmanKidushLevana15Days",
                                 zmanMolad to "zmanMolad",
                                 sofZmanBiurChametzGRA to "sofZmanBiurChametzGRA",
-                                sofZmanBiurChametzMGA72Minutes to "getSofZmanBiurChametzMGA72Minutes",
+                                sofZmanBiurChametzMGA72Minutes to "sofZmanBiurChametzMGA72Minutes",
                                 sofZmanBiurChametzMGA16Point1Degrees to "sofZmanBiurChametzMGA16Point1Degrees",
                                 solarMidnight to "solarMidnight",
                                 sofZmanShmaBaalHatanya to "sofZmanShmaBaalHatanya",
@@ -296,6 +296,7 @@ internal fun App() = AppTheme {
             val otherOpinions = emptyMap<String, String>()
             items(shaaZmanisValues) {
                 ZmanCard(
+                    modifier,
                     now,
                     ZmanCardModel(
                         "",
@@ -308,6 +309,7 @@ internal fun App() = AppTheme {
             items(allZmanim) {
 
                 ZmanCard(
+                    modifier,
                     now,
                     ZmanCardModel(
                         "",
@@ -315,7 +317,7 @@ internal fun App() = AppTheme {
                         it.first?.format(tz).toString(),
                         otherOpinions
                     )
-                ) { now ->
+                ) { modifier, now ->
                     val couldNotCompute = it.first == null
                     val secondsUntilZmanim = if (couldNotCompute) Int.MIN_VALUE else
                         now
@@ -326,33 +328,29 @@ internal fun App() = AppTheme {
                         secondsUntilZmanim
                             .toHrMinSec()
                             .formatted(false),
+                        modifier = modifier,
                         color = if (secondsUntilZmanim <= 0) Color.Red else Color.Green
                     )
                 }
             }
         }
-
-        /*TextButton(
-            onClick = { openUrl("https://github.com/terrakok") },
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
-        ) {
-            Text("Open github")
-        }*/
     }
 }
 
 @Composable
 fun ZmanCard(
+    modifier: Modifier,
     currentTime: Instant,
     model: ZmanCardModel,
-    content: @Composable (now: Instant) -> Unit = {}
+    content: @Composable (modifier: Modifier, now: Instant) -> Unit = {_, _ -> }
 ) {
     Card(
-        Modifier.fillMaxWidth().padding(8.dp)
+        modifier
     ) {
-        Text(model.mainZmanOpinion, Modifier.padding(start = 8.dp, bottom = 4.dp))
+        val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
+        Text(model.mainZmanOpinion, padding)
         Text(model.mainZmanTime, Modifier.padding(start = 8.dp))
-        content(currentTime)
+        content(padding, currentTime)
     }
 }
 
