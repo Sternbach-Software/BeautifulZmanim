@@ -1,13 +1,14 @@
 package sternbach.software
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kosherjava.zmanim.ComplexZmanimCalendar
+import zmanim.ComplexZmanimCalendar
+import zmanim.Zman
+import zmanim.ZmanType
 import com.kosherjava.zmanim.util.GeoLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,17 +34,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.FixedOffsetTimeZone
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.offsetAt
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
 import presentation.ZmanCardModel
 import sternbach.software.theme.AppTheme
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,9 +48,8 @@ internal fun App() = AppTheme {
     var latitude by remember { mutableStateOf("31.80157") }
     var longitude by remember { mutableStateOf("35.21765") }
     var calculatingZmanim by remember { mutableStateOf(false) }
-    var zmanim by remember { mutableStateOf<ZmanCardModel?>(null) }
-    var shaaZmanisValues by remember { mutableStateOf<List<Pair<Duration, String>>>(emptyList()) }
-    var allZmanim: List<Pair<Instant?, String>> by remember { mutableStateOf(emptyList()) }
+    var shaaZmanisValues by remember { mutableStateOf<List<Zman.ValueBased>>(emptyList()) }
+    var allZmanimToDisplay: List<Zman.DateBased> by remember { mutableStateOf(emptyList()) }
     var now by remember { mutableStateOf(Clock.System.now()) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -64,13 +61,6 @@ internal fun App() = AppTheme {
             style = MaterialTheme.typography.titleMedium,
             modifier = modifier
         )
-
-        val thisIs = tz is kotlinx.datetime.FixedOffsetTimeZone
-        Text("Time zone: $tz", modifier)
-        println("this is kotlinx.datetime.FixedOffsetTimeZone = ${tz is kotlinx.datetime.FixedOffsetTimeZone}")
-        if(thisIs) println("tz.offset.totalSeconds.seconds.inWholeMilliseconds = ${(tz as FixedOffsetTimeZone).offset.totalSeconds.seconds.inWholeMilliseconds}")
-        else println("offsetAt(Clock.System.now()).totalSeconds.seconds.inWholeMilliseconds = ${tz.offsetAt(Clock.System.now()).totalSeconds.seconds.inWholeMilliseconds}")
-        println("")
 
         OutlinedTextField(
             value = latitude,
@@ -124,153 +114,11 @@ internal fun App() = AppTheme {
                         )
                         val calendar = ComplexZmanimCalendar(geoLocation)
                         calendar.apply {
-                            val values = listOf(
-                                shaahZmanis19Point8Degrees.milliseconds to "shaahZmanis19Point8Degrees",
-                                shaahZmanis18Degrees.milliseconds to "shaahZmanis18Degrees",
-                                shaahZmanis26Degrees.milliseconds to "shaahZmanis26Degrees",
-                                shaahZmanis16Point1Degrees.milliseconds to "shaahZmanis16Point1Degrees",
-                                shaahZmanis60Minutes.milliseconds to "shaahZmanis60Minutes",
-                                shaahZmanis72MinutesZmanis.milliseconds to "shaahZmanis72MinutesZmanis",
-                                shaahZmanis90Minutes.milliseconds to "shaahZmanis90Minutes",
-                                shaahZmanis90MinutesZmanis.milliseconds to "shaahZmanis90MinutesZmanis",
-                                shaahZmanis96MinutesZmanis.milliseconds to "shaahZmanis96MinutesZmanis",
-                                shaahZmanisAteretTorah.milliseconds to "shaahZmanisAteretTorah",
-                                shaahZmanisAlos16Point1ToTzais3Point8.milliseconds to "shaahZmanisAlos16Point1ToTzais3Point8",
-                                shaahZmanisAlos16Point1ToTzais3Point7.milliseconds to "shaahZmanisAlos16Point1ToTzais3Point7",
-                                shaahZmanis96Minutes.milliseconds to "shaahZmanis96Minutes",
-                                shaahZmanis120Minutes.milliseconds to "shaahZmanis120Minutes",
-                                shaahZmanis120MinutesZmanis.milliseconds to "shaahZmanis120MinutesZmanis"
-                            ).sortedBy { it.first }
-                            val listOfZmanim = listOf(
-                                plagHamincha120MinutesZmanis to "plagHamincha120MinutesZmanis",
-                                plagHamincha120Minutes to "plagHamincha120Minutes",
-                                alos60 to "alos60",
-                                alos72Zmanis to "alos72Zmanis",
-                                alos96 to "alos96",
-                                alos90Zmanis to "alos90Zmanis",
-                                alos96Zmanis to "alos96Zmanis",
-                                alos90 to "alos90",
-                                alos120 to "alos120",
-                                alos120Zmanis to "alos120Zmanis",
-                                alos26Degrees to "alos26Degrees",
-                                alos18Degrees to "alos18Degrees",
-                                alos19Degrees to "alos19Degrees",
-                                alos19Point8Degrees to "alos19Point8Degrees",
-                                alos16Point1Degrees to "alos16Point1Degrees",
-                                misheyakir11Point5Degrees to "misheyakir11Point5Degrees",
-                                misheyakir11Degrees to "misheyakir11Degrees",
-                                misheyakir10Point2Degrees to "misheyakir10Point2Degrees",
-                                misheyakir7Point65Degrees to "misheyakir7Point65Degrees",
-                                misheyakir9Point5Degrees to "misheyakir9Point5Degrees",
-                                sofZmanShmaMGA19Point8Degrees to "sofZmanShmaMGA19Point8Degrees",
-                                sofZmanShmaMGA16Point1Degrees to "sofZmanShmaMGA16Point1Degrees",
-                                sofZmanShmaMGA18Degrees to "sofZmanShmaMGA18Degrees",
-                                sofZmanShmaMGA72MinutesZmanis to "sofZmanShmaMGA72MinutesZmanis",
-                                sofZmanShmaMGA90Minutes to "sofZmanShmaMGA90Minutes",
-                                sofZmanShmaMGA90MinutesZmanis to "sofZmanShmaMGA90MinutesZmanis",
-                                sofZmanShmaMGA96Minutes to "sofZmanShmaMGA96Minutes",
-                                sofZmanShmaMGA96MinutesZmanis to "sofZmanShmaMGA96MinutesZmanis",
-                                sofZmanShma3HoursBeforeChatzos to "sofZmanShma3HoursBeforeChatzos",
-                                sofZmanShmaMGA120Minutes to "sofZmanShmaMGA120Minutes",
-                                sofZmanShmaAlos16Point1ToSunset to "sofZmanShmaAlos16Point1ToSunset",
-                                sofZmanShmaAlos16Point1ToTzaisGeonim7Point083Degrees to "sofZmanShmaAlos16Point1ToTzaisGeonim7Point083Degrees",
-                                sofZmanTfilaMGA19Point8Degrees to "sofZmanTfilaMGA19Point8Degrees",
-                                sofZmanTfilaMGA16Point1Degrees to "sofZmanTfilaMGA16Point1Degrees",
-                                sofZmanTfilaMGA18Degrees to "sofZmanTfilaMGA18Degrees",
-                                sofZmanTfilaMGA72MinutesZmanis to "sofZmanTfilaMGA72MinutesZmanis",
-                                sofZmanTfilaMGA90MinutesZmanis to "sofZmanTfilaMGA90MinutesZmanis",
-                                sofZmanTfilaMGA96MinutesZmanis to "sofZmanTfilaMGA96MinutesZmanis",
-                                sofZmanTfila2HoursBeforeChatzos to "sofZmanTfila2HoursBeforeChatzos",
-                                minchaGedola30Minutes to "minchaGedola30Minutes",
-                                minchaGedola16Point1Degrees to "minchaGedola16Point1Degrees",
-                                minchaGedolaAhavatShalom to "minchaGedolaAhavatShalom",
-                                minchaGedolaGreaterThan30 to "minchaGedolaGreaterThan30",
-                                minchaKetana16Point1Degrees to "minchaKetana16Point1Degrees",
-                                minchaKetanaAhavatShalom to "minchaKetanaAhavatShalom",
-                                minchaKetana72Minutes to "minchaKetana72Minutes",
-                                plagHamincha60Minutes to "plagHamincha60Minutes",
-                                plagHamincha72Minutes to "plagHamincha72Minutes",
-                                plagHamincha90Minutes to "plagHamincha90Minutes",
-                                plagHamincha96Minutes to "plagHamincha96Minutes",
-                                plagHamincha96MinutesZmanis to "plagHamincha96MinutesZmanis",
-                                plagHamincha90MinutesZmanis to "plagHamincha90MinutesZmanis",
-                                plagHamincha72MinutesZmanis to "plagHamincha72MinutesZmanis",
-                                plagHamincha16Point1Degrees to "plagHamincha16Point1Degrees",
-                                plagHamincha19Point8Degrees to "plagHamincha19Point8Degrees",
-                                plagHamincha26Degrees to "plagHamincha26Degrees",
-                                plagHamincha18Degrees to "plagHamincha18Degrees",
-                                plagAlosToSunset to "plagAlosToSunset",
-                                plagAlos16Point1ToTzaisGeonim7Point083Degrees to "plagAlos16Point1ToTzaisGeonim7Point083Degrees",
-                                plagAhavatShalom to "plagAhavatShalom",
-                                bainHashmashosRT13Point24Degrees to "bainHashmashosRT13Point24Degrees",
-                                bainHashmashosRT58Point5Minutes to "bainHashmashosRT58Point5Minutes",
-                                bainHashmashosRT13Point5MinutesBefore7Point083Degrees to "bainHashmashosRT13Point5MinutesBefore7Point083Degrees",
-                                bainHashmashosRT2Stars to "bainHashmashosRT2Stars",
-                                bainHashmashosYereim18Minutes to "bainHashmashosYereim18Minutes",
-                                bainHashmashosYereim3Point05Degrees to "bainHashmashosYereim3Point05Degrees",
-                                bainHashmashosYereim16Point875Minutes to "bainHashmashosYereim16Point875Minutes",
-                                bainHashmashosYereim2Point8Degrees to "bainHashmashosYereim2Point8Degrees",
-                                bainHashmashosYereim13Point5Minutes to "bainHashmashosYereim13Point5Minutes",
-                                bainHashmashosYereim2Point1Degrees to "bainHashmashosYereim2Point1Degrees",
-                                tzaisGeonim3Point7Degrees to "tzaisGeonim3Point7Degrees",
-                                tzaisGeonim3Point8Degrees to "tzaisGeonim3Point8Degrees",
-                                tzaisGeonim5Point95Degrees to "tzaisGeonim5Point95Degrees",
-                                tzaisGeonim3Point65Degrees to "tzaisGeonim3Point65Degrees",
-                                tzaisGeonim3Point676Degrees to "tzaisGeonim3Point676Degrees",
-                                tzaisGeonim4Point61Degrees to "tzaisGeonim4Point61Degrees",
-                                tzaisGeonim4Point37Degrees to "tzaisGeonim4Point37Degrees",
-                                tzaisGeonim5Point88Degrees to "tzaisGeonim5Point88Degrees",
-                                tzaisGeonim4Point8Degrees to "tzaisGeonim4Point8Degrees",
-                                tzaisGeonim6Point45Degrees to "tzaisGeonim6Point45Degrees",
-                                tzaisGeonim7Point083Degrees to "tzaisGeonim7Point083Degrees",
-                                tzaisGeonim7Point67Degrees to "tzaisGeonim7Point67Degrees",
-                                tzaisGeonim8Point5Degrees to "tzaisGeonim8Point5Degrees",
-                                tzaisGeonim9Point3Degrees to "tzaisGeonim9Point3Degrees",
-                                tzaisGeonim9Point75Degrees to "tzaisGeonim9Point75Degrees",
-                                tzais60 to "tzais60",
-                                tzaisAteretTorah to "tzaisAteretTorah",
-                                tzais90Zmanis to "tzais90Zmanis",
-                                tzais96Zmanis to "tzais96Zmanis",
-                                tzais90 to "tzais90",
-                                tzais120 to "tzais120",
-                                tzais120Zmanis to "tzais120Zmanis",
-                                tzais16Point1Degrees to "tzais16Point1Degrees",
-                                tzais26Degrees to "tzais26Degrees",
-                                tzais18Degrees to "tzais18Degrees",
-                                tzais19Point8Degrees to "tzais19Point8Degrees",
-                                tzais96 to "tzais96",
-                                fixedLocalChatzos to "fixedLocalChatzos",
-                                sofZmanKidushLevanaBetweenMoldos to "sofZmanKidushLevanaBetweenMoldos",
-                                sofZmanKidushLevana15Days to "sofZmanKidushLevana15Days",
-                                zmanMolad to "zmanMolad",
-                                sofZmanBiurChametzGRA to "sofZmanBiurChametzGRA",
-                                sofZmanBiurChametzMGA72Minutes to "sofZmanBiurChametzMGA72Minutes",
-                                sofZmanBiurChametzMGA16Point1Degrees to "sofZmanBiurChametzMGA16Point1Degrees",
-                                solarMidnight to "solarMidnight",
-                                sofZmanShmaBaalHatanya to "sofZmanShmaBaalHatanya",
-                                sofZmanTfilaBaalHatanya to "sofZmanTfilaBaalHatanya",
-                                sofZmanBiurChametzBaalHatanya to "sofZmanBiurChametzBaalHatanya",
-                                minchaGedolaBaalHatanya to "minchaGedolaBaalHatanya",
-                                minchaGedolaBaalHatanyaGreaterThan30 to "minchaGedolaBaalHatanyaGreaterThan30",
-                                minchaKetanaBaalHatanya to "minchaKetanaBaalHatanya",
-                                plagHaminchaBaalHatanya to "plagHaminchaBaalHatanya",
-                                tzaisBaalHatanya to "tzaisBaalHatanya",
-                                sofZmanShmaMGA18DegreesToFixedLocalChatzos to "sofZmanShmaMGA18DegreesToFixedLocalChatzos",
-                                sofZmanShmaMGA16Point1DegreesToFixedLocalChatzos to "sofZmanShmaMGA16Point1DegreesToFixedLocalChatzos",
-                                sofZmanShmaMGA90MinutesToFixedLocalChatzos to "sofZmanShmaMGA90MinutesToFixedLocalChatzos",
-                                sofZmanShmaMGA72MinutesToFixedLocalChatzos to "sofZmanShmaMGA72MinutesToFixedLocalChatzos",
-                                sofZmanShmaGRASunriseToFixedLocalChatzos to "sofZmanShmaGRASunriseToFixedLocalChatzos",
-                                sofZmanTfilaGRASunriseToFixedLocalChatzos to "sofZmanTfilaGRASunriseToFixedLocalChatzos",
-                                minchaGedolaGRAFixedLocalChatzos30Minutes to "minchaGedolaGRAFixedLocalChatzos30Minutes",
-                                minchaKetanaGRAFixedLocalChatzosToSunset to "minchaKetanaGRAFixedLocalChatzosToSunset",
-                                plagHaminchaGRAFixedLocalChatzosToSunset to "plagHaminchaGRAFixedLocalChatzosToSunset",
-                                tzais50 to "tzais50",
-                                samuchLeMinchaKetanaGRA to "samuchLeMinchaKetanaGRA",
-                                samuchLeMinchaKetana16Point1Degrees to "samuchLeMinchaKetana16Point1Degrees"
-                            ).sortedBy { it.first }
+                            val values = allShaosZmaniyos.sortedBy { it.duration }
+                            val listOfZmanim = allZmanim.sortedBy { it.momentOfOccurrence }
                             withContext(Dispatchers.Main.immediate) {
                                 shaaZmanisValues = values
-                                allZmanim = listOfZmanim
+                                allZmanimToDisplay = listOfZmanim
                                 calculatingZmanim = false
                             }
                         }
@@ -292,65 +140,130 @@ internal fun App() = AppTheme {
                 }
             }
         }
-        LazyColumn(Modifier.fillMaxWidth()) {
-            val otherOpinions = emptyMap<String, String>()
-            items(shaaZmanisValues) {
-                ZmanCard(
-                    modifier,
-                    now,
-                    ZmanCardModel(
-                        "",
-                        it.second,
-                        it.first.toString(),
-                        otherOpinions
-                    )
-                )
-            }
-            items(allZmanim) {
 
-                ZmanCard(
-                    modifier,
-                    now,
-                    ZmanCardModel(
-                        "",
-                        it.second,
-                        it.first?.format(tz).toString(),
-                        otherOpinions
+        LazyColumn(Modifier.fillMaxWidth()) {
+            if (shaaZmanisValues.isNotEmpty()) {
+                val otherOpinions = getOtherOpinions(shaaZmanisValues)
+                val preferred =
+                    getPreferredOpinionForZmanType(ZmanType.SHAA_ZMANIS, shaaZmanisValues)
+                val model = ZmanCardModel(
+                    preferred.type,
+                    preferred.duration.toString(),
+                    preferred.duration.toString(),
+                    otherOpinions
+                )
+                item {
+                    ZmanCard(
+                        modifier,
+                        now,
+                        model
                     )
-                ) { modifier, now ->
-                    val couldNotCompute = it.first == null
-                    val secondsUntilZmanim = if (couldNotCompute) Int.MIN_VALUE else
-                        now
-                            .until(it.first!!, DateTimeUnit.SECOND)
-                            .toInt()
-                    if(couldNotCompute) Text("N/A")
-                    else Text(
-                        secondsUntilZmanim
-                            .toHrMinSec()
-                            .formatted(false),
-                        modifier = modifier,
-                        color = if (secondsUntilZmanim <= 0) Color.Red else Color.Green
-                    )
+                }
+            }
+            if (allZmanimToDisplay.isNotEmpty()) {
+                items(
+                    allZmanimToDisplay
+                        .groupBy { it.type }
+                        .mapNotNull {
+                            it.key.let { type ->
+                                ZmanCardModel(
+                                    type,
+
+                                    getPreferredOpinionForZmanType(
+                                        type,
+                                        it.value
+                                    ).type.friendlyNameEnglish/*TODO change to opinion explanation*/,
+                                    getPreferredOpinionForZmanType(
+                                        type,
+                                        it.value
+                                    ).momentOfOccurrence?.toString() ?: "N/A",
+                                    getOtherOpinions(it.value)
+                                )
+                            }
+                        }) { model ->
+
+                    ZmanCard(
+                        modifier,
+                        now,
+                        model
+                    ) { modifier, now ->
+                        TimeRemainingText(now to "", modifier, now)
+                    }
                 }
             }
         }
     }
 }
 
+fun getOtherOpinions(shaaZmanisValues: List<Zman>): List<Zman> {
+    return shaaZmanisValues.drop(1)
+}
+
 @Composable
-fun ZmanCard(
+private fun TimeRemainingText(
+    it: Pair<Instant?, String>,
+    modifier: Modifier,
+    now: Instant,
+) {
+    if (it.first == null) Text(
+        "N/A",
+        modifier,
+    )
+    else {
+        val (secondsUntilZmanim, timeRemaining) =
+            getSecondsUntilZmanAndTimeRemaining(it.first!!, now)
+        Text(
+            timeRemaining,
+            modifier,
+            color = if (secondsUntilZmanim <= 0) Color.Red else Color.Green
+        )
+    }
+}
+
+fun <T : Zman> getPreferredOpinionForZmanType(type: ZmanType, zmanim: List<T>): T {
+    return zmanim.first() //TODO implement with settings
+}
+
+private fun getSecondsUntilZmanAndTimeRemaining(
+    zman: Instant,
+    now: Instant,
+): Pair<Int, String> {
+    val secondsUntilZmanim = now.until(zman, DateTimeUnit.SECOND).toInt()
+    return secondsUntilZmanim to secondsUntilZmanim
+        .toHrMinSec()
+        .formatted(false)
+}
+
+@Composable
+fun <T : Zman> ZmanCard(
     modifier: Modifier,
     currentTime: Instant,
-    model: ZmanCardModel,
-    content: @Composable (modifier: Modifier, now: Instant) -> Unit = {_, _ -> }
+    model: ZmanCardModel<T>,
+    content: @Composable (modifier: Modifier, now: Instant) -> Unit = { _, _ -> },
 ) {
-    Card(
-        modifier
+    var isExpanded by remember { mutableStateOf(false) }
+    androidx.compose.material.Card(
+        modifier.clickable { isExpanded = !isExpanded },
+        elevation = 4.dp
     ) {
-        val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
-        Text(model.mainZmanOpinion, padding)
-        Text(model.mainZmanTime, Modifier.padding(start = 8.dp))
-        content(padding, currentTime)
+        Column {
+            val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
+            Text(model.mainZmanOpinion, padding)
+            Text(model.mainZmanTime, Modifier.padding(start = 8.dp))
+            content(padding, currentTime)
+            if (isExpanded) for (zman in model.otherOpinions) {
+                Row {
+                    if (zman is Zman.DateBased) {
+                        Text(zman.momentOfOccurrence.toString())
+                        TimeRemainingText(
+                            zman.momentOfOccurrence to zman.type.friendlyNameEnglish,
+                            modifier,
+                            currentTime
+                        )
+                    } else Text((zman as Zman.ValueBased).duration.toString())
+                }
+            }
+        }
     }
 }
 
