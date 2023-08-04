@@ -23,9 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import zmanim.ComplexZmanimCalendar
-import zmanim.Zman
-import zmanim.ZmanType
+import com.kosherjava.zmanim.ComplexZmanimCalendar
+import com.kosherjava.zmanim.Zman
+import com.kosherjava.zmanim.ZmanOpinion
+import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.GeoLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -48,8 +49,8 @@ internal fun App() = AppTheme {
     var latitude by remember { mutableStateOf("31.80157") }
     var longitude by remember { mutableStateOf("35.21765") }
     var calculatingZmanim by remember { mutableStateOf(false) }
-    var shaaZmanisValues by remember { mutableStateOf<List<Zman.ValueBased>>(emptyList()) }
-    var allZmanimToDisplay: List<Zman.DateBased> by remember { mutableStateOf(emptyList()) }
+    var shaaZmanisValues:  List<Zman.ValueBased<ZmanOpinion<Any>, Any>> by remember { mutableStateOf(emptyList()) }
+    var allZmanimToDisplay: List<Zman.DateBased<ZmanOpinion<Any>, Any>> by remember { mutableStateOf(emptyList()) }
     var now by remember { mutableStateOf(Clock.System.now()) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -117,8 +118,8 @@ internal fun App() = AppTheme {
                             val values = allShaosZmaniyos.sortedBy { it.duration }
                             val listOfZmanim = allZmanim.sortedBy { it.momentOfOccurrence }
                             withContext(Dispatchers.Main.immediate) {
-                                shaaZmanisValues = values
-                                allZmanimToDisplay = listOfZmanim
+                                shaaZmanisValues = values as List<Zman.ValueBased<ZmanOpinion<Any>, Any>>
+                                allZmanimToDisplay = listOfZmanim as List<Zman.DateBased<ZmanOpinion<Any>, Any>>
                                 calculatingZmanim = false
                             }
                         }
@@ -146,12 +147,13 @@ internal fun App() = AppTheme {
                 val otherOpinions = getOtherOpinions(shaaZmanisValues)
                 val preferred =
                     getPreferredOpinionForZmanType(ZmanType.SHAA_ZMANIS, shaaZmanisValues)
-                val model = ZmanCardModel(
-                    preferred.type,
-                    preferred.duration.toString(),
-                    preferred.duration.toString(),
-                    otherOpinions
-                )
+                val model =
+                    ZmanCardModel<Zman<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>(
+                        preferred.type,
+                        preferred.opinion,
+                        preferred.duration.toString(),
+                        otherOpinions
+                    )
                 item {
                     ZmanCard(
                         modifier,
@@ -161,33 +163,44 @@ internal fun App() = AppTheme {
                 }
             }
             if (allZmanimToDisplay.isNotEmpty()) {
-                items(
-                    allZmanimToDisplay
-                        .groupBy { it.type }
-                        .mapNotNull {
-                            it.key.let { type ->
-                                ZmanCardModel(
+                val groupedByOpinion:
+                        List<
+                                ZmanCardModel<
+                                        Zman<
+                                                ZmanOpinion<Any>,
+                                                Any
+                                                >,
+                                        ZmanOpinion<Any>,
+                                        Any,
+                                        >
+                                > = allZmanimToDisplay
+                    .groupBy { it.type }
+                    .mapNotNull {
+                        it.key.let { type ->
+                            ZmanCardModel(
+                                type,
+                                getPreferredOpinionForZmanType(
                                     type,
-
-                                    getPreferredOpinionForZmanType(
-                                        type,
-                                        it.value
-                                    ).type.friendlyNameEnglish/*TODO change to opinion explanation*/,
-                                    getPreferredOpinionForZmanType(
-                                        type,
-                                        it.value
-                                    ).momentOfOccurrence?.toString() ?: "N/A",
-                                    getOtherOpinions(it.value)
-                                )
-                            }
-                        }) { model ->
+                                    it.value
+                                ).opinion,
+                                getPreferredOpinionForZmanType(
+                                    type,
+                                    it.value
+                                ).momentOfOccurrence?.toString() ?: "N/A",
+                                getOtherOpinions(it.value)
+                            )
+                        }
+                    } as List<ZmanCardModel<Zman<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>
+                items(
+                    groupedByOpinion
+                ) { model ->
 
                     ZmanCard(
                         modifier,
                         now,
                         model
                     ) { modifier, now ->
-                        TimeRemainingText(now to "", modifier, now)
+                        TimeRemainingText(now, modifier, now)
                     }
                 }
             }
@@ -195,23 +208,23 @@ internal fun App() = AppTheme {
     }
 }
 
-fun getOtherOpinions(shaaZmanisValues: List<Zman>): List<Zman> {
+fun <T : ZmanOpinion<A>, A> getOtherOpinions(shaaZmanisValues: List<Zman<T, A>>): List<Zman<T, A>> {
     return shaaZmanisValues.drop(1)
 }
 
 @Composable
 private fun TimeRemainingText(
-    it: Pair<Instant?, String>,
+    it: Instant?,
     modifier: Modifier,
     now: Instant,
 ) {
-    if (it.first == null) Text(
+    if (it == null) Text(
         "N/A",
         modifier,
     )
     else {
         val (secondsUntilZmanim, timeRemaining) =
-            getSecondsUntilZmanAndTimeRemaining(it.first!!, now)
+            getSecondsUntilZmanAndTimeRemaining(it, now)
         Text(
             timeRemaining,
             modifier,
@@ -220,7 +233,11 @@ private fun TimeRemainingText(
     }
 }
 
-fun <T : Zman> getPreferredOpinionForZmanType(type: ZmanType, zmanim: List<T>): T {
+fun <
+        T : Zman<A, B>,
+        A : ZmanOpinion<B>,
+        B,
+        > getPreferredOpinionForZmanType(type: ZmanType, zmanim: List<T>): T {
     return zmanim.first() //TODO implement with settings
 }
 
@@ -235,10 +252,10 @@ private fun getSecondsUntilZmanAndTimeRemaining(
 }
 
 @Composable
-fun <T : Zman> ZmanCard(
+fun <T : Zman<A, B>, A: ZmanOpinion<B>, B> ZmanCard(
     modifier: Modifier,
     currentTime: Instant,
-    model: ZmanCardModel<T>,
+    model: ZmanCardModel<T, A, B>,
     content: @Composable (modifier: Modifier, now: Instant) -> Unit = { _, _ -> },
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -248,19 +265,20 @@ fun <T : Zman> ZmanCard(
     ) {
         Column {
             val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
-            Text(model.mainZmanOpinion, padding)
+            Text(model.zmanType.friendlyNameEnglish, padding)
+            Text(model.mainZmanOpinion.format(), padding)
             Text(model.mainZmanTime, Modifier.padding(start = 8.dp))
             content(padding, currentTime)
+            val startPadding = Modifier.padding(start = 2.dp)
             if (isExpanded) for (zman in model.otherOpinions) {
                 Row {
-                    if (zman is Zman.DateBased) {
-                        Text(zman.momentOfOccurrence.toString())
-                        TimeRemainingText(
-                            zman.momentOfOccurrence to zman.type.friendlyNameEnglish,
-                            modifier,
-                            currentTime
-                        )
-                    } else Text((zman as Zman.ValueBased).duration.toString())
+                    Text(zman.opinion.format())
+                    if (zman is Zman.DateBased<*, *>) TimeRemainingText(
+                        zman.momentOfOccurrence,
+                        startPadding,
+                        currentTime
+                    )
+                    else Text((zman as Zman.ValueBased<*, *>).duration.toString(), startPadding)
                 }
             }
         }

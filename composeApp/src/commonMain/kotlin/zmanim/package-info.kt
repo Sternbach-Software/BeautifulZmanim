@@ -9,9 +9,9 @@
  * since people rely on the zmanim calculations for *[halacha lemaaseh](https://en.wikipedia.org/wiki/Halakha)*.
  * @author  Eliyahu Hershfeld 2004 - 2022
  */
-package zmanim
+package com.kosherjava.zmanim
 
 import com.kosherjava.zmanim.util.AstronomicalCalculator
-import zmanim.AstronomicalCalendar
-import zmanim.ZmanimCalendar
-import zmanim.ComplexZmanimCalendar
+import com.kosherjava.zmanim.AstronomicalCalendar
+import com.kosherjava.zmanim.ZmanimCalendar
+import com.kosherjava.zmanim.ComplexZmanimCalendar
