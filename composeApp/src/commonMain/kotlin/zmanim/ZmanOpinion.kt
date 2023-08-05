@@ -14,6 +14,9 @@ sealed class ZmanOpinion<T>(val value: T) {
     data class FixedMinutes(val minutes: Int): ZmanOpinion<Int>(minutes) {
         override fun format() = "Day is $minutes minutes before sunrise / after sunset"
     }
+    data class FixedMinutesFloat(val minutes: Float): ZmanOpinion<Float>(minutes) {
+        override fun format() = "Day is $minutes minutes before sunrise / after sunset"
+    }
     data class ZmaniyosMinutes(val minutes: Int): ZmanOpinion<Int>(minutes) {
         override fun format(inEnglish: Boolean) = buildString {
             append("Day is ")

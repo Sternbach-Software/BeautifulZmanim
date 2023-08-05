@@ -9,8 +9,6 @@ import com.kosherjava.zmanim.ZmanType
  * @param mainZmanTime the user-readable time/moment the zman will occur (e.g. 1:23 PM)
  * */
 data class ZmanCardModel<T: Zman<A, B>, A: ZmanOpinion<B>, B>(
-    val zmanType: ZmanType,
-    val mainZmanOpinion: A,
-    val mainZmanTime: String,
+    val mainZman: T,
     val otherOpinions: List<T>
 )

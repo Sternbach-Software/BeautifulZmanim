@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 
 class AndroidApp : Application() {
     companion object {
@@ -23,6 +25,11 @@ class AppActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent { App() }
     }
+}
+@Preview
+@Composable
+fun AndroidAppPreview() {
+    App()
 }
 
 internal actual fun openUrl(url: String?) {
