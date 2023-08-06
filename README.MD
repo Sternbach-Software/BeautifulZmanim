@@ -4,12 +4,12 @@ A multi-platform zmanim app that uses Google Material Design, written in Kotlin 
 ## Future 
 ### Future supported platforms 
  - Android-based flip-phones
- - Native desktop (currently only supports Desktop/JVM)
  - WearOS
  - watchOS
+
 ### Future features
- - Multi-platform way to get location instead of having to type in long. and lat
-   - Currently existing libraries only support Android and iOS, not web and desktop:
+ - Multi-platform way to get location instead of having to type in longitude and latitude
+   - Currently, existing libraries only support Android and iOS, not web and desktop:
      - https://github.com/line/abc-kmm-location
      - https://github.com/icerockdev/moko-geo
 
@@ -27,7 +27,7 @@ Note: to build Apple platform targets, you must be using a Mac.
  - run `./gradlew podInstall` in the project root
 
 ### Android
-To run the application on android device/emulator:  
+To run the application on Android device/emulator:  
  - open project in Android Studio and run imported android run configuration
 
 To build the application bundle:
@@ -38,7 +38,7 @@ To build the application bundle:
 Run the desktop application: `./gradlew :composeApp:run`
 
 ### iOS
-To run the application on iPhone device/simulator:
+To run the application on an iPhone device/simulator:
  - Open `iosApp/iosApp.xcworkspace` in Xcode and run standard configuration
  - Or use [Kotlin Multiplatform Mobile plugin](https://plugins.jetbrains.com/plugin/14936-kotlin-multiplatform-mobile) for Android Studio
 
