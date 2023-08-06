@@ -101,6 +101,8 @@ internal fun App() = AppTheme {
         Button(
             onClick = {
                 calculatingZmanim = true
+//                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
+                openUrl(null)
                 /* Handle login logic here */
             },
             modifier = modifier
@@ -349,26 +351,5 @@ fun Int.toHrMinSec(): Triple<Int, Int, Int> {
     minute %= 60
     return Triple(hour, minute, second)
 }
-
-private fun Instant.format(timeZone: TimeZone) = buildString {
-    fun Int.pad() = /*if(this == 0) "12" else*/ toString().padStart(2, '0')
-    val datetime = this@format.toLocalDateTime(timeZone)
-    append(datetime.hour.pad())
-    append(':')
-    append(datetime.minute.pad())
-    append(':')
-    append(datetime.second.pad())
-    append('.')
-    append(datetime.nanosecond / 1_000_000)
-    append(' ')
-    append(datetime.monthNumber)
-    append('-')
-    append(datetime.dayOfMonth.pad())
-    append('-')
-    append(datetime.year)
-}
-
-private fun String.getFormattedLabel() =
-    "$this: ${" ".repeat(50.minus(length).coerceAtLeast(10))}"
 
 internal expect fun openUrl(url: String?)
