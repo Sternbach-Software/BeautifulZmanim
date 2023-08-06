@@ -42,6 +42,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
 import presentation.ZmanCardModel
 import sternbach.software.theme.AppTheme
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -318,8 +319,8 @@ fun Triple<Int, Int, Int>.formatted(withColons: Boolean): String {
     }
     return if (withColons) {
         val string = when {
-            first == 0 && second > 0 -> "$second:"
-            first > 0 -> "$first:${second.formatted()}:"
+            first == 0 && second != 0 -> "${if(third == 0) second else second.absoluteValue}:"
+            first != 0 -> "$first:${second.absoluteValue.formatted()}:"
             second == 0 -> "00:"
             else -> TODO("Should not have happened. this=$this") //how beautiful! Also deals with first == 0 && second == 0
         }
@@ -333,8 +334,8 @@ fun Triple<Int, Int, Int>.formatted(withColons: Boolean): String {
 fun timeFormattedConcisely(hour: Int, minute: Int, second: Int): String {
     val string = StringBuilder()
     if (hour != 0) string.append("$hour hr ")
-    if (minute != 0) string.append("$minute min ")
-    if (second != 0) string.append("$second sec")
+    if (minute != 0) string.append("${if(string.isEmpty()) minute else minute.absoluteValue} min ")
+    if (second != 0) string.append("${if(string.isEmpty()) second else second.absoluteValue} sec")
     return if (string.isEmpty()) "0 sec" else string.toString().trim()
 }
 
