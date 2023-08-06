@@ -3237,7 +3237,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val getSofZmanAchilasChametzGRA: Zman.DateBased<ZmanOpinion.Authority, String>
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
+            ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ,
             ZmanOpinion.Authority(ZmanOpinion.Authority.GRA),
             sofZmanTfilaGRA.momentOfOccurrence
         )

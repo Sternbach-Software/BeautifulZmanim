@@ -125,13 +125,13 @@ internal fun App() = AppTheme {
                         val calendar = ComplexZmanimCalendar(geoLocation)
                         calendar.apply {
                             val values = allShaosZmaniyos.sortedBy { it.duration }
-                            val listOfZmanim = allZmanim.sortedBy { it.momentOfOccurrence }
+                            val listOfZmanim = allZmanim.distinct().sortedBy { it.momentOfOccurrence }
                             //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
                             withContext(Dispatchers.Main.immediate) {
                                 shaaZmanisValues =
                                     values as List<Zman.ValueBased<ZmanOpinion<Any>, Any>>
                                 allZmanimToDisplay =
-                                    listOfZmanim.distinct() as List<Zman.DateBased<ZmanOpinion<Any>, Any>>
+                                    listOfZmanim as List<Zman.DateBased<ZmanOpinion<Any>, Any>>
                                 calculatingZmanim = false
                             }
                         }
