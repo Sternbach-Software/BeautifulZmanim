@@ -28,7 +28,7 @@ class ZmanimViewModel(
 //    private val engine: ComplexZmanimCalendar = ComplexZmanimCalendar()
 ) {
 
-    private val tz by lazy { TimeZone.currentSystemDefault() }
+    val tz by lazy { TimeZone.currentSystemDefault() }
     private var _calculatingZmanim: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _listeningForPosition: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _shaaZmanisValues: MutableStateFlow<List<Zman.ValueBased<ZmanOpinion<Any>, Any>>?> =
@@ -61,7 +61,9 @@ class ZmanimViewModel(
     val allZmanimCardModels: Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?>
         get() = _allZmanimToDisplay
             .transform {
-                it?.filter { it.momentOfOccurrence != null }
+                //println("Transforming ${_allZmanimToDisplay.value}")
+                it
+                    ?.filter { it.momentOfOccurrence != null }
                     ?.groupBy { it.type }
                     //.toList()
                     //.sortedBy { it.second.minBy { it.momentOfOccurrence } }
@@ -77,7 +79,7 @@ class ZmanimViewModel(
                     ?.sortedBy { it.mainZman }
                     ?.let {
                         emit(it as List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?)
-                    } ?: emit(null)
+                    } //?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
             }
     val now: Flow<Instant> get() = _now
 
@@ -96,6 +98,7 @@ class ZmanimViewModel(
     }
 
     private suspend fun calculateZmanimBasedOnLocation(it: Location?) {
+        //println("calculateZmanimBasedOnLocation($it)")
         if (it != null) {
             val geoLocation = GeoLocation(
                 it.locationName ?: "Current Location",
@@ -121,9 +124,9 @@ class ZmanimViewModel(
         }
     }
 
-    fun getZmanimByLatLong(latitude: Double, longitude: Double) {
+    fun getZmanimByLatLong(latitude: Double, longitude: Double, elevation: Double = 0.0) {
         scope.launch(Dispatchers.Default) {
-            calculateZmanimBasedOnLocation(Location(latitude, longitude))
+            calculateZmanimBasedOnLocation(Location(latitude, longitude, elevation))
         }
     }
 

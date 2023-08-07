@@ -1,17 +1,21 @@
 package sternbach.software
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Switch
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -20,9 +24,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +54,7 @@ internal fun App() = AppTheme {
     var locationString by remember { mutableStateOf("123 Jane Street") }
     var longitude by remember { mutableStateOf("35.21633") }
     var latitude by remember { mutableStateOf("31.76904") }
+    var elevation by remember { mutableStateOf("754") }
     val vm = ZmanimViewModel(MainScope())
     val calculatingZmanim = vm.calculatingZmanim.collectAsState(false)
     val listeningForPosition = vm.listeningForPosition.collectAsState(false)
@@ -58,19 +65,14 @@ internal fun App() = AppTheme {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
         val fillMaxWidth = Modifier.fillMaxWidth()
-        val modifier = fillMaxWidth.padding(16.dp)
+        val fillMaxWidthPlusPadding = fillMaxWidth.padding(16.dp)
 
         Text(
             text = "Beautiful Zmanim",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        Text(
-            text = if (!gpsSupported) "Enter your location below"
-            else "Click the toggle to listen to live updates of your current location.",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = fillMaxWidth
-        )
+
         if (gpsSupported) Row {
             Switch(
                 checked = listeningForPosition.value,
@@ -81,61 +83,104 @@ internal fun App() = AppTheme {
             )
             Text("Get live zmanim")
         }
-        else {
-            Text(
-                "Address, state, zip, country:", fillMaxWidth
-            )
-            OutlinedTextField(
-                value = locationString,
-                onValueChange = { locationString = it },
-                label = { Text("Location") },
-                singleLine = true,
-                modifier = fillMaxWidth
-            )
-            Button(
-                modifier = fillMaxWidth,
-                onClick = { vm.getZmanimByLocationString(locationString) }) {
-                Text("Get zmanim by location")
+        else Row(horizontalArrangement = Arrangement.SpaceEvenly) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Enter your location below"
+                )
+                Text(
+                    "Address, state, zip, country:"
+                )
+                OutlinedTextField(
+                    value = locationString,
+                    onValueChange = { locationString = it },
+                    label = { Text("Location") },
+                    singleLine = true,
+                )
+                Button(
+                    onClick = { vm.getZmanimByLocationString(locationString) }
+                ) {
+                    Text("Get zmanim by location")
+                }
             }
-            Text(
-                "Alternatively, you can put in your coordinates (and optionally your elevation to get more accurate results, if you would like to see opinions which factor in elevation):",
-                fillMaxWidth
-            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    "Alternatively, you can put in your coordinates (and optionally your elevation to get more accurate results, if you would like to see opinions which factor in elevation):",
+                    textAlign = TextAlign.Center
+                )
 
-            OutlinedTextField(
-                value = longitude,
-                onValueChange = { longitude = it },
-                label = { Text("Longitude") },
-                singleLine = true,
-                modifier = fillMaxWidth
-            )
-            OutlinedTextField(
-                value = latitude,
-                onValueChange = { latitude = it },
-                label = { Text("Latitude") },
-                singleLine = true,
-                modifier = fillMaxWidth
-            )
-            Button(
-                onClick = {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = longitude,
+                        onValueChange = { longitude = it },
+                        label = { Text("Longitude") },
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = latitude,
+                        onValueChange = { latitude = it },
+                        label = { Text("Latitude") },
+                        singleLine = true
+                    )
+                    OutlinedTextField(
+                        value = elevation,
+                        onValueChange = { elevation = it },
+                        label = { Text("Elevation") },
+                        singleLine = true
+                    )
+                }
+                Button(
+                    onClick = {
 //                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
-                    latitude.toDoubleOrNull()?.let {
-                        longitude.toDoubleOrNull()?.let { it1 ->
-                            vm.getZmanimByLatLong(it, it1)
-                        }
-                    } ?: println("Error parsing lat and long")/* Handle login logic here */
-                }, modifier = fillMaxWidth
-            ) {
-                Text("Get zmanim by latitude and longitude")
+                        latitude.toDoubleOrNull()?.let {
+                            longitude.toDoubleOrNull()?.let { it1 ->
+                                elevation.toDoubleOrNull()?.let { it2 ->
+                                    vm.getZmanimByLatLong(it, it1, it2)
+                                }
+                            }
+                        } ?: println("Error parsing lat and long")/* Handle login logic here */
+                    }
+                ) {
+                    Text("Get zmanim by latitude and longitude")
+                }
             }
         }
         if (calculatingZmanim.value) CircularProgressIndicator()
-
-        LazyVerticalGrid(GridCells.Fixed(3), fillMaxWidth) {
+        /* scrolls to active item, but recomposes too often
+        val zmanim =
+            allZmanimToDisplay.value
+        println("Zmanim: $zmanim")
+        val indexOfUpcomingZman = if(zmanim != null)  remember {  //only calculate on initial composition
+            zmanim
+                .indexOfFirst {
+                    it
+                        .mainZman
+                        .momentOfOccurrence
+                        ?.let { it >= now.value } == true
+                }
+                .coerceAtLeast(0)
+        } else 0
+        println("indexOfUpcomingZman = $indexOfUpcomingZman")
+        val state = rememberLazyGridState(
+            indexOfUpcomingZman
+        )
+        if(indexOfUpcomingZman > 0) {
+            println("Scrolling to $indexOfUpcomingZman")
+//          onInitialComposition:
+            rememberCoroutineScope().launch(Dispatchers.Main.immediate) {
+                state.animateScrollToItem(indexOfUpcomingZman)
+            }
+        }*/
+        LazyVerticalGrid(GridCells.Fixed(6), fillMaxWidth/*, state*/) {
             shaaZmanisValues.value?.let {
                 item {
                     ZmanCard(
-                        modifier, now.value, it, showOpinion = true, showMomentOfOccurenceOrDuration = true
+                        Modifier.fillMaxSize().padding(8.dp),
+                        now.value,
+                        vm.tz,
+                        it,
+                        showOpinion = true,
+                        showMomentOfOccurenceOrDuration = true
                     )
                 }
             }
@@ -143,13 +188,15 @@ internal fun App() = AppTheme {
                 items(
                     it
                 ) { model ->
-
-                    Row {
-                        ZmanCard(
-                            modifier, now.value, model, showMomentOfOccurenceOrDuration = true, showTimeRemaining = true
-                        ) { modifier, zman, now ->
-                            TimeRemainingText(zman, modifier, now)
-                        }
+                    ZmanCard(
+                        Modifier.fillMaxSize().padding(8.dp),
+                        now.value,
+                        vm.tz,
+                        model,
+                        showMomentOfOccurenceOrDuration = true,
+                        showTimeRemaining = true
+                    ) { modifier, zman, now ->
+                        TimeRemainingText(zman, modifier, now)
                     }
                 }
             }
@@ -192,76 +239,74 @@ private fun getSecondsUntilZmanAndTimeRemaining(
         .formatted(false, secondsUntilZmanim in 0..SECONDS_IN_HOUR)
 }
 
-val expandedCards: MutableMap<ZmanType, Boolean> = mutableMapOf()
+val expandedCards = mutableStateMapOf<ZmanType, Boolean>()
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
     modifier: Modifier,
     currentTime: Instant,
+    currentTimeZone: TimeZone,
     model: ZmanCardModel<T, A, B>,
     showMomentOfOccurenceOrDuration: Boolean = false,
     showOpinion: Boolean = false,
     showTimeRemaining: Boolean = false,
     content: @Composable (modifier: Modifier, zman: Instant?, now: Instant) -> Unit = { _, _, _ -> },
-) {
-    val tz = remember { TimeZone.currentSystemDefault() }
-    var isExpanded by remember { mutableStateOf(expandedCards[model.mainZman.type] ?: false) }
-    androidx.compose.material.Card(
-        modifier.clickable {
-            val new = !isExpanded
-            expandedCards[model.mainZman.type] = new
-            isExpanded = new
-        }, backgroundColor = MaterialTheme.colorScheme.primaryContainer, elevation = 4.dp
-    ) {
-        Column {
-            val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
-            Text(
-                model.mainZman.type.friendlyNameEnglish,
-                padding.fillMaxWidth(),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
-            )
-            if (showOpinion) Text(
-                model.mainZman.opinion.format(),
-                padding.fillMaxWidth(),
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Center
-            )
-            if (showMomentOfOccurenceOrDuration) Text(
-                model.mainZman.formatted(tz, ""),
-                padding.fillMaxWidth(),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center
-            )
-            if (showTimeRemaining && model.mainZman is Zman.DateBased<*, *>) content(
-                padding, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
-            )
-            val startPadding = Modifier.padding(start = 2.dp)
-            if (isExpanded) for ((index, zman) in model.otherOpinions.withIndex()) {
-                Column(
-                    Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                        .background(if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
-                        .fillMaxWidth()
-                ) {
-                    if (showOpinion) Text(
-                        zman.opinion.format(),
-                        Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-                    if (showMomentOfOccurenceOrDuration)
-                        if (zman is Zman.DateBased<*, *>) TimeRemainingText(
-                            zman.momentOfOccurrence, startPadding.fillMaxWidth(), currentTime
-                        )
-                        else Text(
-                            (zman as Zman.ValueBased<*, *>).formatted(tz, ""),
-                            startPadding.fillMaxWidth(),
-                            textAlign = TextAlign.Center
-                        )
-                }
-            }
-        }
-    }
-}
+) = Card(
+    onClick = {
+        expandedCards[model.mainZman.type] = !expandedCards.getOrElse(model.mainZman.type) { false }
+    },
+    modifier = modifier,
+    elevation = CardDefaults.cardElevation(4.dp),
+    shape = RoundedCornerShape(4.dp),
+ ) {
+     Column(verticalArrangement = Arrangement.SpaceEvenly) {
+         Text(
+             model.mainZman.type.friendlyNameEnglish,
+             Modifier.fillMaxWidth(),
+             style = MaterialTheme.typography.titleLarge,
+             textAlign = TextAlign.Center
+         )
+         if (showOpinion) Text(
+             model.mainZman.opinion.format(),
+             Modifier.fillMaxWidth(),
+             style = MaterialTheme.typography.titleMedium,
+             textAlign = TextAlign.Center
+         )
+         if (showMomentOfOccurenceOrDuration) Text(
+             model.mainZman.formatted(currentTimeZone, ""),
+             Modifier.fillMaxWidth(),
+             style = MaterialTheme.typography.bodyMedium,
+             textAlign = TextAlign.Center
+         )
+         if (showTimeRemaining && model.mainZman is Zman.DateBased<*, *>) content(
+             Modifier, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
+         )
+         val startPadding = Modifier.padding(start = 2.dp)
+         if (expandedCards.getOrElse(model.mainZman.type) { false }) for ((index, zman) in model.otherOpinions.withIndex()) {
+             Column(
+                 Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                     .background(if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
+                     .fillMaxWidth()
+             ) {
+                 if (showOpinion) Text(
+                     zman.opinion.format(),
+                     Modifier.fillMaxWidth(),
+                     textAlign = TextAlign.Center
+                 )
+                 if (showMomentOfOccurenceOrDuration)
+                     if (zman is Zman.DateBased<*, *>) TimeRemainingText(
+                         zman.momentOfOccurrence, startPadding.fillMaxWidth(), currentTime
+                     )
+                     else Text(
+                         (zman as Zman.ValueBased<*, *>).formatted(currentTimeZone, ""),
+                         startPadding.fillMaxWidth(),
+                         textAlign = TextAlign.Center
+                     )
+             }
+         }
+     }
+ }
 
 /**
  * Takes a [Triple] of <hour,minute,second> and returns either e.g. "05:32:15", or "5 hr 32 min 15 sec".

@@ -77,7 +77,7 @@ sealed class Zman<T: ZmanOpinion<A>, A>(
                     ?.toLocalDateTime(tz)
                     ?.time
                     ?.let {
-                        "${(if(it.hour <= 12) it.hour else it.hour - 12).pad()}:${it.minute.pad()}:${it.second.pad()} ${if (it.hour >= 12) "PM" else "AM"}"
+                        "${(if(it.hour == 0) 12 else if(it.hour <= 12) it.hour else it.hour - 12).pad()}:${it.minute.pad()}:${it.second.pad()} ${if (it.hour < 12) "AM" else "PM"}"
                     }
                     ?: "N/A"
             }
