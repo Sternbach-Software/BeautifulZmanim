@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kosherjava.zmanim.Zman
 import com.kosherjava.zmanim.ZmanOpinion
@@ -164,12 +165,16 @@ private fun TimeRemainingText(
 ) {
     if (zman == null) Text(
         "N/A",
-        modifier,
+        modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center
     )
     else {
         val (secondsUntilZmanim, timeRemaining) = getSecondsUntilZmanAndTimeRemaining(zman, now)
         Text(
-            timeRemaining, modifier, color = if (secondsUntilZmanim <= 0) Color.Red else Color.Green
+            timeRemaining,
+            modifier.fillMaxWidth(),
+            color = if (secondsUntilZmanim <= 0) Color.Red else Color.Green,
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -212,18 +217,21 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
             val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
             Text(
                 model.mainZman.type.friendlyNameEnglish,
-                padding,
-                style = MaterialTheme.typography.titleLarge
+                padding.fillMaxWidth(),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
             )
             if (showOpinion) Text(
                 model.mainZman.opinion.format(),
-                padding,
-                style = MaterialTheme.typography.titleMedium
+                padding.fillMaxWidth(),
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center
             )
             if (showMomentOfOccurenceOrDuration) Text(
                 model.mainZman.formatted(tz, ""),
-                padding,
-                style = MaterialTheme.typography.bodyMedium
+                padding.fillMaxWidth(),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
             )
             if (showTimeRemaining && model.mainZman is Zman.DateBased<*, *>) content(
                 padding, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
@@ -235,12 +243,20 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
                         .background(if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
                         .fillMaxWidth()
                 ) {
-                    if (showOpinion) Text(zman.opinion.format())
+                    if (showOpinion) Text(
+                        zman.opinion.format(),
+                        Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
                     if (showMomentOfOccurenceOrDuration)
                         if (zman is Zman.DateBased<*, *>) TimeRemainingText(
-                            zman.momentOfOccurrence, startPadding, currentTime
+                            zman.momentOfOccurrence, startPadding.fillMaxWidth(), currentTime
                         )
-                        else Text((zman as Zman.ValueBased<*, *>).formatted(tz, ""), startPadding)
+                        else Text(
+                            (zman as Zman.ValueBased<*, *>).formatted(tz, ""),
+                            startPadding.fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
                 }
             }
         }
