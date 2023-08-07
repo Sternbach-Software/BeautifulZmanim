@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Switch
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,8 +45,8 @@ import kotlin.math.absoluteValue
 @Composable
 internal fun App() = AppTheme {
     var locationString by remember { mutableStateOf("123 Jane Street") }
-    var longitude by remember { mutableStateOf("31.76904") }
-    var latitude by remember { mutableStateOf("35.21633") }
+    var longitude by remember { mutableStateOf("35.21633") }
+    var latitude by remember { mutableStateOf("31.76904") }
     val vm = ZmanimViewModel(MainScope())
     val calculatingZmanim = vm.calculatingZmanim.collectAsState(false)
     val listeningForPosition = vm.listeningForPosition.collectAsState(false)
@@ -81,8 +82,7 @@ internal fun App() = AppTheme {
         }
         else {
             Text(
-                "Address, state, zip, country:",
-                fillMaxWidth
+                "Address, state, zip, country:", fillMaxWidth
             )
             OutlinedTextField(
                 value = locationString,
@@ -93,8 +93,7 @@ internal fun App() = AppTheme {
             )
             Button(
                 modifier = fillMaxWidth,
-                onClick = { vm.getZmanimByLocationString(locationString) }
-            ) {
+                onClick = { vm.getZmanimByLocationString(locationString) }) {
                 Text("Get zmanim by location")
             }
             Text(
@@ -119,29 +118,23 @@ internal fun App() = AppTheme {
             Button(
                 onClick = {
 //                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
-                    latitude.toDoubleOrNull()
-                        ?.let {
-                            longitude.toDoubleOrNull()
-                                ?.let { it1 ->
-                                    vm.getZmanimByLatLong(it, it1)
-                                }
-                        } ?: println("Error parsing lat and long")
-                    /* Handle login logic here */
-                },
-                modifier = fillMaxWidth
+                    latitude.toDoubleOrNull()?.let {
+                        longitude.toDoubleOrNull()?.let { it1 ->
+                            vm.getZmanimByLatLong(it, it1)
+                        }
+                    } ?: println("Error parsing lat and long")/* Handle login logic here */
+                }, modifier = fillMaxWidth
             ) {
-                Text("Get zmanim by latitude and")
+                Text("Get zmanim by latitude and longitude")
             }
         }
         if (calculatingZmanim.value) CircularProgressIndicator()
 
-        LazyColumn(fillMaxWidth) {
+        LazyVerticalGrid(GridCells.Fixed(3), fillMaxWidth) {
             shaaZmanisValues.value?.let {
                 item {
                     ZmanCard(
-                        modifier,
-                        now.value,
-                        it
+                        modifier, now.value, it, showOpinion = true, showMomentOfOccurenceOrDuration = true
                     )
                 }
             }
@@ -150,12 +143,12 @@ internal fun App() = AppTheme {
                     it
                 ) { model ->
 
-                    ZmanCard(
-                        modifier,
-                        now.value,
-                        model
-                    ) { modifier, zman, now ->
-                        TimeRemainingText(zman, modifier, now)
+                    Row {
+                        ZmanCard(
+                            modifier, now.value, model, showMomentOfOccurenceOrDuration = true, showTimeRemaining = true
+                        ) { modifier, zman, now ->
+                            TimeRemainingText(zman, modifier, now)
+                        }
                     }
                 }
             }
@@ -174,15 +167,13 @@ private fun TimeRemainingText(
         modifier,
     )
     else {
-        val (secondsUntilZmanim, timeRemaining) =
-            getSecondsUntilZmanAndTimeRemaining(zman, now)
+        val (secondsUntilZmanim, timeRemaining) = getSecondsUntilZmanAndTimeRemaining(zman, now)
         Text(
-            timeRemaining,
-            modifier,
-            color = if (secondsUntilZmanim <= 0) Color.Red else Color.Green
+            timeRemaining, modifier, color = if (secondsUntilZmanim <= 0) Color.Red else Color.Green
         )
     }
 }
+
 const val SECONDS_IN_HOUR = 60 * 60
 
 
@@ -192,8 +183,7 @@ private fun getSecondsUntilZmanAndTimeRemaining(
 ): Pair<Int, String> {
     val secondsUntilZmanim = now.until(zman, DateTimeUnit.SECOND).toInt()
     //println("Seconds from $now until $zman: $secondsUntilZmanim")
-    return secondsUntilZmanim to secondsUntilZmanim
-        .toHrMinSec()
+    return secondsUntilZmanim to secondsUntilZmanim.toHrMinSec()
         .formatted(false, secondsUntilZmanim in 0..SECONDS_IN_HOUR)
 }
 
@@ -204,6 +194,9 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
     modifier: Modifier,
     currentTime: Instant,
     model: ZmanCardModel<T, A, B>,
+    showMomentOfOccurenceOrDuration: Boolean = false,
+    showOpinion: Boolean = false,
+    showTimeRemaining: Boolean = false,
     content: @Composable (modifier: Modifier, zman: Instant?, now: Instant) -> Unit = { _, _, _ -> },
 ) {
     val tz = remember { TimeZone.currentSystemDefault() }
@@ -213,9 +206,7 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
             val new = !isExpanded
             expandedCards[model.mainZman.type] = new
             isExpanded = new
-        },
-        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-        elevation = 4.dp
+        }, backgroundColor = MaterialTheme.colorScheme.primaryContainer, elevation = 4.dp
     ) {
         Column {
             val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
@@ -224,36 +215,32 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
                 padding,
                 style = MaterialTheme.typography.titleLarge
             )
-            Text(
+            if (showOpinion) Text(
                 model.mainZman.opinion.format(),
                 padding,
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
+            if (showMomentOfOccurenceOrDuration) Text(
                 model.mainZman.formatted(tz, ""),
-                Modifier.padding(start = 8.dp),
+                padding,
                 style = MaterialTheme.typography.bodyMedium
             )
-            if (model.mainZman is Zman.DateBased<*, *>) content(
-                padding,
-                (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence,
-                currentTime
+            if (showTimeRemaining && model.mainZman is Zman.DateBased<*, *>) content(
+                padding, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
             )
             val startPadding = Modifier.padding(start = 2.dp)
             if (isExpanded) for ((index, zman) in model.otherOpinions.withIndex()) {
                 Column(
-                    Modifier
-                        .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                    Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
                         .background(if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
                         .fillMaxWidth()
                 ) {
-                    Text(zman.opinion.format())
-                    if (zman is Zman.DateBased<*, *>) TimeRemainingText(
-                        zman.momentOfOccurrence,
-                        startPadding,
-                        currentTime
-                    )
-                    else Text((zman as Zman.ValueBased<*, *>).formatted(tz, ""), startPadding)
+                    if (showOpinion) Text(zman.opinion.format())
+                    if (showMomentOfOccurenceOrDuration)
+                        if (zman is Zman.DateBased<*, *>) TimeRemainingText(
+                            zman.momentOfOccurrence, startPadding, currentTime
+                        )
+                        else Text((zman as Zman.ValueBased<*, *>).formatted(tz, ""), startPadding)
                 }
             }
         }
@@ -278,7 +265,7 @@ fun Triple<Int, Int, Int>.formatted(withColons: Boolean, includeSeconds: Boolean
             second == 0 -> "00:"
             else -> TODO("Should not have happened. this=$this") //how beautiful! Also deals with first == 0 && second == 0
         }
-        if(includeSeconds) string + third.formatted()
+        if (includeSeconds) string + third.formatted()
         else string
     } else timeFormattedConcisely(first, second, third, includeSeconds)
 }
@@ -338,9 +325,7 @@ fun encode(s: String?, allow: String?): String? {
 
         // Find the next character which needs to be encoded.
         var nextToEncode = current
-        while (nextToEncode < oldLength
-            && isAllowed(s[nextToEncode], allow)
-        ) {
+        while (nextToEncode < oldLength && isAllowed(s[nextToEncode], allow)) {
             nextToEncode++
         }
 
@@ -370,9 +355,7 @@ fun encode(s: String?, allow: String?): String? {
         // Find the next allowed character.
         current = nextToEncode
         var nextAllowed = current + 1
-        while (nextAllowed < oldLength
-            && !isAllowed(s[nextAllowed], allow)
-        ) {
+        while (nextAllowed < oldLength && !isAllowed(s[nextAllowed], allow)) {
             nextAllowed++
         }
 
@@ -406,15 +389,10 @@ fun encode(s: String?, allow: String?): String? {
  * @return true if the character is allowed or false if it should be
  * encoded
  */
-private fun isAllowed(c: Char, allow: String?): Boolean = (
-        (c in 'A'..'Z' ||
-                c in 'a'..'z' ||
-                c >= '0') &&
-                c <= '9' ||
-                "_-!.~'()*".indexOf(c) != -1 ||
-                allow != null
-        ) &&
-        allow?.indexOf(c) != -1
+private fun isAllowed(c: Char, allow: String?): Boolean =
+    ((c in 'A'..'Z' || c in 'a'..'z' || c >= '0') && c <= '9' || "_-!.~'()*".indexOf(c) != -1 || allow != null) && allow?.indexOf(
+        c
+    ) != -1
 
 val location = MutableStateFlow<Location?>(null)
 val errorInGettingLocation = MutableStateFlow<String?>(null)
