@@ -1,51 +1,76 @@
 package sternbach.software
 
+import com.kosherjava.zmanim.util.Location
 import kotlinx.browser.window
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
-internal actual fun openUrl(url: String?) {
-    data class Config(
-        val enableHighAccuracy: Boolean = true,
-        val timeout: Int = 10_000,
-        val maximumAge: Int = 0,
-    )
+private var geolocation: dynamic = null
+private var listener: dynamic = null
+private var options: Options? = null
 
-    val geolocation = window.navigator.asDynamic().geolocation
-    println(geolocation)
-    println(geolocation.getCurrentPosition(::onSuccess, ::onError, Config()))
+internal actual fun openUrl(url: String?) {
     url?.let { window.open(it) }
 //    println(jsJodaTz.ZoneId.systemDefault().rules().isDaylightSavings(jsJodaTz.Instant.now()))
 
 }
 
+private data class Options(
+    val enableHighAccuracy: Boolean = true,
+    val timeout: Int = 10_000,
+    val maximumAge: Int = 0,
+)
+actual fun listenForPosition() {
+    initGeolocationAndOptions()
+    initListener()
+}
+
+private fun initListener() {
+    listener = geolocation.watchPosition(::onSuccess, ::onError, options)
+}
+
+private fun initGeolocationAndOptions() {
+    geolocation = window.navigator.asDynamic().geolocation
+    println(geolocation)
+    options = Options()
+}
+
+actual fun stopListening() {
+    geolocation.clearWatch(listener)
+}
+
 fun onSuccess(position: dynamic) {
     println("On success")
-    println(position)
-    println(position.coords)
-    println(position.coords.latitude)
-    println(position.coords.longitude)
-    println(position.coords.altitude)
-    val timestamp = position.timestamp
-    val longTimestamp = /*runCatching {  timestamp.unsafeCast<String>().toLong() }.getOrNull() ?:*/ runCatching { timestamp.unsafeCast<Long>() }.getOrNull()
-    println("Timestamp: $timestamp, longTimestamp: $longTimestamp")
-    println("Last got location: ${if(longTimestamp == null) Clock.System.now() else Instant.fromEpochMilliseconds(longTimestamp)}")
+    val newLocation = Location(
+        position.coords.latitude.unsafeCast<Double>(),
+        position.coords.longitude.unsafeCast<Double>(),
+
+        position.coords.altitude?.unsafeCast<Double?>(),
+        position.coords.accuracy?.unsafeCast<Double?>(),
+        runCatching { position.timestamp.unsafeCast<Long>() }.getOrNull() ?: Clock.System.now().toEpochMilliseconds(),
+    )
+    location.value = newLocation
+    println("New location: $newLocation")
 }
 
 fun onError(error: dynamic) {
     println("On error")
-    println(error.message)
-    when (error.code) {
+    val message = error.message.unsafeCast<String>()
+    println(message)
+    errorInGettingLocation.value = message
+    /*when (error.code) {
         error.PERMISSION_DENIED -> {
-            /*TODO*/
+            *//*TODO*//*
         }
+
         error.POSITION_UNAVAILABLE -> {
-            /*TODO*/
+            *//*TODO*//*
         }
+
         error.TIMEOUT -> {
-            /*TODO*/
+            *//*TODO*//*
         }
-    }
+    }*/
 }
 
 @JsModule("@js-joda/timezone")
@@ -53,3 +78,8 @@ fun onError(error: dynamic) {
 external object JsJodaTimeZoneModule
 
 private val jsJodaTz = JsJodaTimeZoneModule
+actual val gpsSupported: Boolean = true
+actual fun getLocationOnce() {
+    initGeolocationAndOptions()
+    geolocation.getCurrentPosition(::onSuccess, ::onError, options)
+}

@@ -26,6 +26,7 @@ class AppActivity : ComponentActivity() {
         setContent { App() }
     }
 }
+
 @Preview
 @Composable
 fun AndroidAppPreview() {
@@ -40,4 +41,17 @@ internal actual fun openUrl(url: String?) {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
     AndroidApp.INSTANCE.startActivity(intent)
+}
+
+actual fun listenForPosition() {
+    TODO()
+}
+
+actual fun stopListening() {
+    TODO()
+}
+
+actual val gpsSupported: Boolean = false//TODO change to true and implement getting permissions
+actual fun getLocationOnce() {
+    TODO()
 }

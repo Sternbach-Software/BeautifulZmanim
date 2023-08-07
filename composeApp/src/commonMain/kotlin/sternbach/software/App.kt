@@ -3,11 +3,13 @@ package sternbach.software
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Switch
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,53 +17,41 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.kosherjava.zmanim.ComplexZmanimCalendar
 import com.kosherjava.zmanim.Zman
 import com.kosherjava.zmanim.ZmanOpinion
 import com.kosherjava.zmanim.ZmanType
-import com.kosherjava.zmanim.util.GeoLocation
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.kosherjava.zmanim.util.Location
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.until
 import presentation.ZmanCardModel
 import sternbach.software.theme.AppTheme
+import kotlin.coroutines.coroutineContext
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun App() = AppTheme {
-    val tz = remember { TimeZone.currentSystemDefault() }
-    var latitude by remember { mutableStateOf("31.80157") }
-    var longitude by remember { mutableStateOf("35.21765") }
-    var calculatingZmanim by remember { mutableStateOf(false) }
-    var shaaZmanisValues: List<Zman.ValueBased<ZmanOpinion<Any>, Any>> by remember {
-        mutableStateOf(
-            emptyList()
-        )
-    }
-    var allZmanimToDisplay: List<Zman.DateBased<ZmanOpinion<Any>, Any>> by remember {
-        mutableStateOf(
-            emptyList()
-        )
-    }
-    var now by remember { mutableStateOf(Clock.System.now()) }
+    var locationString by remember { mutableStateOf("123 Jane Street") }
+    val vm = ZmanimViewModel(MainScope())
+    val calculatingZmanim = vm.calculatingZmanim.collectAsState(false)
+    val listeningForPosition = vm.listeningForPosition.collectAsState(false)
+    val shaaZmanisValues = vm.shaaZmanisCardModel.collectAsState(null)
+    val allZmanimToDisplay = vm.allZmanimCardModels.collectAsState(null)
+    val now = vm.now.collectAsState(Clock.System.now())
 
     Column(modifier = Modifier.fillMaxSize()) {
 
@@ -72,133 +62,69 @@ internal fun App() = AppTheme {
             style = MaterialTheme.typography.titleMedium,
             modifier = modifier
         )
-
-        OutlinedTextField(
-            value = latitude,
-            onValueChange = { latitude = it },
-            label = { Text("Latitude") },
-            singleLine = true,
+        Text(
+            text = "${if (gpsSupported) "Enter your location below, or c" else "C"}lick the toggle to listen to live updates of your current location.",
+            style = MaterialTheme.typography.bodyMedium,
             modifier = modifier
         )
-
-        OutlinedTextField(
-            value = longitude,
-            onValueChange = { longitude = it },
-            label = { Text("Longitude") },
-            singleLine = true,
-//            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = modifier,
-//            keyboardOptions = KeyboardOptions(
-//                keyboardType = KeyboardType.Password
-//            ),
-//            trailingIcon = {
-//                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-//                    val imageVector = if (passwordVisibility) Icons.Default.Close else Icons.Default.Edit
-//                    Icon(imageVector, contentDescription = if (passwordVisibility) "Hide password" else "Show password")
-//                }
-//            }
-        )
-        Button(
-            onClick = {
-                calculatingZmanim = true
+        if (gpsSupported) Row {
+            Switch(
+                checked = listeningForPosition.value,
+                onCheckedChange = {
+                    if (it) vm.startListeningForPosition()
+                    else vm.stopListeningForPosition()
+                },
+                modifier = modifier
+            )
+            Text("Get live zmanim")
+        }
+        else {
+            Text(
+                "Address, state, zip, country:",
+                modifier
+            )
+            OutlinedTextField(
+                value = locationString,
+                onValueChange = { locationString = it },
+                label = { Text("Location") },
+                singleLine = true,
+                modifier = modifier
+            )
+            /*Text(
+                "Alternatively, you can put in your coordinates (and optionally your elevation to get more accurate results, if you would like to see opinions which factor in elevation):",
+                modifier
+            )*/ //TODO
+            Button(
+                onClick = {
 //                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
-                openUrl(null)
-                /* Handle login logic here */
-            },
-            modifier = modifier
-        ) {
-            Text("Get zmanim")
-        }
-        if (calculatingZmanim) {
-            CircularProgressIndicator()
-            LaunchedEffect(calculatingZmanim) {
-                launch(Dispatchers.Default) {
-                    val latitudeDouble = latitude.toDoubleOrNull()
-                    val longitudeDouble = longitude.toDoubleOrNull()
-                    println("Latitude: $latitudeDouble")
-                    println("Longitude: $longitudeDouble")
-                    if (latitudeDouble != null && longitudeDouble != null) {
-                        val geoLocation = GeoLocation(
-                            "Israel",
-                            latitudeDouble,
-                            longitudeDouble,
-                            0.0,
-                            tz
-                        )
-                        val calendar = ComplexZmanimCalendar(geoLocation)
-                        calendar.apply {
-                            val values = allShaosZmaniyos.sortedBy { it.duration }
-                            val listOfZmanim = allZmanim.distinct().sortedBy { it.momentOfOccurrence }
-                            //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
-                            withContext(Dispatchers.Main.immediate) {
-                                shaaZmanisValues =
-                                    values as List<Zman.ValueBased<ZmanOpinion<Any>, Any>>
-                                allZmanimToDisplay =
-                                    listOfZmanim as List<Zman.DateBased<ZmanOpinion<Any>, Any>>
-                                calculatingZmanim = false
-                            }
-                        }
-                    } else withContext(Dispatchers.Main.immediate) {
-                        calculatingZmanim = false
-                    }
-                }
+                    vm.getCalculationOnceWithoutGPSSupport(locationString)
+                    /* Handle login logic here */
+                },
+                modifier = modifier
+            ) {
+                Text("Get zmanim")
             }
         }
-
-
-        LaunchedEffect(Unit) {
-            launch(Dispatchers.Default) {
-                while (isActive) {
-                    delay(1_000)
-                    withContext(Dispatchers.Main.immediate) {
-                        now = Clock.System.now()
-                    }
-                }
-            }
-        }
+        if (calculatingZmanim.value) CircularProgressIndicator()
 
         LazyColumn(Modifier.fillMaxWidth()) {
-            if (shaaZmanisValues.isNotEmpty()) {
-                val otherOpinions = getOtherOpinions(shaaZmanisValues)
-                val preferred =
-                    getPreferredOpinionForZmanType(ZmanType.SHAA_ZMANIS, shaaZmanisValues)
-                val model =
-                    ZmanCardModel(
-                        preferred,
-                        otherOpinions
-                    )
+            shaaZmanisValues.value?.let {
                 item {
                     ZmanCard(
                         modifier,
-                        now,
-                        model
+                        now.value,
+                        it
                     )
                 }
             }
-            if (allZmanimToDisplay.isNotEmpty()) {
-                val groupedByOpinion//: List<ZmanCardModel<Zman<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>
-                        = allZmanimToDisplay
-                    .filter { it.momentOfOccurrence != null }
-                    .groupBy { it.type }
-                    //.toList()
-                    //.sortedBy { it.second.minBy { it.momentOfOccurrence } }
-                    .map {
-                        ZmanCardModel(
-                            getPreferredOpinionForZmanType(
-                                it.key,
-                                it.value
-                            ),
-                            getOtherOpinions(it.value)
-                        )
-                    }
-                    .sortedBy { it.mainZman }
+            allZmanimToDisplay.value?.let {
                 items(
-                    groupedByOpinion
+                    it
                 ) { model ->
 
                     ZmanCard(
                         modifier,
-                        now,
+                        now.value,
                         model
                     ) { modifier, zman, now ->
                         TimeRemainingText(zman, modifier, now)
@@ -207,10 +133,6 @@ internal fun App() = AppTheme {
             }
         }
     }
-}
-
-fun <T : ZmanOpinion<A>, A> getOtherOpinions(shaaZmanisValues: List<Zman<T, A>>): List<Zman<T, A>> {
-    return shaaZmanisValues.drop(1)
 }
 
 @Composable
@@ -234,13 +156,6 @@ private fun TimeRemainingText(
     }
 }
 
-fun <
-        T : Zman<A, B>,
-        A : ZmanOpinion<B>,
-        B,
-        > getPreferredOpinionForZmanType(type: ZmanType, zmanim: List<T>): T {
-    return zmanim.first() //TODO implement with settings
-}
 
 private fun getSecondsUntilZmanAndTimeRemaining(
     zman: Instant,
@@ -275,8 +190,16 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
     ) {
         Column {
             val padding = Modifier.padding(start = 8.dp, bottom = 4.dp)
-            Text(model.mainZman.type.friendlyNameEnglish, padding, style = MaterialTheme.typography.titleLarge)
-            Text(model.mainZman.opinion.format(), padding, style = MaterialTheme.typography.titleMedium)
+            Text(
+                model.mainZman.type.friendlyNameEnglish,
+                padding,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Text(
+                model.mainZman.opinion.format(),
+                padding,
+                style = MaterialTheme.typography.titleMedium
+            )
             Text(
                 model.mainZman.formatted(tz, ""),
                 Modifier.padding(start = 8.dp),
@@ -321,7 +244,7 @@ fun Triple<Int, Int, Int>.formatted(withColons: Boolean): String {
     }
     return if (withColons) {
         val string = when {
-            first == 0 && second != 0 -> "${if(third == 0) second else second.absoluteValue}:"
+            first == 0 && second != 0 -> "${if (third == 0) second else second.absoluteValue}:"
             first != 0 -> "$first:${second.absoluteValue.formatted()}:"
             second == 0 -> "00:"
             else -> TODO("Should not have happened. this=$this") //how beautiful! Also deals with first == 0 && second == 0
@@ -336,8 +259,8 @@ fun Triple<Int, Int, Int>.formatted(withColons: Boolean): String {
 fun timeFormattedConcisely(hour: Int, minute: Int, second: Int): String {
     val string = StringBuilder()
     if (hour != 0) string.append("$hour hr ")
-    if (minute != 0) string.append("${if(string.isEmpty()) minute else minute.absoluteValue} min ")
-    if (second != 0) string.append("${if(string.isEmpty()) second else second.absoluteValue} sec")
+    if (minute != 0) string.append("${if (string.isEmpty()) minute else minute.absoluteValue} min ")
+    if (second != 0) string.append("${if (string.isEmpty()) second else second.absoluteValue} sec")
     return if (string.isEmpty()) "0 sec" else string.toString().trim()
 }
 
@@ -352,4 +275,121 @@ fun Int.toHrMinSec(): Triple<Int, Int, Int> {
     return Triple(hour, minute, second)
 }
 
+/**
+ * Copyright (C) 2007 The Android Open Source Project
+ *
+ * Encodes characters in the given string as '%'-escaped octets
+ * using the UTF-8 scheme. Leaves letters ("A-Z", "a-z"), numbers
+ * ("0-9"), and unreserved characters ("_-!.~'()*") intact. Encodes
+ * all other characters with the exception of those specified in the
+ * allow argument.
+ *
+ * @param s string to encode
+ * @param allow set of additional characters to allow in the encoded form,
+ * null if no characters should be skipped
+ * @return an encoded version of s suitable for use as a URI component,
+ * or null if s is null
+ */
+fun encode(s: String?, allow: String?): String? {
+    if (s == null) {
+        return null
+    }
+
+    // Lazily-initialized buffers.
+    var encoded: StringBuilder? = null
+    val oldLength = s.length
+
+    // This loop alternates between copying over allowed characters and
+    // encoding in chunks. This results in fewer method calls and
+    // allocations than encoding one character at a time.
+    var current = 0
+    while (current < oldLength) {
+        // Start in "copying" mode where we copy over allowed chars.
+
+        // Find the next character which needs to be encoded.
+        var nextToEncode = current
+        while (nextToEncode < oldLength
+            && isAllowed(s[nextToEncode], allow)
+        ) {
+            nextToEncode++
+        }
+
+        // If there's nothing more to encode...
+        if (nextToEncode == oldLength) {
+            return if (current == 0) {
+                // We didn't need to encode anything!
+                s
+            } else {
+                // Presumably, we've already done some encoding.
+                encoded!!.append(s, current, oldLength)
+                encoded.toString()
+            }
+        }
+        if (encoded == null) {
+            encoded = StringBuilder()
+        }
+        if (nextToEncode > current) {
+            // Append allowed characters leading up to this point.
+            encoded.append(s, current, nextToEncode)
+        } else {
+            // assert nextToEncode == current
+        }
+
+        // Switch to "encoding" mode.
+
+        // Find the next allowed character.
+        current = nextToEncode
+        var nextAllowed = current + 1
+        while (nextAllowed < oldLength
+            && !isAllowed(s[nextAllowed], allow)
+        ) {
+            nextAllowed++
+        }
+
+        // Convert the substring to bytes and encode the bytes as
+        // '%'-escaped octets.
+        val toEncode = s.substring(current, nextAllowed)
+        try {
+            val HEX_DIGITS = "0123456789ABCDEF".toCharArray()
+            val bytes = toEncode.encodeToByteArray()
+            val bytesLength = bytes.size
+            for (i in 0 until bytesLength) {
+                encoded.append('%')
+                encoded.append(HEX_DIGITS[bytes[i].toInt() and 0xf0 shr 4])
+                encoded.append(HEX_DIGITS[bytes[i].toInt() and 0xf])
+            }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+        current = nextAllowed
+    }
+
+    // Encoded could still be null at this point if s is empty.
+    return encoded?.toString() ?: s
+}
+
+/**
+ * Returns true if the given character is allowed.
+ *
+ * @param c character to check
+ * @param allow characters to allow
+ * @return true if the character is allowed or false if it should be
+ * encoded
+ */
+private fun isAllowed(c: Char, allow: String?): Boolean = (
+        (c in 'A'..'Z' ||
+                c in 'a'..'z' ||
+                c >= '0') &&
+                c <= '9' ||
+                "_-!.~'()*".indexOf(c) != -1 ||
+                allow != null
+        ) &&
+        allow?.indexOf(c) != -1
+
+val location = MutableStateFlow<Location?>(null)
+val errorInGettingLocation = MutableStateFlow<String?>(null)
 internal expect fun openUrl(url: String?)
+expect fun listenForPosition()
+expect fun stopListening()
+expect fun getLocationOnce()
+expect val gpsSupported: Boolean

@@ -32,6 +32,7 @@ sealed class Zman<T: ZmanOpinion<A>, A>(
             if(other is ValueBased<*, *>) return 1 //not sure why DateBased should go after ValueBased, but why are you comparing them?
             other as DateBased<*, *>
             return when {
+                //null goes at the beginning
                 this.momentOfOccurrence == null && other.momentOfOccurrence == null -> 0
                 this.momentOfOccurrence == null && other.momentOfOccurrence != null -> -1
                 this.momentOfOccurrence != null && other.momentOfOccurrence == null -> 1
@@ -65,7 +66,6 @@ sealed class Zman<T: ZmanOpinion<A>, A>(
             }
         }
     }
-
     fun formatted(tz: TimeZone) = formatted(tz, opinion.format())
     fun formatted(tz: TimeZone, inEnglish: Boolean) = formatted(tz, opinion.format(inEnglish))
     private fun Int.pad() = toString().padStart(2,'0')

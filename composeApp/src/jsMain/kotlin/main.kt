@@ -3,7 +3,7 @@ import org.jetbrains.skiko.wasm.onWasmReady
 
 fun main() {
     onWasmReady {
-        BrowserViewportWindow("Compose Template") {
+        BrowserViewportWindow("Beautiful Zmanim") {
             App()
         }
     }

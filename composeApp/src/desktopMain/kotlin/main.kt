@@ -6,7 +6,7 @@ import sternbach.software.App
 
 fun main() = application {
     Window(
-        title = "Compose Template",
+        title = "Beautiful Zmanim",
         state = rememberWindowState(width = 800.dp, height = 600.dp),
         onCloseRequest = ::exitApplication,
     ) { App() }
