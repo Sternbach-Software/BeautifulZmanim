@@ -7,12 +7,8 @@ import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.GeoLocation
 import com.kosherjava.zmanim.util.Location
 import io.ktor.client.call.body
-import io.ktor.client.plugins.UserAgent
 import io.ktor.client.request.get
-import io.ktor.client.request.header
 import io.ktor.http.Url
-import io.ktor.util.Identity.encode
-import io.ktor.utils.io.ByteReadChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -94,42 +90,55 @@ class ZmanimViewModel(
             }
 
             location.collect {
-                if (it != null) {
-                    val geoLocation = GeoLocation(
-                        it.locationName ?: "Current Location",
-                        it.latitude,
-                        it.longitude,
-                        it.elevation ?: 0.0,
-                        it.tz ?: tz
-                    )
-                    val calendar = ComplexZmanimCalendar(geoLocation)
-                    calendar.apply {
-                        val values = allShaosZmaniyos.sortedBy { it.duration }
-                        val listOfZmanim =
-                            allZmanim.distinct().sortedBy { it.momentOfOccurrence }
-                        //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
-                        withContext(Dispatchers.Main.immediate) {
-                            _shaaZmanisValues.value =
-                                values as List<Zman.ValueBased<ZmanOpinion<Any>, Any>>
-                            _allZmanimToDisplay.value =
-                                listOfZmanim as List<Zman.DateBased<ZmanOpinion<Any>, Any>>
-                            _calculatingZmanim.value = false
-                        }
-                    }
-                } else withContext(Dispatchers.Main.immediate) {
-                    _calculatingZmanim.value = false
-                }
+                calculateZmanimBasedOnLocation(it)
             }
         }
     }
 
-    fun getCalculationOnceWithoutGPSSupport(locationString: String) {
+    private suspend fun calculateZmanimBasedOnLocation(it: Location?) {
+        if (it != null) {
+            val geoLocation = GeoLocation(
+                it.locationName ?: "Current Location",
+                it.latitude,
+                it.longitude,
+                it.elevation ?: 0.0,
+                it.tz ?: tz
+            )
+            val cal = ComplexZmanimCalendar(geoLocation)
+            val values = cal.allShaosZmaniyos.sortedBy { it.duration }
+            val listOfZmanim =
+                cal.allZmanim.distinct().sortedBy { it.momentOfOccurrence }
+            //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
+            withContext(Dispatchers.Main.immediate) {
+                _shaaZmanisValues.value =
+                    values as List<Zman.ValueBased<ZmanOpinion<Any>, Any>>
+                _allZmanimToDisplay.value =
+                    listOfZmanim as List<Zman.DateBased<ZmanOpinion<Any>, Any>>
+                _calculatingZmanim.value = false
+            }
+        } else withContext(Dispatchers.Main.immediate) {
+            _calculatingZmanim.value = false
+        }
+    }
+
+    fun getZmanimByLatLong(latitude: Double, longitude: Double) {
+        scope.launch(Dispatchers.Default) {
+            calculateZmanimBasedOnLocation(Location(latitude, longitude))
+        }
+    }
+
+    fun getZmanimByLocationString(locationString: String) {
         _calculatingZmanim.value = true
         val client = io.ktor.client.HttpClient()
 //        UserAgent.install(UserAgent.prepare { agent = "BeautifulZmanim" }, client)
         scope.launch(Dispatchers.Default) {
             val urlString =
-                "https://nominatim.openstreetmap.org/search.php?q=${encode(locationString, null)}&format=jsonv2"
+                "https://nominatim.openstreetmap.org/search.php?q=${
+                    encode(
+                        locationString,
+                        null
+                    )
+                }&format=jsonv2"
             val url = Url(urlString)
             println("URL encoded: $url")
             println("Created url: $url")

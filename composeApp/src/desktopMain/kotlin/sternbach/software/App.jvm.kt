@@ -15,7 +15,7 @@ actual fun stopListening() {
     throwNoLocation()
 }
 
-actual val gpsSupported: Boolean = true
+actual val gpsSupported: Boolean = false
 actual fun getLocationOnce() {
     throwNoLocation()
 }

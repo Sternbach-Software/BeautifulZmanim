@@ -29,7 +29,6 @@ import com.kosherjava.zmanim.Zman
 import com.kosherjava.zmanim.ZmanOpinion
 import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.Location
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
@@ -39,13 +38,14 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.until
 import presentation.ZmanCardModel
 import sternbach.software.theme.AppTheme
-import kotlin.coroutines.coroutineContext
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun App() = AppTheme {
     var locationString by remember { mutableStateOf("123 Jane Street") }
+    var longitude by remember { mutableStateOf("31.76904") }
+    var latitude by remember { mutableStateOf("35.21633") }
     val vm = ZmanimViewModel(MainScope())
     val calculatingZmanim = vm.calculatingZmanim.collectAsState(false)
     val listeningForPosition = vm.listeningForPosition.collectAsState(false)
@@ -53,19 +53,21 @@ internal fun App() = AppTheme {
     val allZmanimToDisplay = vm.allZmanimCardModels.collectAsState(null)
     val now = vm.now.collectAsState(Clock.System.now())
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
 
-        val modifier = Modifier.fillMaxWidth().padding(16.dp)
+        val fillMaxWidth = Modifier.fillMaxWidth()
+        val modifier = fillMaxWidth.padding(16.dp)
 
         Text(
             text = "Beautiful Zmanim",
             style = MaterialTheme.typography.titleMedium,
-            modifier = modifier
+            modifier = Modifier.padding(bottom = 8.dp)
         )
         Text(
-            text = "${if (gpsSupported) "Enter your location below, or c" else "C"}lick the toggle to listen to live updates of your current location.",
+            text = if (!gpsSupported) "Enter your location below"
+            else "Click the toggle to listen to live updates of your current location.",
             style = MaterialTheme.typography.bodyMedium,
-            modifier = modifier
+            modifier = fillMaxWidth
         )
         if (gpsSupported) Row {
             Switch(
@@ -74,40 +76,66 @@ internal fun App() = AppTheme {
                     if (it) vm.startListeningForPosition()
                     else vm.stopListeningForPosition()
                 },
-                modifier = modifier
             )
             Text("Get live zmanim")
         }
         else {
             Text(
                 "Address, state, zip, country:",
-                modifier
+                fillMaxWidth
             )
             OutlinedTextField(
                 value = locationString,
                 onValueChange = { locationString = it },
                 label = { Text("Location") },
                 singleLine = true,
-                modifier = modifier
+                modifier = fillMaxWidth
             )
-            /*Text(
+            Button(
+                modifier = fillMaxWidth,
+                onClick = { vm.getZmanimByLocationString(locationString) }
+            ) {
+                Text("Get zmanim by location")
+            }
+            Text(
                 "Alternatively, you can put in your coordinates (and optionally your elevation to get more accurate results, if you would like to see opinions which factor in elevation):",
-                modifier
-            )*/ //TODO
+                fillMaxWidth
+            )
+
+            OutlinedTextField(
+                value = longitude,
+                onValueChange = { longitude = it },
+                label = { Text("Longitude") },
+                singleLine = true,
+                modifier = fillMaxWidth
+            )
+            OutlinedTextField(
+                value = latitude,
+                onValueChange = { latitude = it },
+                label = { Text("Latitude") },
+                singleLine = true,
+                modifier = fillMaxWidth
+            )
             Button(
                 onClick = {
 //                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
-                    vm.getCalculationOnceWithoutGPSSupport(locationString)
+                    latitude.toDoubleOrNull()
+                        ?.let {
+                            longitude.toDoubleOrNull()
+                                ?.let { it1 ->
+                                    vm.getZmanimByLatLong(it, it1)
+                                }
+                        } ?: println("Error parsing lat and long")
                     /* Handle login logic here */
                 },
-                modifier = modifier
+                modifier = fillMaxWidth
             ) {
-                Text("Get zmanim")
+                Text("Get zmanim by latitude and")
             }
         }
         if (calculatingZmanim.value) CircularProgressIndicator()
 
-        LazyColumn(Modifier.fillMaxWidth()) {
+        LazyColumn(fillMaxWidth) {
             shaaZmanisValues.value?.let {
                 item {
                     ZmanCard(
