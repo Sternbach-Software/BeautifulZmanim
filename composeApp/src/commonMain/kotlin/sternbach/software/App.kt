@@ -183,6 +183,7 @@ private fun TimeRemainingText(
         )
     }
 }
+const val SECONDS_IN_HOUR = 60 * 60
 
 
 private fun getSecondsUntilZmanAndTimeRemaining(
@@ -193,7 +194,7 @@ private fun getSecondsUntilZmanAndTimeRemaining(
     //println("Seconds from $now until $zman: $secondsUntilZmanim")
     return secondsUntilZmanim to secondsUntilZmanim
         .toHrMinSec()
-        .formatted(false)
+        .formatted(false, secondsUntilZmanim in 0..SECONDS_IN_HOUR)
 }
 
 val expandedCards: MutableMap<ZmanType, Boolean> = mutableMapOf()
@@ -264,7 +265,7 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
  * Valid outputs: 12:34, 00:12, 00:00, 1:00:00, 1:12:00
  * Invalid outputs: "00:00:00", "00:01:00", "1:5:3"
  * */
-fun Triple<Int, Int, Int>.formatted(withColons: Boolean): String {
+fun Triple<Int, Int, Int>.formatted(withColons: Boolean, includeSeconds: Boolean): String {
     fun Int.formatted() = when {
         this == 0 -> "00"
         this < 10 -> "0$this"
@@ -277,18 +278,19 @@ fun Triple<Int, Int, Int>.formatted(withColons: Boolean): String {
             second == 0 -> "00:"
             else -> TODO("Should not have happened. this=$this") //how beautiful! Also deals with first == 0 && second == 0
         }
-        string + third.formatted()
-    } else timeFormattedConcisely(first, second, third)
+        if(includeSeconds) string + third.formatted()
+        else string
+    } else timeFormattedConcisely(first, second, third, includeSeconds)
 }
 
 /**
  * Takes an hour, minute, and second, and will return a string with only those values which are not equal to 0 (e.g. "5 hr 15 sec", "5 hr 32 min 15 sec")
  * */
-fun timeFormattedConcisely(hour: Int, minute: Int, second: Int): String {
+fun timeFormattedConcisely(hour: Int, minute: Int, second: Int, includeSeconds: Boolean): String {
     val string = StringBuilder()
     if (hour != 0) string.append("$hour hr ")
     if (minute != 0) string.append("${if (string.isEmpty()) minute else minute.absoluteValue} min ")
-    if (second != 0) string.append("${if (string.isEmpty()) second else second.absoluteValue} sec")
+    if (includeSeconds && second != 0) string.append("${if (string.isEmpty()) second else second.absoluteValue} sec")
     return if (string.isEmpty()) "0 sec" else string.toString().trim()
 }
 
