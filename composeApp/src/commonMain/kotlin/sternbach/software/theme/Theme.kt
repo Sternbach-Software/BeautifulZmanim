@@ -62,8 +62,9 @@ private val AppTypography = Typography(
 @Composable
 internal fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
+
     val colors = if (!useDarkTheme) {
         LightColorScheme
     } else {

@@ -16,4 +16,4 @@ actual fun stopListening() {
 actual fun getLocationOnce() {
     TODO()
 }
-actual val gpsSupported: Boolean = true
+actual var gpsSupported: androidx.compose.runtime.State<Boolean> = ImmutableBool(true)

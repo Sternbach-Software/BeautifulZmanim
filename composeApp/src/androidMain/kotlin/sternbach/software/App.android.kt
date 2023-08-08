@@ -51,7 +51,7 @@ actual fun stopListening() {
     TODO()
 }
 
-actual val gpsSupported: Boolean = false//TODO change to true and implement getting permissions
+actual var gpsSupported: androidx.compose.runtime.State<Boolean> = ImmutableBool(true)//TODO change to true and implement getting permissions
 actual fun getLocationOnce() {
     TODO()
 }

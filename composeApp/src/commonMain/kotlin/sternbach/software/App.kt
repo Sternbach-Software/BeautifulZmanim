@@ -17,11 +17,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -37,8 +39,17 @@ import com.kosherjava.zmanim.Zman
 import com.kosherjava.zmanim.ZmanOpinion
 import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.Location
+import io.ktor.client.HttpClient
+import io.ktor.client.request.request
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -73,7 +84,7 @@ internal fun App() = AppTheme {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-        if (gpsSupported) Row {
+        if (gpsSupported.value) Row {
             Switch(
                 checked = listeningForPosition.value,
                 onCheckedChange = {
@@ -252,13 +263,13 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
     showOpinion: Boolean = false,
     showTimeRemaining: Boolean = false,
     content: @Composable (modifier: Modifier, zman: Instant?, now: Instant) -> Unit = { _, _, _ -> },
-) = Card(
+) = ElevatedCard(
     onClick = {
-        expandedCards[model.mainZman.type] = !expandedCards.getOrElse(model.mainZman.type) { false }
+//        if(model.otherOpinions.isNotEmpty()) expandedCards[model.mainZman.type] = !expandedCards.getOrElse(model.mainZman.type) { false }
     },
     modifier = modifier,
-    elevation = CardDefaults.cardElevation(4.dp),
-    shape = RoundedCornerShape(4.dp),
+    elevation = CardDefaults.cardElevation(8.dp),
+    shape = RoundedCornerShape(8.dp),
  ) {
      Column(verticalArrangement = Arrangement.SpaceEvenly) {
          Text(
@@ -283,10 +294,13 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
              Modifier, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
          )
          val startPadding = Modifier.padding(start = 2.dp)
-         if (expandedCards.getOrElse(model.mainZman.type) { false }) for ((index, zman) in model.otherOpinions.withIndex()) {
+         /*if (
+             model.otherOpinions.isNotEmpty() &&
+             expandedCards.getOrElse(model.mainZman.type) { false }
+         ) for ((index, zman) in model.otherOpinions.withIndex()) {
              Column(
                  Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                     .background(if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
+//                     .background(if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
                      .fillMaxWidth()
              ) {
                  if (showOpinion) Text(
@@ -304,7 +318,7 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
                          textAlign = TextAlign.Center
                      )
              }
-         }
+         }*/
      }
  }
 
@@ -461,4 +475,29 @@ internal expect fun openUrl(url: String?)
 expect fun listenForPosition()
 expect fun stopListening()
 expect fun getLocationOnce()
-expect val gpsSupported: Boolean
+expect var gpsSupported: State<Boolean>
+class ImmutableBool(override val value: Boolean) : State<Boolean>
+
+private var _isOnline: Boolean = false
+val isOnline: Flow<Boolean> = flow {
+    emit(_isOnline)
+    while(currentCoroutineContext().isActive) {
+        getIsOnline {
+            if(_isOnline != it) {
+                _isOnline = it
+                emit(_isOnline)
+            }
+        }
+        delay(5_000)
+    }
+}
+private fun getIsOnline(onResult: suspend (isOnline: Boolean) -> Unit) {
+    MainScope().launch(Dispatchers.Default) {
+        val code = HttpClient().request {
+            url.host = "8.8.8.8"
+        }.status.value
+        println("Got code: $code")
+        _isOnline = code in 200 until 300
+        onResult(_isOnline)
+    }
+}

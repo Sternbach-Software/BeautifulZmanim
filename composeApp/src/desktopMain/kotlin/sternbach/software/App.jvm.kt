@@ -1,5 +1,7 @@
 package sternbach.software
 
+import androidx.compose.runtime.SnapshotMutationPolicy
+import androidx.compose.runtime.derivedStateOf
 import java.awt.Desktop
 import java.net.URI
 
@@ -15,7 +17,7 @@ actual fun stopListening() {
     throwNoLocation()
 }
 
-actual val gpsSupported: Boolean = false
+actual var gpsSupported: androidx.compose.runtime.State<Boolean> = ImmutableBool(false)
 actual fun getLocationOnce() {
     throwNoLocation()
 }

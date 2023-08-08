@@ -1,9 +1,25 @@
 package sternbach.software
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.kosherjava.zmanim.util.Location
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.request
 import kotlinx.browser.window
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.isActive
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 private var geolocation: dynamic = null
 private var listener: dynamic = null
@@ -31,7 +47,7 @@ private fun initListener() {
 
 private fun initGeolocationAndOptions() {
     geolocation = window.navigator.asDynamic().geolocation
-    println(geolocation)
+    println("geolocation: $geolocation")
     options = Options()
 }
 
@@ -57,6 +73,14 @@ fun onError(error: dynamic) {
     println("On error")
     val message = error.message.unsafeCast<String>()
     println(message)
+    (gpsSupported as MutableState<Boolean>).value = false
+    if(error.code == error.POSITION_UNAVAILABLE) MainScope().launch(Dispatchers.Default) {
+        isOnline.collectLatest {
+            if(it) {
+                (gpsSupported as MutableState<Boolean>).value = true
+            }
+        }
+    }
     errorInGettingLocation.value = message
     /*when (error.code) {
         error.PERMISSION_DENIED -> {
@@ -78,7 +102,12 @@ fun onError(error: dynamic) {
 external object JsJodaTimeZoneModule
 
 private val jsJodaTz = JsJodaTimeZoneModule
-actual val gpsSupported: Boolean = true
+actual var gpsSupported: androidx.compose.runtime.State<Boolean> = mutableStateOf(true).also { state ->
+//    getIsOnline {
+//        state.value = it
+//    }
+}
+
 actual fun getLocationOnce() {
     initGeolocationAndOptions()
     geolocation.getCurrentPosition(::onSuccess, ::onError, options)
