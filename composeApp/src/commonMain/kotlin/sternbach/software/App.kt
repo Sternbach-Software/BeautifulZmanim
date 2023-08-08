@@ -265,7 +265,7 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
     content: @Composable (modifier: Modifier, zman: Instant?, now: Instant) -> Unit = { _, _, _ -> },
 ) = ElevatedCard(
     onClick = {
-//        if(model.otherOpinions.isNotEmpty()) expandedCards[model.mainZman.type] = !expandedCards.getOrElse(model.mainZman.type) { false }
+        if(model.otherOpinions.isNotEmpty()) expandedCards[model.mainZman.type] = !expandedCards.getOrElse(model.mainZman.type) { false }
     },
     modifier = modifier,
     elevation = CardDefaults.cardElevation(8.dp),
@@ -294,7 +294,7 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
              Modifier, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
          )
          val startPadding = Modifier.padding(start = 2.dp)
-         /*if (
+         if (
              model.otherOpinions.isNotEmpty() &&
              expandedCards.getOrElse(model.mainZman.type) { false }
          ) for ((index, zman) in model.otherOpinions.withIndex()) {
@@ -318,7 +318,7 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
                          textAlign = TextAlign.Center
                      )
              }
-         }*/
+         }
      }
  }
 
