@@ -36,17 +36,8 @@ import com.kosherjava.zmanim.Zman
 import com.kosherjava.zmanim.ZmanOpinion
 import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.Location
-import io.ktor.client.HttpClient
-import io.ktor.client.request.request
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
@@ -63,7 +54,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
     var longitude by remember { mutableStateOf("35.21633") }
     var latitude by remember { mutableStateOf("31.76904") }
     var elevation by remember { mutableStateOf("754") }
-    val vm = ZmanimViewModel(MainScope())
+    val vm = remember { ZmanimViewModel(MainScope()) }
     val isOnline = vm.isOnline.collectAsState(false)
     val calculatingZmanim = vm.calculatingZmanim.collectAsState(false)
     val listeningForPosition = vm.listeningForPosition.collectAsState(false)
