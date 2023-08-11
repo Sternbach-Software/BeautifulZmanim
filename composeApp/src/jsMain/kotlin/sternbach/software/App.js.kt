@@ -57,14 +57,14 @@ fun onSuccess(position: dynamic) {
     currentLocation.value = newLocation
     println("New location: $newLocation")
 }
-
+val vm by lazy { ZmanimViewModel(MainScope()) }
 fun onError(error: dynamic) {
     println("On error")
     val message = error.message.unsafeCast<String>()
     println(message)
     (gpsSupported as MutableState<Boolean>).value = false
     if(error.code == error.POSITION_UNAVAILABLE) MainScope().launch(Dispatchers.Default) {
-        isOnline.collectLatest {
+        vm.isOnline.collectLatest {
             if(it) {
                 (gpsSupported as MutableState<Boolean>).value = true
             }
