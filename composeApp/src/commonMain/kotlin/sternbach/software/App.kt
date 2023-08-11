@@ -491,29 +491,3 @@ expect fun stopListening()
 expect fun getLocationOnce()
 expect var gpsSupported: State<Boolean>
 
-class ImmutableBool(override val value: Boolean) : State<Boolean>
-
-private var _isOnline: Boolean = false
-val isOnline: Flow<Boolean> = flow {
-    emit(_isOnline)
-    while (currentCoroutineContext().isActive) {
-        getIsOnline {
-            if (_isOnline != it) {
-                _isOnline = it
-                emit(_isOnline)
-            }
-        }
-        delay(5_000)
-    }
-}
-
-private fun getIsOnline(onResult: suspend (isOnline: Boolean) -> Unit) {
-    MainScope().launch(Dispatchers.Default) {
-        val code = HttpClient().request {
-            url.host = "8.8.8.8"
-        }.status.value
-        println("Got code: $code")
-        _isOnline = code in 200 until 300
-        onResult(_isOnline)
-    }
-}

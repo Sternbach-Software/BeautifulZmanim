@@ -6,14 +6,19 @@ import com.kosherjava.zmanim.ZmanOpinion
 import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.GeoLocation
 import com.kosherjava.zmanim.util.Location
+import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.request
 import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -28,8 +33,8 @@ class ZmanimViewModel(
 //    private val engine: ComplexZmanimCalendar = ComplexZmanimCalendar()
 ) {
 
-    val isOnline: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val tz by lazy { TimeZone.currentSystemDefault() }
+    private var _isOnline: Boolean = false
     private var _calculatingZmanim: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _listeningForPosition: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _shaaZmanisValues: MutableStateFlow<List<Zman.ValueBased<ZmanOpinion<Any>, Any>>?> =
@@ -199,5 +204,29 @@ class ZmanimViewModel(
             B,
             > getPreferredOpinionForZmanType(type: ZmanType, zmanim: List<T>): T {
         return zmanim.first() //TODO implement with settings
+    }
+
+    val isOnline: Flow<Boolean> = flow {
+        emit(_isOnline)
+        while (currentCoroutineContext().isActive) {
+            getIsOnline {
+                if (_isOnline != it) {
+                    _isOnline = it
+                    emit(_isOnline)
+                }
+            }
+            delay(5_000)
+        }
+    }
+
+    private fun getIsOnline(onResult: suspend (isOnline: Boolean) -> Unit) {
+        scope.launch(Dispatchers.Default) {
+            val code = HttpClient().request {
+                url.host = "8.8.8.8"
+            }.status.value
+            println("Got code: $code")
+            _isOnline = code in 200 until 300
+            onResult(_isOnline)
+        }
     }
 }
