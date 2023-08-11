@@ -3,21 +3,10 @@ package sternbach.software
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import com.kosherjava.zmanim.util.Location
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.request.request
 import kotlinx.browser.window
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.isActive
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
@@ -65,7 +54,7 @@ fun onSuccess(position: dynamic) {
         position.coords.accuracy?.unsafeCast<Double?>(),
         runCatching { position.timestamp.unsafeCast<Long>() }.getOrNull() ?: Clock.System.now().toEpochMilliseconds(),
     )
-    location.value = newLocation
+    currentLocation.value = newLocation
     println("New location: $newLocation")
 }
 

@@ -28,6 +28,7 @@ class ZmanimViewModel(
 //    private val engine: ComplexZmanimCalendar = ComplexZmanimCalendar()
 ) {
 
+    val isOnline: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val tz by lazy { TimeZone.currentSystemDefault() }
     private var _calculatingZmanim: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _listeningForPosition: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -151,7 +152,7 @@ class ZmanimViewModel(
             println("Body: $body")
             body.response.firstOrNull()?.let {
                 println("First location: $it")
-                location.value = Location(
+                currentLocation.value = Location(
                     it.lat.toDouble(),
                     it.lon.toDouble(),
                     tz = tz

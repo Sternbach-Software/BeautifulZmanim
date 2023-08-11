@@ -23,7 +23,7 @@ class AndroidApp : Application() {
 class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { App() }
+        setContent { App(true) }
     }
 }
 
@@ -51,7 +51,7 @@ actual fun stopListening() {
     TODO()
 }
 
-actual var gpsSupported: androidx.compose.runtime.State<Boolean> = ImmutableBool(true)//TODO change to true and implement getting permissions
+actual var gpsSupported: androidx.compose.runtime.State<Boolean> = ImmutableBool(false)//TODO change to true and implement getting permissions
 actual fun getLocationOnce() {
     TODO()
 }

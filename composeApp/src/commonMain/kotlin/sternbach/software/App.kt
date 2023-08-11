@@ -1,10 +1,8 @@
 package sternbach.software
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Switch
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -61,19 +58,24 @@ import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun App() = AppTheme {
+internal fun App(smallScreen: Boolean = false) = AppTheme {
     var locationString by remember { mutableStateOf("123 Jane Street") }
     var longitude by remember { mutableStateOf("35.21633") }
     var latitude by remember { mutableStateOf("31.76904") }
     var elevation by remember { mutableStateOf("754") }
     val vm = ZmanimViewModel(MainScope())
+    val isOnline = vm.isOnline.collectAsState(false)
     val calculatingZmanim = vm.calculatingZmanim.collectAsState(false)
     val listeningForPosition = vm.listeningForPosition.collectAsState(false)
     val shaaZmanisValues = vm.shaaZmanisCardModel.collectAsState(null)
     val allZmanimToDisplay = vm.allZmanimCardModels.collectAsState(null)
     val now = vm.now.collectAsState(Clock.System.now())
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
 
         val fillMaxWidth = Modifier.fillMaxWidth()
         val fillMaxWidthPlusPadding = fillMaxWidth.padding(16.dp)
@@ -94,67 +96,76 @@ internal fun App() = AppTheme {
             )
             Text("Get live zmanim")
         }
-        else Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "Enter your location below"
-                )
-                Text(
-                    "Address, state, zip, country:"
-                )
-                OutlinedTextField(
-                    value = locationString,
-                    onValueChange = { locationString = it },
-                    label = { Text("Location") },
-                    singleLine = true,
-                )
-                Button(
-                    onClick = { vm.getZmanimByLocationString(locationString) }
-                ) {
-                    Text("Get zmanim by location")
-                }
-            }
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    "Alternatively, you can put in your coordinates (and optionally your elevation to get more accurate results, if you would like to see opinions which factor in elevation):",
-                    textAlign = TextAlign.Center
-                )
-
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = longitude,
-                        onValueChange = { longitude = it },
-                        label = { Text("Longitude") },
-                        singleLine = true
+        else {
+            fun <SCOPE> manualLocationLayout(): @Composable (SCOPE.() -> Unit) = {
+                if (isOnline.value) Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Enter your location below"
+                    )
+                    Text(
+                        "Address, state, zip, country:"
                     )
                     OutlinedTextField(
-                        value = latitude,
-                        onValueChange = { latitude = it },
-                        label = { Text("Latitude") },
-                        singleLine = true
+                        value = locationString,
+                        onValueChange = { locationString = it },
+                        label = { Text("Location") },
+                        singleLine = true,
                     )
-                    OutlinedTextField(
-                        value = elevation,
-                        onValueChange = { elevation = it },
-                        label = { Text("Elevation") },
-                        singleLine = true
-                    )
-                }
-                Button(
-                    onClick = {
-//                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
-                        latitude.toDoubleOrNull()?.let {
-                            longitude.toDoubleOrNull()?.let { it1 ->
-                                elevation.toDoubleOrNull()?.let { it2 ->
-                                    vm.getZmanimByLatLong(it, it1, it2)
-                                }
-                            }
-                        } ?: println("Error parsing lat and long")/* Handle login logic here */
+                    Button(
+                        onClick = { vm.getZmanimByLocationString(locationString) }
+                    ) {
+                        Text("Get zmanim by location")
                     }
-                ) {
-                    Text("Get zmanim by latitude and longitude")
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        "${if (isOnline.value) "Alternatively, you can p" else "P"}ut in your coordinates (and optionally your elevation to get more accurate results, if you would like to see opinions which factor in elevation):",
+                        textAlign = TextAlign.Center
+                    )
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = longitude,
+                            onValueChange = { longitude = it },
+                            label = { Text("Longitude") },
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = latitude,
+                            onValueChange = { latitude = it },
+                            label = { Text("Latitude") },
+                            singleLine = true
+                        )
+                        OutlinedTextField(
+                            value = elevation,
+                            onValueChange = { elevation = it },
+                            label = { Text("Elevation") },
+                            singleLine = true
+                        )
+                    }
+                    Button(
+                        onClick = {
+//                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
+                            latitude.toDoubleOrNull()?.let {
+                                longitude.toDoubleOrNull()?.let { it1 ->
+                                    elevation.toDoubleOrNull()?.let { it2 ->
+                                        vm.getZmanimByLatLong(it, it1, it2)
+                                    }
+                                }
+                            } ?: println("Error parsing lat and long")/* Handle login logic here */
+                        }
+                    ) {
+                        Text("Get zmanim by latitude and longitude")
+                    }
                 }
             }
+
+            val arrangment =
+                if (isOnline.value) /*only one widget will display*/ Arrangement.SpaceEvenly
+                else Arrangement.Center
+            if (smallScreen) {
+                Column(verticalArrangement = arrangment, content = manualLocationLayout())
+            } else Row(horizontalArrangement = arrangment, content = manualLocationLayout())
         }
         if (calculatingZmanim.value) CircularProgressIndicator()
         /* scrolls to active item, but recomposes too often
@@ -184,6 +195,7 @@ internal fun App() = AppTheme {
         }*/
         LazyVerticalGrid(GridCells.Fixed(6), fillMaxWidth/*, state*/) {
             shaaZmanisValues.value?.let {
+                println("Shaa zmanis received: $it")
                 item {
                     ZmanCard(
                         Modifier.fillMaxSize().padding(8.dp),
@@ -196,6 +208,7 @@ internal fun App() = AppTheme {
                 }
             }
             allZmanimToDisplay.value?.let {
+                println("Zmanim received: $it")
                 items(
                     it
                 ) { model ->
@@ -265,62 +278,63 @@ fun <T : Zman<A, B>, A : ZmanOpinion<B>, B> ZmanCard(
     content: @Composable (modifier: Modifier, zman: Instant?, now: Instant) -> Unit = { _, _, _ -> },
 ) = ElevatedCard(
     onClick = {
-        if(model.otherOpinions.isNotEmpty()) expandedCards[model.mainZman.type] = !expandedCards.getOrElse(model.mainZman.type) { false }
+        if (model.otherOpinions.isNotEmpty()) expandedCards[model.mainZman.type] =
+            !expandedCards.getOrElse(model.mainZman.type) { false }
     },
     modifier = modifier,
     elevation = CardDefaults.cardElevation(8.dp),
     shape = RoundedCornerShape(8.dp),
- ) {
-     Column(verticalArrangement = Arrangement.SpaceEvenly) {
-         Text(
-             model.mainZman.type.friendlyNameEnglish,
-             Modifier.fillMaxWidth(),
-             style = MaterialTheme.typography.titleLarge,
-             textAlign = TextAlign.Center
-         )
-         if (showOpinion) Text(
-             model.mainZman.opinion.format(),
-             Modifier.fillMaxWidth(),
-             style = MaterialTheme.typography.titleMedium,
-             textAlign = TextAlign.Center
-         )
-         if (showMomentOfOccurenceOrDuration) Text(
-             model.mainZman.formatted(currentTimeZone, ""),
-             Modifier.fillMaxWidth(),
-             style = MaterialTheme.typography.bodyMedium,
-             textAlign = TextAlign.Center
-         )
-         if (showTimeRemaining && model.mainZman is Zman.DateBased<*, *>) content(
-             Modifier, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
-         )
-         val startPadding = Modifier.padding(start = 2.dp)
-         if (
-             model.otherOpinions.isNotEmpty() &&
-             expandedCards.getOrElse(model.mainZman.type) { false }
-         ) for ((index, zman) in model.otherOpinions.withIndex()) {
-             Column(
-                 Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+) {
+    Column(verticalArrangement = Arrangement.SpaceEvenly) {
+        Text(
+            model.mainZman.type.friendlyNameEnglish,
+            Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center
+        )
+        if (showOpinion) Text(
+            model.mainZman.opinion.format(),
+            Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        if (showMomentOfOccurenceOrDuration) Text(
+            model.mainZman.formatted(currentTimeZone, ""),
+            Modifier.fillMaxWidth(),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center
+        )
+        if (showTimeRemaining && model.mainZman is Zman.DateBased<*, *>) content(
+            Modifier, (model.mainZman as Zman.DateBased<*, *>).momentOfOccurrence, currentTime
+        )
+        val startPadding = Modifier.padding(start = 2.dp)
+        if (
+            model.otherOpinions.isNotEmpty() &&
+            expandedCards.getOrElse(model.mainZman.type) { false }
+        ) for ((index, zman) in model.otherOpinions.withIndex()) {
+            Column(
+                Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
 //                     .background(if (index % 2 == 0) MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
-                     .fillMaxWidth()
-             ) {
-                 if (showOpinion) Text(
-                     zman.opinion.format(),
-                     Modifier.fillMaxWidth(),
-                     textAlign = TextAlign.Center
-                 )
-                 if (showMomentOfOccurenceOrDuration)
-                     if (zman is Zman.DateBased<*, *>) TimeRemainingText(
-                         zman.momentOfOccurrence, startPadding.fillMaxWidth(), currentTime
-                     )
-                     else Text(
-                         (zman as Zman.ValueBased<*, *>).formatted(currentTimeZone, ""),
-                         startPadding.fillMaxWidth(),
-                         textAlign = TextAlign.Center
-                     )
-             }
-         }
-     }
- }
+                    .fillMaxWidth()
+            ) {
+                if (showOpinion) Text(
+                    zman.opinion.format(),
+                    Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
+                )
+                if (showMomentOfOccurenceOrDuration)
+                    if (zman is Zman.DateBased<*, *>) TimeRemainingText(
+                        zman.momentOfOccurrence, startPadding.fillMaxWidth(), currentTime
+                    )
+                    else Text(
+                        (zman as Zman.ValueBased<*, *>).formatted(currentTimeZone, ""),
+                        startPadding.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+            }
+        }
+    }
+}
 
 /**
  * Takes a [Triple] of <hour,minute,second> and returns either e.g. "05:32:15", or "5 hr 32 min 15 sec".
@@ -469,21 +483,22 @@ private fun isAllowed(c: Char, allow: String?): Boolean =
         c
     ) != -1
 
-val location = MutableStateFlow<Location?>(null)
+val currentLocation = MutableStateFlow<Location?>(null)
 val errorInGettingLocation = MutableStateFlow<String?>(null)
 internal expect fun openUrl(url: String?)
 expect fun listenForPosition()
 expect fun stopListening()
 expect fun getLocationOnce()
 expect var gpsSupported: State<Boolean>
+
 class ImmutableBool(override val value: Boolean) : State<Boolean>
 
 private var _isOnline: Boolean = false
 val isOnline: Flow<Boolean> = flow {
     emit(_isOnline)
-    while(currentCoroutineContext().isActive) {
+    while (currentCoroutineContext().isActive) {
         getIsOnline {
-            if(_isOnline != it) {
+            if (_isOnline != it) {
                 _isOnline = it
                 emit(_isOnline)
             }
@@ -491,6 +506,7 @@ val isOnline: Flow<Boolean> = flow {
         delay(5_000)
     }
 }
+
 private fun getIsOnline(onResult: suspend (isOnline: Boolean) -> Unit) {
     MainScope().launch(Dispatchers.Default) {
         val code = HttpClient().request {
