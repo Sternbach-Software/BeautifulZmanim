@@ -18,6 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -79,13 +80,15 @@ class ZmanimViewModel(
     }
 
     val tz by lazy { TimeZone.currentSystemDefault() }
+    private val client by lazy { HttpClient() }
+
     private var _isOnline: Boolean = false
     private var _calculatingZmanim: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _listeningForPosition: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _shaaZmanisValues: MutableStateFlow<List<Zman.ValueBased<ZmanOpinion<Any>, Any>>?> =
-        MutableStateFlow(emptyList())
+        MutableStateFlow(null)
     private var _allZmanimToDisplay: MutableStateFlow<List<Zman.DateBased<ZmanOpinion<Any>, Any>>?> =
-        MutableStateFlow(emptyList())
+        MutableStateFlow(null)
     private var _now: MutableStateFlow<Instant> = MutableStateFlow(Clock.System.now())
 
     val calculatingZmanim: Flow<Boolean> get() = _calculatingZmanim
@@ -128,7 +131,7 @@ class ZmanimViewModel(
                     ?.sortedBy { it.mainZman }
                     ?.let {
                         emit(it as List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?)
-                    } //?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
+                    }// ?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
             }
     val now: Flow<Instant> get() = _now
 
@@ -187,7 +190,6 @@ class ZmanimViewModel(
 
     fun getZmanimByLocationString(locationString: String) {
         _calculatingZmanim.value = true
-        val client = io.ktor.client.HttpClient()
 //        UserAgent.install(UserAgent.prepare { agent = "BeautifulZmanim" }, client)
         scope.launch(Dispatchers.Default) {
             val urlString =
@@ -288,7 +290,7 @@ class ZmanimViewModel(
 
     private fun getIsOnline(onResult: suspend (isOnline: Boolean) -> Unit) {
         scope.launch(Dispatchers.Default) {
-            val code = HttpClient().get(OPEN_STREET_MAP_BASE_URL).status.value
+            val code = client.get(OPEN_STREET_MAP_BASE_URL).status.value
             println("Got code: $code")
             _isOnline = code in 200 until 300
             onResult(_isOnline)
