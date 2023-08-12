@@ -9,7 +9,6 @@ import com.kosherjava.zmanim.util.Location
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.client.request.request
 import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +17,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -30,40 +28,55 @@ import presentation.ZmanCardModel
 
 class ZmanimViewModel(
     val scope: CoroutineScope,
-    val alwaysObserveLiveLocation: Boolean = false
+    val alwaysObserveLiveLocation: Boolean = false,
 ) {
     /**
      * @param engine the [ComplexZmanimCalendar] used to immediately emit zmanim to the flows
      * [allZmanimCardModels] & [shaaZmanisCardModel].
      * */
-    constructor(scope: CoroutineScope, engine: ComplexZmanimCalendar, alwaysObserveLiveLocation: Boolean = false): this(scope, alwaysObserveLiveLocation) {
+    constructor(
+        scope: CoroutineScope,
+        engine: ComplexZmanimCalendar,
+        alwaysObserveLiveLocation: Boolean = false,
+    ) : this(scope, alwaysObserveLiveLocation) {
         _calculatingZmanim.value = true
         scope.launch(Dispatchers.Default) {
             calculateAndEmitZmanim(engine)
         }
     }
+
     /**
      * @param geoLocation the [GeoLocation] used to construct the [ComplexZmanimCalendar] which will
      * be used to immediately emit zmanim to the flows [allZmanimCardModels] & [shaaZmanisCardModel].
      * */
-    constructor(scope: CoroutineScope, geoLocation: GeoLocation, alwaysObserveLiveLocation: Boolean = false): this(scope, alwaysObserveLiveLocation) {
+    constructor(
+        scope: CoroutineScope,
+        geoLocation: GeoLocation,
+        alwaysObserveLiveLocation: Boolean = false,
+    ) : this(scope, alwaysObserveLiveLocation) {
         _calculatingZmanim.value = true
         scope.launch(Dispatchers.Default) {
             calculateAndEmitZmanim(ComplexZmanimCalendar(geoLocation))
         }
     }
+
     /**
      * @param location the [Location] used to construct the [ComplexZmanimCalendar] which will
      * be used to immediately emit zmanim to the flows [allZmanimCardModels] & [shaaZmanisCardModel].
      * */
-    constructor(scope: CoroutineScope, location: Location, alwaysObserveLiveLocation: Boolean = false): this(scope, alwaysObserveLiveLocation) {
+    constructor(
+        scope: CoroutineScope,
+        location: Location,
+        alwaysObserveLiveLocation: Boolean = false,
+    ) : this(scope, alwaysObserveLiveLocation) {
         _calculatingZmanim.value = true
         scope.launch(Dispatchers.Default) {
             calculateAndEmitZmanim(ComplexZmanimCalendar(location.toGeoLocation()))
         }
     }
+
     init {
-        if(alwaysObserveLiveLocation && gpsSupported.value) scope.launch(Dispatchers.Default) {
+        if (alwaysObserveLiveLocation && gpsSupported.value) scope.launch(Dispatchers.Default) {
             currentLocation.collect {
                 _calculatingZmanim.value = true
                 calculateZmanimBasedOnLocation(it)
@@ -100,8 +113,8 @@ class ZmanimViewModel(
                 if (it != null) {
                     val preferred =
                         getZmanForZmanTypePreferredOpinion(ZmanType.SHAA_ZMANIS, it)
-                    val otherOpinions = if(preferred != null) it.minus(preferred) else it
-                    if(preferred != null) emit(
+                    val otherOpinions = if (preferred != null) it.minus(preferred) else it
+                    if (preferred != null) emit(
                         ZmanCardModel(
                             preferred,
                             otherOpinions
@@ -109,31 +122,90 @@ class ZmanimViewModel(
                     )
                 } //else emit(null)
             }
+
+    fun Map<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>.mapNotNullToCardModel(
+        transform: (Map.Entry<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>) -> ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>?,
+    ): List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>> =
+        mapNotNull(transform) //this function exists for type safety and readability
+
     val allZmanimCardModels: Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?>
         get() = _allZmanimToDisplay
             .transform {
                 println("Transforming _allZmanimToDisplay = $it")
                 //println("Transforming ${_allZmanimToDisplay.value}")
                 it
-                    ?.filter { it.momentOfOccurrence != null }
-                    ?.groupBy { it.type }
-                    ?.mapNotNull {
-                        getZmanForZmanTypePreferredOpinion(
-                            it.key,
-                            it.value
-                        )?.let { preferredZman ->
-                            ZmanCardModel(
-                                preferredZman,
-                                it.value.minus(preferredZman).sorted()
-                            )
+                    ?.transformToZmanCardModels(preferredOpinionTransform)
+                    ?.let { emit(it) }
+                    // ?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
+            }
+    private val preferredOpinionTransform: (Map.Entry<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>) -> ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>? =
+        {
+            getZmanForZmanTypePreferredOpinion(
+                it.key,
+                it.value
+            )?.let { preferredZman ->
+                ZmanCardModel(
+                    preferredZman,
+                    it.value.minus(preferredZman).sorted()
+                )
+            }
+        }
+
+    private fun List<Zman.DateBased<ZmanOpinion<Any>, Any>>.transformToZmanCardModels(
+        transform: (Map.Entry<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>) -> ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>?,
+        pipelineOp: Iterable<Zman.DateBased<ZmanOpinion<Any>, Any>>.() -> Iterable<Zman.DateBased<ZmanOpinion<Any>, Any>> = { this },
+    ) =
+        this
+            .filter { it.momentOfOccurrence != null }
+            .pipelineOp()
+            .groupBy { it.type }
+            .mapNotNullToCardModel(transform)
+            .sortedBy { it.mainZman }
+
+    val now: Flow<Instant> get() = _now
+
+    fun getZmanimByOpinions(opinions: Iterable<ZmanOpinion<Any>>): Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?> {
+        val noOtherOpinions =
+            emptyList<Zman.DateBased<ZmanOpinion<Any>, Any>>() //when by opinion, every card should be its own opinion
+        return _allZmanimToDisplay
+            .transform {
+                it
+                    ?.filter { it.opinion in opinions }
+                    ?.map { ZmanCardModel(it, noOtherOpinions) }
+                    ?.let { emit(it) }
+            }
+    }
+
+    fun getZmanimByTypeWithAllOpinions(types: Iterable<ZmanType>): Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?> =
+        _allZmanimToDisplay
+            .transform {
+                it
+                    ?.transformToZmanCardModels(preferredOpinionTransform) {
+                        filter { it.type in types }
+                    }
+                    ?.let { emit(it) }
+            }
+    /**
+     * @param typeToOpinions a map of zman type and the opinions for that zman to be returned
+     * (e.g [ZmanType.ALOS] to [[ZmanOpinion.Authority.GRA], [ZmanOpinion.Authority.MGA]] will only
+     * return a [Flow] containing two [ZmanCardModel]s: one for the [ZmanOpinion.Authority.GRA]'s opinion on [ZmanType.ALOS]
+     * and one for the [ZmanOpinion.Authority.MGA]'s opinion on [ZmanType.ALOS].
+     * */
+    fun getZmanimByTypeAndOpinions(typeToOpinions: Map<ZmanType, Iterable<ZmanOpinion<Any>>>): Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?> {
+        return _allZmanimToDisplay
+            .transform {
+                it
+                    ?.transformToZmanCardModels(preferredOpinionTransform) {
+                        filter {
+                            typeToOpinions[it.type]?.let { opinions ->
+                                it.opinion in opinions
+                            }
+                                ?: false
                         }
                     }
-                    ?.sortedBy { it.mainZman }
-                    ?.let {
-                        emit(it as List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?)
-                    }// ?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
+                    ?.let { emit(it) }
             }
-    val now: Flow<Instant> get() = _now
+    }
 
     private suspend fun calculateZmanimBasedOnLocation(it: Location?) = it?.let {
         calculateZmanimBasedOnLocation(it.toGeoLocation())
@@ -246,7 +318,8 @@ class ZmanimViewModel(
 
 
     fun <T : ZmanOpinion<A>, A> getOtherOpinions(shaaZmanisValues: List<Zman<T, A>>): List<Zman<T, A>> {
-        val preferredOpinionForZmanType = shaaZmanisValues.firstOrNull()?.opinion //TODO implement with settings
+        val preferredOpinionForZmanType =
+            shaaZmanisValues.firstOrNull()?.opinion //TODO implement with settings
         return getOtherOpinons(shaaZmanisValues, preferredOpinionForZmanType)
     }
 
@@ -271,7 +344,8 @@ class ZmanimViewModel(
             A : ZmanOpinion<B>,
             B,
             > getZmanForZmanTypePreferredOpinion(type: ZmanType, zmanim: List<T>): T? {
-        val preferredOpinionForZmanType = zmanim.firstOrNull()?.opinion //TODO implement with settings
+        val preferredOpinionForZmanType =
+            zmanim.firstOrNull()?.opinion //TODO implement with settings
         return zmanim.firstOrNull { it.opinion == preferredOpinionForZmanType }
     }
 
@@ -296,6 +370,7 @@ class ZmanimViewModel(
             onResult(_isOnline)
         }
     }
+
     companion object {
         private const val OPEN_STREET_MAP_BASE_URL = "https://nominatim.openstreetmap.org"
 
