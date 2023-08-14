@@ -368,12 +368,16 @@ class ZmanimViewModel(
         flow.send(_isOnline)
         while (currentCoroutineContext().isActive) {
             println("Checking if online")
-            getIsOnline {
-                println("Got is online: $it, previous: $_isOnline")
-                if (_isOnline != it) {
-                    _isOnline = it
-                    flow.send(it)
+            kotlin.runCatching {
+                getIsOnline {
+                    println("Got is online: $it, previous: $_isOnline")
+                    if (_isOnline != it) {
+                        _isOnline = it
+                        flow.send(it)
+                    }
                 }
+            }.getOrElse {
+                it.printStackTrace()
             }
             delay(60_000)
         }
