@@ -61,7 +61,9 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
     val shaaZmanisValues = vm.shaaZmanisCardModel.collectAsState(null)
     val allZmanimToDisplay = vm.allZmanimCardModels.collectAsState(null)
     val now = vm.now.collectAsState(Clock.System.now())
+    var userWantsToSeeLocationInput by remember { mutableStateOf(true) }
 
+    val userHasNotCalculatedZmanim = allZmanimToDisplay.value.isNullOrEmpty()
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -77,6 +79,11 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
+        if (!userHasNotCalculatedZmanim) //only show if user has calculated zmanim; if user hasn't calculated zmanim yet, they for sure want to see location input, so don't ask them if they want to see it or not (don't bother them with a choice we know the answer to)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Show location input")
+                Switch(userWantsToSeeLocationInput, { userWantsToSeeLocationInput = it })
+            }
         if (gpsSupported.value) Row {
             Switch(
                 checked = listeningForPosition.value,
@@ -87,7 +94,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
             )
             Text("Get live zmanim")
         }
-        else {
+        else if (userWantsToSeeLocationInput || userHasNotCalculatedZmanim) {
             val content = @Composable {
                 if (isOnline.value) Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -103,7 +110,10 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                         singleLine = true,
                     )
                     Button(
-                        onClick = { vm.getZmanimByLocationString(locationString) }
+                        onClick = {
+                            vm.getZmanimByLocationString(locationString)
+                            userWantsToSeeLocationInput = false
+                        }
                     ) {
                         Text("Get zmanim by location")
                     }
@@ -134,16 +144,18 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                             singleLine = true
                         )
                     }
-                    if(smallScreen) Column { content() } 
-                    else Row(horizontalArrangement = Arrangement.spacedBy(8.dp), content = { content() })
+                    if (smallScreen) Column { content() }
+                    else Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        content = { content() })
                     Button(
                         onClick = {
+
 //                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
                             latitude.toDoubleOrNull()?.let {
                                 longitude.toDoubleOrNull()?.let { it1 ->
-                                    elevation.toDoubleOrNull()?.let { it2 ->
-                                        vm.getZmanimByLatLong(it, it1, it2)
-                                    }
+                                    vm.getZmanimByLatLong(it, it1, elevation.toDoubleOrNull() ?: 0.0)
+                                    userWantsToSeeLocationInput = false
                                 }
                             } ?: println("Error parsing lat and long")/* Handle login logic here */
                         }
@@ -185,7 +197,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                 state.animateScrollToItem(indexOfUpcomingZman)
             }
         }*/
-        LazyVerticalGrid(GridCells.Fixed(if(smallScreen) 2 else 6), fillMaxWidth/*, state*/) {
+        LazyVerticalGrid(GridCells.Fixed(if (smallScreen) 2 else 6), fillMaxWidth/*, state*/) {
             shaaZmanisValues.value?.let {
                 println("Shaa zmanis received: $it")
                 item {
