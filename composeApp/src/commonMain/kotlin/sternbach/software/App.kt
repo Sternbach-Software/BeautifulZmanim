@@ -224,11 +224,16 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                 }
             }
             val arrangment =
-                if (isOnline.value) /*only one widget will display*/ Arrangement.SpaceEvenly
+                if (isOnline.value && !smallScreen) /*only one widget will display*/ Arrangement.SpaceEvenly
                 else Arrangement.Center
             if (smallScreen) {
-                Column(verticalArrangement = arrangment, content = { content() })
-            } else Row(horizontalArrangement = arrangment, content = { content() })
+                Column(
+                    verticalArrangement = arrangment,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) { content() }
+            } else Row(
+                horizontalArrangement = arrangment
+            ) { content() }
         }
         if (calculatingZmanim.value) CircularProgressIndicator()
         /* scrolls to active item, but recomposes too often
