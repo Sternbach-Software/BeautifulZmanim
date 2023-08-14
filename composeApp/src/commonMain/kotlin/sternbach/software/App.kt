@@ -79,7 +79,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
             LazyColumn {
                 items(possibleLocations.sortedBy { it.display_name.length }) {
                     Card(
-                        modifier = Modifier.fillParentMaxWidth(),
+                        modifier = Modifier.fillParentMaxWidth().padding(bottom = 8.dp),
                         onClick = {
                             userWantsToSeeLocationInput = false
                             possibleLocations = emptyList()
