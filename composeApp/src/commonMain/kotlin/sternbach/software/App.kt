@@ -57,6 +57,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
     var longitude by remember { mutableStateOf("35.21633") }
     var latitude by remember { mutableStateOf("31.76904") }
     var elevation by remember { mutableStateOf("754") }
+    var errorMessage by remember { mutableStateOf("") }
     val vm = remember { ZmanimViewModel(MainScope()) }
     val isOnline = vm.isOnline.collectAsState(false)
     val calculatingZmanim = vm.calculatingZmanim.collectAsState(false)
@@ -68,7 +69,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
     var possibleLocations by remember { mutableStateOf(emptyList<OpenStreetMapAPI.Place>()) }
 
     val userHasNotCalculatedZmanim = allZmanimToDisplay.value.isNullOrEmpty()
-    if(possibleLocations.isNotEmpty()) {
+    if (possibleLocations.isNotEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -82,16 +83,21 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                         onClick = {
                             userWantsToSeeLocationInput = false
                             possibleLocations = emptyList()
-                            vm.getZmanimByLocationString(it.display_name){} //TODO if this somehow has multiple options, the user is screwed because they can't see the screen
+                            vm.getZmanimByLocationString(
+                                it.display_name,
+                                {}) {} //TODO if this somehow has multiple options, the user is screwed because they can't see the screen. TODO what if they lose connection between the beggining of onClick and when this function is called again?
                         }
                     ) {
-                        Text(it.display_name, Modifier.padding(8.dp).fillMaxWidth(), textAlign = TextAlign.Center)
+                        Text(
+                            it.display_name,
+                            Modifier.padding(8.dp).fillMaxWidth(),
+                            textAlign = TextAlign.Center
+                        )
                     }
                 }
             }
         }
-    }
-    else Column(
+    } else Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -104,6 +110,12 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
             text = "Beautiful Zmanim",
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        if (errorMessage.isNotBlank()) Text(
+            errorMessage,
+            color = Color.Red,
+            textAlign = TextAlign.Center
         )
 
         if (!userHasNotCalculatedZmanim) //only show if user has calculated zmanim; if user hasn't calculated zmanim yet, they for sure want to see location input, so don't ask them if they want to see it or not (don't bother them with a choice we know the answer to)
@@ -139,10 +151,17 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                     )
                     Button(
                         onClick = {
-                            vm.getZmanimByLocationString(locationString) {
+                            userWantsToSeeLocationInput = false
+                            vm.getZmanimByLocationString(
+                                locationString,
+                                {
+                                    errorMessage = "No location found. Please try again."
+                                    userWantsToSeeLocationInput = true
+                                    possibleLocations = emptyList()
+                                }
+                            ) {
                                 possibleLocations = it
                             }
-                            userWantsToSeeLocationInput = false
                         }
                     ) {
                         Text("Get zmanim by location")
@@ -182,12 +201,22 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                         onClick = {
 
 //                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
-                            latitude.toDoubleOrNull()?.let {
-                                longitude.toDoubleOrNull()?.let { it1 ->
-                                    vm.getZmanimByLatLong(it, it1, elevation.toDoubleOrNull() ?: 0.0)
-                                    userWantsToSeeLocationInput = false
-                                }
-                            } ?: println("Error parsing lat and long")/* Handle login logic here */
+                            if (
+                                latitude.toDoubleOrNull()?.let {
+                                    longitude.toDoubleOrNull()?.let { it1 ->
+                                        vm.getZmanimByLatLong(
+                                            it,
+                                            it1,
+                                            elevation.toDoubleOrNull() ?: 0.0
+                                        )
+                                        userWantsToSeeLocationInput = false
+                                    }
+                                } == null
+                            ) {
+
+                                println("Error parsing lat and long")
+                                errorMessage = "Latitude or longitude values invalid"
+                            }
                         }
                     ) {
                         Text("Get zmanim by latitude and longitude")

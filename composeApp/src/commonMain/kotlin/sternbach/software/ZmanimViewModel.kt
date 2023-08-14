@@ -262,7 +262,7 @@ class ZmanimViewModel(
         }
     }
 
-    fun getZmanimByLocationString(locationString: String, onMultipleLocations: (List<OpenStreetMapAPI.Place>) -> Unit) {
+    fun getZmanimByLocationString(locationString: String, onNoLocations: () -> Unit, onMultipleLocations: (List<OpenStreetMapAPI.Place>) -> Unit) {
         _calculatingZmanim.value = true
 //        UserAgent.install(UserAgent.prepare { agent = "BeautifulZmanim" }, client)
         scope.launch(Dispatchers.Default) {
@@ -284,25 +284,31 @@ class ZmanimViewModel(
 
                 val body = Json.Default.decodeFromString<List<OpenStreetMapAPI.Place>>(string)
                 println("Body: $body")
-                if(body.size > 1) onMultipleLocations(body)
-                else body.firstOrNull()?.let {
-                    println("First location: $it")
-                    calculateZmanimBasedOnLocation(
+                if(body.isEmpty()) {
+                    onNoLocations()
+                    _calculatingZmanim.value = false
+                    errorInGettingLocation.value = "No location found."
+                }
+                else if(body.size == 1) calculateZmanimBasedOnLocation(
+                    body.first().let {
+                        println("First location: $it")
                         Location(
                             it.lat.toDouble(),
                             it.lon.toDouble(),
                             tz = tz
                         )
-                    )
-                } ?: {
-                    println("Error in getting location from openstreetmap.org.")
-                    errorInGettingLocation.value =
-                        "Could not access GPS server ($OPEN_STREET_MAP_BASE_URL)"
-
-                    _calculatingZmanim.value = false
-                }
+                    }
+                )
+                else onMultipleLocations(body)
                 println("Api response: $body")
-            }.exceptionOrNull()?.printStackTrace()
+            }.getOrElse {
+                println("Error in getting location from openstreetmap.org.")
+                errorInGettingLocation.value =
+                    "Could not access GPS server ($OPEN_STREET_MAP_BASE_URL)"
+
+                _calculatingZmanim.value = false
+                it.printStackTrace()
+            }
         }
     }
 
