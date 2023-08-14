@@ -3,5 +3,5 @@ import sternbach.software.App
 import platform.UIKit.UIViewController
 
 fun MainViewController(): UIViewController {
-    return ComposeUIViewController { App() }
+    return ComposeUIViewController { App(true) }
 }
