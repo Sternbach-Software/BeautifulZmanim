@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Switch
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -62,9 +65,33 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
     val allZmanimToDisplay = vm.allZmanimCardModels.collectAsState(null)
     val now = vm.now.collectAsState(Clock.System.now())
     var userWantsToSeeLocationInput by remember { mutableStateOf(true) }
+    var possibleLocations by remember { mutableStateOf(emptyList<OpenStreetMapAPI.Place>()) }
 
     val userHasNotCalculatedZmanim = allZmanimToDisplay.value.isNullOrEmpty()
-    Column(
+    if(possibleLocations.isNotEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("There were multiple locations with that name, please choose one:")
+            LazyColumn {
+                items(possibleLocations.sortedBy { it.display_name.length }) {
+                    Card(
+                        modifier = Modifier.fillParentMaxWidth(),
+                        onClick = {
+                            userWantsToSeeLocationInput = false
+                            possibleLocations = emptyList()
+                            vm.getZmanimByLocationString(it.display_name){} //TODO if this somehow has multiple options, the user is screwed because they can't see the screen
+                        }
+                    ) {
+                        Text(it.display_name, Modifier.padding(8.dp).fillMaxWidth(), textAlign = TextAlign.Center)
+                    }
+                }
+            }
+        }
+    }
+    else Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -96,6 +123,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
         }
         else if (userWantsToSeeLocationInput || userHasNotCalculatedZmanim) {
             val content = @Composable {
+                println("Is online: ${isOnline.value}")
                 if (isOnline.value) Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Enter your location below"
@@ -111,7 +139,9 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                     )
                     Button(
                         onClick = {
-                            vm.getZmanimByLocationString(locationString)
+                            vm.getZmanimByLocationString(locationString) {
+                                possibleLocations = it
+                            }
                             userWantsToSeeLocationInput = false
                         }
                     ) {

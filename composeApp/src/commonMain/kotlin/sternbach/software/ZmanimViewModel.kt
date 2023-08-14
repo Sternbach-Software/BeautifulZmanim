@@ -7,8 +7,8 @@ import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.GeoLocation
 import com.kosherjava.zmanim.util.Location
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -24,6 +24,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.serialization.json.Json
 import presentation.ZmanCardModel
 
 class ZmanimViewModel(
@@ -136,7 +137,7 @@ class ZmanimViewModel(
                 it
                     ?.transformToZmanCardModels(preferredOpinionTransform)
                     ?.let { emit(it) }
-                    // ?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
+                // ?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
             }
     private val preferredOpinionTransform: (Map.Entry<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>) -> ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>? =
         {
@@ -185,6 +186,7 @@ class ZmanimViewModel(
                     }
                     ?.let { emit(it) }
             }
+
     /**
      * @param typeToOpinions a map of zman type and the opinions for that zman to be returned
      * (e.g [ZmanType.ALOS] to [[ZmanOpinion.Authority.GRA], [ZmanOpinion.Authority.MGA]] will only
@@ -260,7 +262,7 @@ class ZmanimViewModel(
         }
     }
 
-    fun getZmanimByLocationString(locationString: String) {
+    fun getZmanimByLocationString(locationString: String, onMultipleLocations: (List<OpenStreetMapAPI.Place>) -> Unit) {
         _calculatingZmanim.value = true
 //        UserAgent.install(UserAgent.prepare { agent = "BeautifulZmanim" }, client)
         scope.launch(Dispatchers.Default) {
@@ -277,19 +279,21 @@ class ZmanimViewModel(
                 println("URL encoded: $url")
                 println("Created url: $url")
                 val response = client.get(url)
-                println("REsponse: $response")
-                val body = response.body<OpenStreetMapAPI>()
+                val string = response.bodyAsText()
+                println("Response: $response, string: $string")
+
+                val body = Json.Default.decodeFromString<List<OpenStreetMapAPI.Place>>(string)
                 println("Body: $body")
-                body.response.firstOrNull()?.let {
+                if(body.size > 1) onMultipleLocations(body)
+                else body.firstOrNull()?.let {
                     println("First location: $it")
-                    currentLocation.value = Location(
-                        it.lat.toDouble(),
-                        it.lon.toDouble(),
-                        tz = tz
+                    calculateZmanimBasedOnLocation(
+                        Location(
+                            it.lat.toDouble(),
+                            it.lon.toDouble(),
+                            tz = tz
+                        )
                     )
-                    withContext(Dispatchers.Main.immediate) {
-                        _calculatingZmanim.value = false
-                    }
                 } ?: {
                     println("Error in getting location from openstreetmap.org.")
                     errorInGettingLocation.value =
@@ -352,13 +356,17 @@ class ZmanimViewModel(
         return zmanim.firstOrNull { it.opinion == preferredOpinionForZmanType }
     }
 
-    val isOnline: Flow<Boolean> = flow {
-        emit(_isOnline)
+    val isOnline: Flow<Boolean> = channelFlow {
+        val flow = this
+        println("Flow turned on, emitting $_isOnline")
+        flow.send(_isOnline)
         while (currentCoroutineContext().isActive) {
+            println("Checking if online")
             getIsOnline {
+                println("Got is online: $it, previous: $_isOnline")
                 if (_isOnline != it) {
                     _isOnline = it
-                    emit(_isOnline)
+                    flow.send(it)
                 }
             }
             delay(60_000)
@@ -370,8 +378,7 @@ class ZmanimViewModel(
             kotlin.runCatching {
                 val code = client.get(OPEN_STREET_MAP_BASE_URL).status.value
                 println("Got code: $code")
-                _isOnline = code in 200 until 300
-                onResult(_isOnline)
+                onResult(code in 200 until 300)
             }
                 .exceptionOrNull()
                 ?.printStackTrace()
