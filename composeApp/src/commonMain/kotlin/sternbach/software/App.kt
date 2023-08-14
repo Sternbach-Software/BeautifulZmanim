@@ -88,7 +88,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
             Text("Get live zmanim")
         }
         else {
-            fun <SCOPE> manualLocationLayout(): @Composable (SCOPE.() -> Unit) = {
+            val content = @Composable {
                 if (isOnline.value) Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Enter your location below"
@@ -108,13 +108,13 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                         Text("Get zmanim by location")
                     }
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
                     Text(
                         "${if (isOnline.value) "Alternatively, you can p" else "P"}ut in your coordinates (and optionally your elevation to get more accurate results, if you would like to see opinions which factor in elevation):",
-                        textAlign = TextAlign.Center
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
 
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    val content = @Composable {
                         OutlinedTextField(
                             value = longitude,
                             onValueChange = { longitude = it },
@@ -134,6 +134,8 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                             singleLine = true
                         )
                     }
+                    if(smallScreen) Column { content() } 
+                    else Row(horizontalArrangement = Arrangement.spacedBy(8.dp), content = { content() })
                     Button(
                         onClick = {
 //                openUrl("https://www.google.com/maps/search/?api=1&query=$latitude,$longitudde")
@@ -150,13 +152,12 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                     }
                 }
             }
-
             val arrangment =
                 if (isOnline.value) /*only one widget will display*/ Arrangement.SpaceEvenly
                 else Arrangement.Center
             if (smallScreen) {
-                Column(verticalArrangement = arrangment, content = manualLocationLayout())
-            } else Row(horizontalArrangement = arrangment, content = manualLocationLayout())
+                Column(verticalArrangement = arrangment, content = { content() })
+            } else Row(horizontalArrangement = arrangment, content = { content() })
         }
         if (calculatingZmanim.value) CircularProgressIndicator()
         /* scrolls to active item, but recomposes too often
@@ -184,7 +185,7 @@ internal fun App(smallScreen: Boolean = false) = AppTheme {
                 state.animateScrollToItem(indexOfUpcomingZman)
             }
         }*/
-        LazyVerticalGrid(GridCells.Fixed(6), fillMaxWidth/*, state*/) {
+        LazyVerticalGrid(GridCells.Fixed(if(smallScreen) 2 else 6), fillMaxWidth/*, state*/) {
             shaaZmanisValues.value?.let {
                 println("Shaa zmanis received: $it")
                 item {
