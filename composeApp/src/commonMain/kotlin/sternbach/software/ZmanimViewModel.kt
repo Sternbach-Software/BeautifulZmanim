@@ -264,38 +264,41 @@ class ZmanimViewModel(
         _calculatingZmanim.value = true
 //        UserAgent.install(UserAgent.prepare { agent = "BeautifulZmanim" }, client)
         scope.launch(Dispatchers.Default) {
-            val urlString =
-                "$OPEN_STREET_MAP_BASE_URL/search.php?q=${
-                    encode(
-                        locationString,
-                        null
+            kotlin.runCatching {
+
+                val urlString =
+                    "$OPEN_STREET_MAP_BASE_URL/search.php?q=${
+                        encode(
+                            locationString,
+                            null
+                        )
+                    }&format=jsonv2"
+                val url = Url(urlString)
+                println("URL encoded: $url")
+                println("Created url: $url")
+                val response = client.get(url)
+                println("REsponse: $response")
+                val body = response.body<OpenStreetMapAPI>()
+                println("Body: $body")
+                body.response.firstOrNull()?.let {
+                    println("First location: $it")
+                    currentLocation.value = Location(
+                        it.lat.toDouble(),
+                        it.lon.toDouble(),
+                        tz = tz
                     )
-                }&format=jsonv2"
-            val url = Url(urlString)
-            println("URL encoded: $url")
-            println("Created url: $url")
-            val response = client.get(url)
-            println("REsponse: $response")
-            val body = response.body<OpenStreetMapAPI>()
-            println("Body: $body")
-            body.response.firstOrNull()?.let {
-                println("First location: $it")
-                currentLocation.value = Location(
-                    it.lat.toDouble(),
-                    it.lon.toDouble(),
-                    tz = tz
-                )
-                withContext(Dispatchers.Main.immediate) {
+                    withContext(Dispatchers.Main.immediate) {
+                        _calculatingZmanim.value = false
+                    }
+                } ?: {
+                    println("Error in getting location from openstreetmap.org.")
+                    errorInGettingLocation.value =
+                        "Could not access GPS server ($OPEN_STREET_MAP_BASE_URL)"
+
                     _calculatingZmanim.value = false
                 }
-            } ?: {
-                println("Error in getting location from openstreetmap.org.")
-                errorInGettingLocation.value =
-                    "Could not access GPS server ($OPEN_STREET_MAP_BASE_URL)"
-
-                _calculatingZmanim.value = false
-            }
-            println("Api response: $body")
+                println("Api response: $body")
+            }.exceptionOrNull()?.printStackTrace()
         }
     }
 
@@ -364,10 +367,14 @@ class ZmanimViewModel(
 
     private fun getIsOnline(onResult: suspend (isOnline: Boolean) -> Unit) {
         scope.launch(Dispatchers.Default) {
-            val code = client.get(OPEN_STREET_MAP_BASE_URL).status.value
-            println("Got code: $code")
-            _isOnline = code in 200 until 300
-            onResult(_isOnline)
+            kotlin.runCatching {
+                val code = client.get(OPEN_STREET_MAP_BASE_URL).status.value
+                println("Got code: $code")
+                _isOnline = code in 200 until 300
+                onResult(_isOnline)
+            }
+                .exceptionOrNull()
+                ?.printStackTrace()
         }
     }
 
