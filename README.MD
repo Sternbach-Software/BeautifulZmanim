@@ -1,5 +1,5 @@
 # BeautifulZmanim
-A multi-platform zmanim app that uses Google Material Design, written in Kotlin Multiplatform. Compiles to Android, iOS, web, and desktop (through the JVM).
+A multi-platform zmanim app that uses Google Material Design, written in Kotlin Multiplatform. Compiles to Android, iOS, web, and desktop (through the JVM). Based on (Sternbach-Software)[https://github.com/Sternbach-Software]'s port of (KosherJava)[https://github.com/KosherJava/zmanim]: (KosherKotlin)[https://github.com/Sternbach-Software/KosherKotlin]
 
 ## Future 
 ### Future supported platforms 
