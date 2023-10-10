@@ -28,5 +28,5 @@ enum class ZmanType(
     EARLIEST_MINCHA("Earliest Mincha", "מנחה הכי מוקדם"),
     EARLIEST_KIDDUSH_LEVANA("Earliest time to sanctify the moon", "תחילת זמן קידוש לבנה"),
     SOF_ZMAN_KIDDUSH_LEVANA("Latest time to sanctify the moon", "סוף זמן קידוש לבנה"),
-    CANDLE_LIGHTING("Candle lighting", "הדלקת נרות")
+    CANDLE_LIGHTING("Candle lighting", "הדלקת נרות"),
 }

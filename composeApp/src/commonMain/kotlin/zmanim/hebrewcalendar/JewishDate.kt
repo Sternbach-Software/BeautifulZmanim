@@ -630,7 +630,7 @@ open class JewishDate : Comparable<JewishDate> {
         return this
     }
 
-    val Int.lastDayOfGregorianMonth get() = getLastDayOfGregorianMonth(this, gregorianLocalDate.year) //TODO is this an easily-abusable/confusing API because it is scoped to the current instance's year?
+    val Int.lastDayOfGregorianMonth get() = getLastDayOfGregorianMonth(this, gregorianLocalDate.year)
 
     /**
      * A method that creates a [deep copy](http://en.wikipedia.org/wiki/Object_copy#Deep_copy) of the object.
