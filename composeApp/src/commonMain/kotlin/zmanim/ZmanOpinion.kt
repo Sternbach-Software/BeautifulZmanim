@@ -22,10 +22,10 @@ sealed class ZmanOpinion<T>(val value: T) {
             append("Day is ")
             append(minutes)
             append(
-                if(inEnglish) "Halachic Minutes"
-                else          " זמניות "
+                if(inEnglish) " Halachic Minutes"
+                else          " minutes זמניות"
             )
-            append("minutes before sunrise / after sunset")
+            append(" before sunrise / after sunset")
         }
     }
     data class Degrees(val degrees: Float): ZmanOpinion<Float>(degrees) {

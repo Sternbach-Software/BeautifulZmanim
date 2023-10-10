@@ -76,13 +76,13 @@ open class JewishDate : Comparable<JewishDate> {
     /**
      * Creates a Jewish date based on a Jewish year, month and day of month.
      *
-     * @param hebrewLocalDate.year
+     * @param jewishYear
      * the Jewish year
-     * @param hebrewLocalDate.month
+     * @param jewishMonth
      * the Jewish month. The method expects a 1 for Nissan ... 12 for Adar and 13 for Adar II. Use the
      * constants [NISSAN] ... [ADAR] (or [ADAR_II] for a leap year Adar II) to avoid any
      * confusion.
-     * @param hebrewDayOfMonth
+     * @param jewishDayOfMonth
      * the Jewish day of month. If 30 is passed in for a month with only 29 days (for example [IYAR],
      * or [KISLEV] in a year that [isKislevShort]), the 29th (last valid date of the month)
      * will be set
@@ -630,7 +630,7 @@ open class JewishDate : Comparable<JewishDate> {
         return this
     }
 
-    val Int.lastDayOfGregorianMonth get() = getLastDayOfGregorianMonth(this, gregorianLocalDate.year)
+    val Int.lastDayOfGregorianMonth get() = getLastDayOfGregorianMonth(this, gregorianLocalDate.year) //TODO is this an easily-abusable/confusing API because it is scoped to the current instance's year?
 
     /**
      * A method that creates a [deep copy](http://en.wikipedia.org/wiki/Object_copy#Deep_copy) of the object.
