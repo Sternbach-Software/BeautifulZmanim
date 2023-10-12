@@ -2,7 +2,7 @@ package sternbach.software
 
 import com.kosherjava.zmanim.ComplexZmanimCalendar
 import com.kosherjava.zmanim.Zman
-import com.kosherjava.zmanim.ZmanOpinion
+import com.kosherjava.zmanim.ZmanCalculationMethod
 import com.kosherjava.zmanim.ZmanType
 import com.kosherjava.zmanim.util.GeoLocation
 import com.kosherjava.zmanim.util.Location
@@ -41,6 +41,7 @@ class ZmanimViewModel(
         alwaysObserveLiveLocation: Boolean = false,
     ) : this(scope, alwaysObserveLiveLocation) {
         _calculatingZmanim.value = true
+        _location.value = engine.geoLocation.toLocation()
         scope.launch(Dispatchers.Default) {
             calculateAndEmitZmanim(engine)
         }
@@ -56,6 +57,7 @@ class ZmanimViewModel(
         alwaysObserveLiveLocation: Boolean = false,
     ) : this(scope, alwaysObserveLiveLocation) {
         _calculatingZmanim.value = true
+        _location.value = geoLocation.toLocation()
         scope.launch(Dispatchers.Default) {
             calculateAndEmitZmanim(ComplexZmanimCalendar(geoLocation))
         }
@@ -71,6 +73,7 @@ class ZmanimViewModel(
         alwaysObserveLiveLocation: Boolean = false,
     ) : this(scope, alwaysObserveLiveLocation) {
         _calculatingZmanim.value = true
+        _location.value = location
         scope.launch(Dispatchers.Default) {
             calculateAndEmitZmanim(ComplexZmanimCalendar(location.toGeoLocation()))
         }
@@ -85,11 +88,11 @@ class ZmanimViewModel(
         }
         //tick every second and update [now]
         scope.launch(Dispatchers.Default) {
-            while (isActive) {
+            /*while (isActive) {
                 val instant = Clock.System.now()
                 if (instant != null && _now != null) runCatching { _now.value = instant }
                 delay(1000)
-            }
+            }*/
         }
     }
 
@@ -99,15 +102,17 @@ class ZmanimViewModel(
     private var _isOnline: Boolean = false
     private var _calculatingZmanim: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _listeningForPosition: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private var _shaaZmanisValues: MutableStateFlow<List<Zman.ValueBased<ZmanOpinion<Any>, Any>>?> =
+    private var _location: MutableStateFlow<Location?> = MutableStateFlow(null)
+    private var _shaaZmanisValues: MutableStateFlow<List<Zman.ValueBased>?> =
         MutableStateFlow(null)
-    private var _allZmanimToDisplay: MutableStateFlow<List<Zman.DateBased<ZmanOpinion<Any>, Any>>?> =
+    private var _allZmanimToDisplay: MutableStateFlow<List<Zman.DateBased>?> =
         MutableStateFlow(null)
     private var _now: MutableStateFlow<Instant> = MutableStateFlow(Clock.System.now())
-
     val calculatingZmanim: Flow<Boolean> get() = _calculatingZmanim
+
+    val location: Flow<Location?> get() = _location
     val listeningForPosition: Flow<Boolean> get() = _listeningForPosition
-    val shaaZmanisCardModel: Flow<ZmanCardModel<Zman.ValueBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>?>
+    val shaaZmanisCardModel: Flow<ZmanCardModel<Zman.ValueBased>>
         get() = _shaaZmanisValues
             .transform {
                 println("Transforming _shaaZmanisVaues: $it")
@@ -119,17 +124,17 @@ class ZmanimViewModel(
                         ZmanCardModel(
                             preferred,
                             otherOpinions
-                        ) as ZmanCardModel<Zman.ValueBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>?
+                        )
                     )
                 } //else emit(null)
             }
 
-    fun Map<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>.mapNotNullToCardModel(
-        transform: (Map.Entry<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>) -> ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>?,
-    ): List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>> =
+    fun Map<ZmanType, List<Zman.DateBased>>.mapNotNullToCardModel(
+        transform: (Map.Entry<ZmanType, List<Zman.DateBased>>) -> ZmanCardModel<Zman.DateBased>?,
+    ): List<ZmanCardModel<Zman.DateBased>> =
         mapNotNull(transform) //this function exists for type safety and readability
 
-    val allZmanimCardModels: Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?>
+    val allZmanimCardModels: Flow<List<ZmanCardModel<Zman.DateBased>?>>
         get() = _allZmanimToDisplay
             .transform {
                 println("Transforming _allZmanimToDisplay = $it")
@@ -139,7 +144,7 @@ class ZmanimViewModel(
                     ?.let { emit(it) }
                 // ?: emit(null).also { println("Emiting null because _allZmanimToDisplay was null") }
             }
-    private val preferredOpinionTransform: (Map.Entry<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>) -> ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>? =
+    private val preferredOpinionTransform: (Map.Entry<ZmanType, List<Zman.DateBased>>) -> ZmanCardModel<Zman.DateBased>? =
         {
             getZmanForZmanTypePreferredOpinion(
                 it.key,
@@ -152,9 +157,9 @@ class ZmanimViewModel(
             }
         }
 
-    private fun List<Zman.DateBased<ZmanOpinion<Any>, Any>>.transformToZmanCardModels(
-        transform: (Map.Entry<ZmanType, List<Zman.DateBased<ZmanOpinion<Any>, Any>>>) -> ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>?,
-        pipelineOp: Iterable<Zman.DateBased<ZmanOpinion<Any>, Any>>.() -> Iterable<Zman.DateBased<ZmanOpinion<Any>, Any>> = { this },
+    private fun List<Zman.DateBased>.transformToZmanCardModels(
+        transform: (Map.Entry<ZmanType, List<Zman.DateBased>>) -> ZmanCardModel<Zman.DateBased>?,
+        pipelineOp: Iterable<Zman.DateBased>.() -> Iterable<Zman.DateBased> = { this },
     ) =
         this
             .filter { it.momentOfOccurrence != null }
@@ -165,19 +170,19 @@ class ZmanimViewModel(
 
     val now: Flow<Instant> get() = _now
 
-    fun getZmanimByOpinions(opinions: Iterable<ZmanOpinion<Any>>): Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?> {
+    fun getZmanimByOpinions(opinions: Iterable<ZmanCalculationMethod<*>>): Flow<List<ZmanCardModel<Zman.DateBased>?>> {
         val noOtherOpinions =
-            emptyList<Zman.DateBased<ZmanOpinion<Any>, Any>>() //when by opinion, every card should be its own opinion
+            emptyList<Zman.DateBased>() //when by opinion, every card should be its own opinion
         return _allZmanimToDisplay
             .transform {
                 it
-                    ?.filter { it.opinion in opinions }
+                    ?.filter { it.rules.zmanToCalcMethodUsed?.let { opinions.union(it.values).isNotEmpty() } != null }
                     ?.map { ZmanCardModel(it, noOtherOpinions) }
                     ?.let { emit(it) }
             }
     }
 
-    fun getZmanimByTypeWithAllOpinions(types: Iterable<ZmanType>): Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?> =
+    fun getZmanimByTypeWithAllOpinions(types: Iterable<ZmanType>): Flow<List<ZmanCardModel<Zman.DateBased>?>> =
         _allZmanimToDisplay
             .transform {
                 it
@@ -193,14 +198,14 @@ class ZmanimViewModel(
      * return a [Flow] containing two [ZmanCardModel]s: one for the [ZmanOpinion.Authority.GRA]'s opinion on [ZmanType.ALOS]
      * and one for the [ZmanOpinion.Authority.MGA]'s opinion on [ZmanType.ALOS].
      * */
-    fun getZmanimByTypeAndOpinions(typeToOpinions: Map<ZmanType, Iterable<ZmanOpinion<Any>>>): Flow<List<ZmanCardModel<Zman.DateBased<ZmanOpinion<Any>, Any>, ZmanOpinion<Any>, Any>>?> {
+    fun getZmanimByTypeAndOpinions(typeToOpinions: Map<ZmanType, Iterable<ZmanCalculationMethod<*>>>): Flow<List<ZmanCardModel<Zman.DateBased>?>> {
         return _allZmanimToDisplay
             .transform {
                 it
                     ?.transformToZmanCardModels(preferredOpinionTransform) {
                         filter {
                             typeToOpinions[it.type]?.let { opinions ->
-                                it.opinion in opinions
+                                it.rules.zmanToCalcMethodUsed?.let { opinions.union(it.values).isNotEmpty() } != null
                             }
                                 ?: false
                         }
@@ -213,6 +218,13 @@ class ZmanimViewModel(
         calculateZmanimBasedOnLocation(it.toGeoLocation())
     }
 
+    private fun GeoLocation.toLocation() = Location(
+        latitude,
+        longitude,
+        elevation,
+        tz = timeZone,
+        locationName = locationName
+    )
     private fun Location.toGeoLocation() = GeoLocation(
         locationName ?: "Current Location",
         latitude,
@@ -226,9 +238,8 @@ class ZmanimViewModel(
         if (it != null) {
             println("geo location is not null")
             _calculatingZmanim.value = true
-            calculateAndEmitZmanim(
-                ComplexZmanimCalendar(it)
-            )
+            _location.value = it.toLocation()
+            calculateAndEmitZmanim(ComplexZmanimCalendar(it))
         } else withContext(Dispatchers.Main.immediate) {
             println("geo location was null!")
             _calculatingZmanim.value = false
@@ -243,10 +254,10 @@ class ZmanimViewModel(
         //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
         println("Got zmanim: values=$values, listOfZmanim=$listOfZmanim")
         _shaaZmanisValues.emit(
-            values as List<Zman.ValueBased<ZmanOpinion<Any>, Any>>
+            values
         )
         _allZmanimToDisplay.emit(
-            listOfZmanim as List<Zman.DateBased<ZmanOpinion<Any>, Any>>
+            listOfZmanim
         )
         _calculatingZmanim.emit(false)
         println("Emitted all values")
@@ -262,7 +273,12 @@ class ZmanimViewModel(
         }
     }
 
-    fun getZmanimByLocationString(locationString: String, onNoLocations: () -> Unit, onMultipleLocations: (List<OpenStreetMapAPI.Place>) -> Unit) {
+    fun getZmanimByLocationString(
+        locationString: String,
+        onNoLocations: () -> Unit = {},
+        onLocationFound: (OpenStreetMapAPI.Place) -> Unit = {},
+        onMultipleLocations: (List<OpenStreetMapAPI.Place>) -> Unit = {}
+    ) {
         _calculatingZmanim.value = true
 //        UserAgent.install(UserAgent.prepare { agent = "BeautifulZmanim" }, client)
         scope.launch(Dispatchers.Default) {
@@ -291,6 +307,7 @@ class ZmanimViewModel(
                 }
                 else if(body.size == 1) calculateZmanimBasedOnLocation(
                     body.first().let {
+                        onLocationFound(it)
                         println("First location: $it")
                         Location(
                             it.lat.toDouble(),
@@ -326,21 +343,21 @@ class ZmanimViewModel(
         getLocationOnce()
     }
 
-    private fun List<Zman.DateBased<ZmanOpinion<Any>, Any>>.asZmanimCardModels() =
+    private fun List<Zman.DateBased>.asZmanimCardModels() =
         this
 
 
-    fun <T : ZmanOpinion<A>, A> getOtherOpinions(shaaZmanisValues: List<Zman<T, A>>): List<Zman<T, A>> {
+    fun getOtherOpinions(shaaZmanisValues: List<Zman>): List<Zman> {
         val preferredOpinionForZmanType =
-            shaaZmanisValues.firstOrNull()?.opinion //TODO implement with settings
+            shaaZmanisValues.firstOrNull()?.rules?.mainCalculationMethodUsed //TODO implement with settings
         return getOtherOpinons(shaaZmanisValues, preferredOpinionForZmanType)
     }
 
-    private fun <A, T : ZmanOpinion<A>> getOtherOpinons(
-        shaaZmanisValues: List<Zman<T, A>>,
-        preferredOpinionForZmanType: T?,
-    ): List<Zman<T, A>> {
-        val index = shaaZmanisValues.indexOfFirst { it.opinion == preferredOpinionForZmanType }
+    private fun getOtherOpinons(
+        shaaZmanisValues: List<Zman>,
+        preferredOpinionForZmanType: ZmanCalculationMethod<*>?,
+    ): List<Zman> {
+        val index = shaaZmanisValues.indexOfFirst { it.rules.zmanToCalcMethodUsed?.containsValue(preferredOpinionForZmanType) == true }
         return index
             .takeIf { it >= 0 }
             ?.let {
@@ -352,14 +369,10 @@ class ZmanimViewModel(
     /**
      * @return null if preferred opinion is not found in [zmanim] (e.g. does not occur on given date ([now]) at [currentLocation])
      * */
-    fun <
-            T : Zman<A, B>,
-            A : ZmanOpinion<B>,
-            B,
-            > getZmanForZmanTypePreferredOpinion(type: ZmanType, zmanim: List<T>): T? {
+    fun <T : Zman> getZmanForZmanTypePreferredOpinion(type: ZmanType, zmanim: List<T>): T? {
         val preferredOpinionForZmanType =
-            zmanim.firstOrNull()?.opinion //TODO implement with settings
-        return zmanim.firstOrNull { it.opinion == preferredOpinionForZmanType }
+            zmanim.firstOrNull()?.rules //TODO implement with settings
+        return zmanim.firstOrNull { it.rules == preferredOpinionForZmanType }
     }
 
     val isOnline: Flow<Boolean> = channelFlow {
