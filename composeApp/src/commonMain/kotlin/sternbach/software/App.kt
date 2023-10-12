@@ -68,6 +68,7 @@ internal fun App(
 ) = AppTheme {
     val vm = remember { ZmanimViewModel(MainScope()) }
     val now = vm.now.collectAsState(Clock.System.now())
+    val zmanFormatter = remember { ZmanDescriptionFormatter() }
     Scaffold(topBar = {
         TopAppBar(
             { Text("Beautiful Zmanim") },
@@ -111,6 +112,7 @@ internal fun App(
                     }
 
                     is Screen.ZmanimScreen -> {
+                        if(it.zmanDescription != null) Text(it.zmanDescription, Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                         val zmanim =
                             it.zmanim.also { println("Zmanim were passed as nav args") }
                                 ?: vm.allZmanimCardModels.collectAsState(emptyList()).value.also {
@@ -134,36 +136,15 @@ internal fun App(
                                 .filter { it?.mainZman is Zman.DateBased }
                                 .let {
                                     it.ifEmpty { null }
-                                }as List<ZmanCardModel<Zman.DateBased>>?,
+                                } as List<ZmanCardModel<Zman.DateBased>>?,
+                            zmanFormatter,
                             onValueBasedSelected = {
                                 println("On value based selected: $it")
-                                if(it.otherOpinions.isNotEmpty()) nav.navigateTo(
-                                    Screen.ZmanimScreen(
-                                        it
-                                            .otherOpinions
-                                            .map {
-                                                ZmanCardModel(
-                                                    it,
-                                                    emptyList()
-                                                )
-                                            } as List<ZmanCardModel<Zman>>
-                                    )
-                                )
+                                navigateToOtherOpinions(it, nav, zmanFormatter)
                             },
                             onDateBasedSelected = {
                                 println("On date based selected: $it")
-                                if(it.otherOpinions.isNotEmpty()) nav.navigateTo(
-                                    Screen.ZmanimScreen(
-                                        it
-                                            .otherOpinions
-                                            .map {
-                                                ZmanCardModel(
-                                                    it,
-                                                    emptyList()
-                                                )
-                                            } as List<ZmanCardModel<Zman>>
-                                    )
-                                )
+                                navigateToOtherOpinions(it, nav, zmanFormatter)
                             }
                         )
                         else ZmanimList(
@@ -174,35 +155,14 @@ internal fun App(
                             vm,
                             if (containsDateBased) zmanim as List<ZmanCardModel<Zman.DateBased>>?
                             else null,
+                            zmanFormatter,
                             onValueBasedSelected = {
                                 println("On value based selected: $it")
-                                if(it.otherOpinions.isNotEmpty()) nav.navigateTo(
-                                    Screen.ZmanimScreen(
-                                        it
-                                            .otherOpinions
-                                            .map {
-                                                ZmanCardModel(
-                                                    it,
-                                                    emptyList()
-                                                )
-                                            } as List<ZmanCardModel<Zman>>
-                                    )
-                                )
+                                navigateToOtherOpinions(it, nav, zmanFormatter)
                             },
                             onDateBasedSelected = {
                                 println("On date based selected: $it")
-                                if(it.otherOpinions.isNotEmpty()) nav.navigateTo(
-                                    Screen.ZmanimScreen(
-                                        it
-                                            .otherOpinions
-                                            .map {
-                                                ZmanCardModel(
-                                                    it,
-                                                    emptyList()
-                                                )
-                                            } as List<ZmanCardModel<Zman>>
-                                    )
-                                )
+                                navigateToOtherOpinions(it, nav, zmanFormatter)
                             }
                         )
                     }
@@ -210,6 +170,26 @@ internal fun App(
             }
         }
     }
+}
+
+private fun <T: Zman> navigateToOtherOpinions(
+    it: ZmanCardModel<T>,
+    nav: Navigation<Screen>,
+    zmanFormatter: ZmanDescriptionFormatter
+) {
+    if (it.otherOpinions.isNotEmpty()) nav.navigateTo(
+        Screen.ZmanimScreen(
+            it
+                .otherOpinions
+                .map {
+                    ZmanCardModel(
+                        it,
+                        emptyList()
+                    )
+                },
+            zmanFormatter.formatLongDescription(it.mainZman)
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -432,6 +412,7 @@ private fun ZmanimList(
     now: Instant,
     vm: ZmanimViewModel,
     allZmanimToDisplay: List<ZmanCardModel<Zman.DateBased>>?,
+    zmanFormatter: ZmanDescriptionFormatter = ZmanDescriptionFormatter(),
     onValueBasedSelected: (ZmanCardModel<Zman.ValueBased>) -> Unit = {},
     onDateBasedSelected: (ZmanCardModel<Zman.DateBased>) -> Unit = {}
 ) {
@@ -447,6 +428,7 @@ private fun ZmanimList(
                     now,
                     vm.tz,
                     model,
+                    formatter = zmanFormatter,
                     showOpinion = true,
                     showMomentOfOccurenceOrDuration = true,
                     onClick = {
@@ -466,6 +448,7 @@ private fun ZmanimList(
                     now,
                     vm.tz,
                     model,
+                    formatter = zmanFormatter,
                     showMomentOfOccurenceOrDuration = true,
                     showTimeRemaining = true,
                     onClick = {
