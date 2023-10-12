@@ -79,6 +79,8 @@ kotlin {
                 implementation(libs.compose.uitooling)
                 implementation(libs.kotlinx.coroutines.android)
                 implementation(libs.ktor.client.okhttp)
+                implementation("com.google.accompanist:accompanist-permissions:0.30.1")
+
             }
         }
 
@@ -153,6 +155,9 @@ libres {
 tasks.getByPath("desktopProcessResources").dependsOn("libresGenerateResources")
 tasks.getByPath("desktopSourcesJar").dependsOn("libresGenerateResources")
 tasks.getByPath("jsProcessResources").dependsOn("libresGenerateResources")
+dependencies {
+    implementation(libs.play.services.base)
+}
 
 buildConfig {
   // BuildConfig configuration here.

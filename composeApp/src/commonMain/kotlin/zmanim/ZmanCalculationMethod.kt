@@ -1,5 +1,6 @@
 package com.kosherjava.zmanim
 
+import kotlin.math.absoluteValue
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
@@ -12,7 +13,7 @@ import kotlin.time.Duration.Companion.minutes
  *      2. or as the moment that the sun reaches a number of degrees above the eastern geometric horizon - which happens before sunrise.
  * Sunrise is an astronomical phenomenon, not subject to varying opinions (save for whether to adjust for elevation).
  * Dusk is often calculated as the inverse of dawn (i.e. after sunrise, and below the western geometric horizon),
- * though some opinions place it orthogonally to their definiition of dawn (e.g. [ZmanAuthority.ATERET_TORAH] in [ComplexZmanimCalendar.shaahZmanisAteretTorah]).
+ * though some opinions place it orthogonally to their definiition of dawn (e.g. [ZmanAuthority.AteretTorah] in [ComplexZmanimCalendar.shaahZmanisAteretTorah]).
  * The number of fixed minutes for sunrise/sunset is determined by the time it takes to walk the distance of a [*mil*][https://en.wikipedia.org/wiki/Biblical_mile].
  * Some interpret those fixed minutes (let M = minutes) as measured by the position of the sun in degrees relative to
  * the eastern geometric horizon M minutes before sunrise in Jerusalem [around the equinox / equilux](https://kosherjava.com/2022/01/12/equinox-vs-equilux-zmanim-calculations/).
@@ -40,6 +41,9 @@ sealed class ZmanCalculationMethod<T>(val value: T) {
     open fun format(): String = format(true)
     open fun format(inEnglish: Boolean): String = format()
 
+    open fun format(subjectZman:String, zmanRelativeTo: String) = format()
+    open fun valueToString() = format()
+
     object Unspecified : ZmanCalculationMethod<Unit>(Unit) {
         override fun format(): String = "Unspecified"
     }
@@ -47,23 +51,27 @@ sealed class ZmanCalculationMethod<T>(val value: T) {
     /**
      * @see ComplexZmanimCalendar.fixedLocalChatzos
      * */
-    object FixedLocalChatzos: ZmanCalculationMethod<Unit>(Unit) {
+    object FixedLocalChatzos : ZmanCalculationMethod<Unit>(Unit) {
         override fun format(): String = "Fixed Local Chatzos"
     }
+
     /**
      * Dawn for this calculation is 60 minutes before sunrise.
      * Dusk is 60 minutes after sunset.
      *
      * @param duration if negative, this zman is [duration] before [fromZman]. If positive, after. If [Duration.ZERO], this zman is equal to [fromZman].
      * */
-    data class FixedDuration(val duration: Duration, val fromZman: ZmanType? = null/*sunrise/set*/) :
+    open class FixedDuration(val duration: Duration, val fromZman: ZmanType? = null/*sunrise/set*/) :
         ZmanCalculationMethod<Duration>(duration) {
+        /**
+         * Ateret torah (which defaults to 40 minutes)
+         * */
+        data class AteretTorah(val minutes: Double = ComplexZmanimCalendar.ATERET_TORAH_DEFAULT_OFFSET) :
+            FixedDuration(minutes.minutes) {
+            override fun valueToString(): String = ZmanDescriptionFormatter.formatAteretTorah(minutes)
+        }
         companion object {
-            /**
-             * Ateret torah (which defaults to 40 minutes)
-             * */
-            fun AteretTorah(offset: Int = ComplexZmanimCalendar.ATERET_TORAH_DEFAULT_OFFSET) =
-                FixedDuration(offset.minutes)
+
 
             /**
              * A mil takes 15 minutes to walk; 4 mil * 15 minutes/mil = 60 minutes
@@ -73,41 +81,56 @@ sealed class ZmanCalculationMethod<T>(val value: T) {
              * @see ZmanAuthority.MAHARIK
              * @see ZmanAuthority.HISACHDUS_HARABONIM
              *
-             * @see ZmanCalculationRule.MilLengthRule._15_Minutes
              * */
             val _30 = FixedDuration(30.minutes)
             val _60 = FixedDuration(60.minutes)
 
             /**
              * A mil takes 18 minutes to walk; 4 mil * 18 minutes/mil = 72 minutes
-             * @see ZmanCalculationRule.MilLengthRule._18_Minutes
+             * @see ZmanAuthority.RAAVAN (disputed - see [ComplexZmanimCalendar.alos60])
              * */
             val _72 = FixedDuration(72.minutes)
 
             /**
              * A mil takes 22.5 minutes to walk; 4 mil * 22.5 minutes/mil = 90 minutes
-             * @see ZmanCalculationRule.MilLengthRule._22_5_Minutes
              * */
             val _90 = FixedDuration(90.minutes)
 
             /**
              * A mil takes 24 minutes to walk; 4 mil * 24 minutes/mil = 96 minutes
-             * @see ZmanCalculationRule.MilLengthRule._24_Minutes
              * */
             val _96 = FixedDuration(96.minutes)
 
             /**
              * A mil takes 24 minutes to walk; 5 mil * 24 minutes/mil = 120 minutes
-             * @see ZmanCalculationRule.MilLengthRule._24_Minutes
              * */
             val _120 = FixedDuration(120.minutes)
         }
 
-        override fun format() = "Day is $duration minutes before sunrise / after sunset"
+        override fun format() = format("Day", fromZman?.toString() ?: "sunrise/set")
+
+        override fun format(subjectZman:String, zmanRelativeTo: String) = "$subjectZman is ${valueToString()} ${if (duration.isNegative()) "before" else "after"} $zmanRelativeTo"
+
+        override fun valueToString(): String = duration.durationValueToString()
     }
+
+    internal fun Duration.durationValueToString(halachic: Boolean = false) = toComponents { hours, minutes, seconds, nanoseconds ->
+        buildString {
+            val totalMinutes = inWholeMinutes
+            if(totalMinutes.absoluteValue <= 120) append("$totalMinutes${if(halachic) " Halachic "  else " "}minutes")
+            else {
+                append(if (hours != 0L) "$hours hour${hours.pluralSuffix()}" else "")
+                append(if (minutes != 0) " $minutes minute${minutes.pluralSuffix()}" else "")
+                if (halachic) append(" - Halachic time")
+            }
+        }
+    }
+    internal fun Long.pluralSuffix() = if (absoluteValue > 1L) "s" else ""
+    internal fun Int.pluralSuffix() = if (absoluteValue > 1L) "s" else ""
 
     data class FixedMinutesFloat(val minutes: Float) : ZmanCalculationMethod<Float>(minutes) {
         override fun format() = "Day is $minutes minutes before sunrise / after sunset"
+        override fun valueToString(): String = "$minutes minutes"
     }
 
     /**
@@ -139,6 +162,8 @@ sealed class ZmanCalculationMethod<T>(val value: T) {
             )
             append("minutes before sunrise / after sunset")
         }
+
+        override fun valueToString(): String = duration.durationValueToString(true)
     }
 
     /**
@@ -231,5 +256,7 @@ sealed class ZmanCalculationMethod<T>(val value: T) {
         }
 
         override fun format(): String = "Day is ${degrees}˚ below sunrise / sunset"
+        override fun format(subjectZman: String, zmanRelativeTo: String): String = "$subjectZman is $degrees˚ ${if (degrees < 0) "before" else "after"} $zmanRelativeTo"
+        override fun valueToString(): String = "$degrees˚"
     }
 }

@@ -505,9 +505,9 @@ class JewishCalendar : JewishDate {
     /**
      * Creates a Jewish date based on a Jewish date and whether in Israel
      *
-     * @param hebrewLocalDate.year
+     * @param jewishYear
      * the Jewish year
-     * @param hebrewLocalDate.month
+     * @param jewishMonth
      * the Jewish month. The method expects a 1 for *Nissan* ... 12 for *Adar* and 13 for
      * *Adar II*. Use the constants [.NISSAN] ... [.ADAR] (or [.ADAR_II] for a
      * leap year Adar II) to avoid any confusion.
@@ -554,8 +554,7 @@ class JewishCalendar : JewishDate {
      */
     val isBirkasHachamah: Boolean
         get() {
-            var elapsedDays =
-                getJewishCalendarElapsedDays(hebrewLocalDate.year) //elapsed days since molad ToHu
+            var elapsedDays = getJewishCalendarElapsedDays(hebrewLocalDate.year) //elapsed days since molad ToHu
             elapsedDays += daysSinceStartOfJewishYear //elapsed days to the current LocalDate date
 
             /* Molad Nissan year 1 was 177 days after molad tohu of Tishrei. We multiply 29.5 days * 6 months from Tishrei
@@ -797,7 +796,7 @@ class JewishCalendar : JewishDate {
                     when {
                         day == 5 -> EREV_SHAVUOS
                         day == 6 || day == 7 && !inIsrael -> SHAVUOS
-                        day == if (inIsrael) 7 else 8 -> ISRU_CHAG
+                        day == if(inIsrael) 7 else 8 -> ISRU_CHAG
                         else -> NO_HOLIDAY
                     }
                 }
@@ -895,7 +894,7 @@ class JewishCalendar : JewishDate {
 
                 HebrewMonth.TEVES -> {
                     when (day) {
-                        in 1..(if (isKislevShort) 3 else 2) -> CHANUKAH //TODO use constant comparison
+                        in 1..(if (isKislevShort) 3 else 2) -> CHANUKAH//TODO use constant comparison
                         10 -> TENTH_OF_TEVES
                         else -> NO_HOLIDAY
                     }
@@ -1401,6 +1400,7 @@ class JewishCalendar : JewishDate {
                     it == FAST_OF_ESTHER
         }// on 14 Nissan unless that is Shabbos where the fast is moved back to Thursday
 
+
     /**
      * Return true if the day is *Taanis Bechoros* (on *Erev Pesach*). It will return true for the 14th
      * of *Nissan* if it is not on *Shabbos*, or if the 12th of *Nissan* occurs on a Thursday.
@@ -1430,6 +1430,7 @@ class JewishCalendar : JewishDate {
                 if (hebrewLocalDate.month == HebrewMonth.KISLEV) jewishDayOfMonth - 24
                 else /*teves*/ if (isKislevShort) jewishDayOfMonth + 5 else jewishDayOfMonth + 6
             else -1
+
 
     /**
      * Returns true if the current day is one of the 8 days of *Chanukah*.
