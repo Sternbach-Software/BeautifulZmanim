@@ -1,4 +1,7 @@
-package com.kosherjava.zmanim
+package com.kosherjava.zmanim.metadata
+
+import com.kosherjava.zmanim.ComplexZmanimCalendar
+import com.kosherjava.zmanim.ZmanDescriptionFormatter
 
 /**
  * A [ZmanAuthority] is also a [ZmanCalculationMethod] so that it is possible to say (for example) that
@@ -9,14 +12,15 @@ package com.kosherjava.zmanim
  * */
 open class ZmanAuthority(val name: String): ZmanCalculationMethod<String>(name) {
     data class AccordingTo(val authority: ZmanAuthority? = null, val accordingTo: ZmanAuthority, val calculationMethod: ZmanCalculationMethod<*>? = null): ZmanAuthority("${authority?.name ?: calculationMethod?.valueToString()} according to ${accordingTo.name}")
-    data class AteretTorah(val minutes: Double = ComplexZmanimCalendar.ATERET_TORAH_DEFAULT_OFFSET): ZmanAuthority(ZmanDescriptionFormatter.formatAteretTorah(minutes))
+    infix fun accordingTo(accordingTo: ZmanAuthority) = AccordingTo(this, accordingTo)
+
+    data class AteretTorah(val minutes: Double = ComplexZmanimCalendar.ATERET_TORAH_DEFAULT_OFFSET): ZmanAuthority(
+        ZmanDescriptionFormatter.shortDescriptionAteretTorah(minutes)
+    )
 
     override fun format() = "According to $name"
     override fun valueToString(): String = name
 
-    companion object {
-        val RABEINU_TAM_DIVREI_YOSEF = AccordingTo(RABEINU_TAM, DIVREI_YOSEF)
-    }
     object Unanimous: ZmanAuthority(Strings.Unanimous) //only one, universal opinion / "The widely accepted or only opinion"
 
     object AHAVAT_SHALOM: ZmanAuthority(Strings.AHAVAT_SHALOM)
@@ -39,10 +43,14 @@ open class ZmanAuthority(val name: String): ZmanCalculationMethod<String>(name) 
     object KRONGLASS: ZmanAuthority(Strings.KRONGLASS)
     object LECHEM_MISHNAH: ZmanAuthority(Strings.LECHEM_MISHNAH)
     object MAAGALEI_TZEDEK: ZmanAuthority(Strings.MAAGALEI_TZEDEK)
+    object MACHATZIS_HASHEKEL: ZmanAuthority(Strings.MACHATZIS_HASHEKEL)
     object MAHARIK: ZmanAuthority(Strings.MAHARIK)
     object MAHARIL: ZmanAuthority(Strings.MAHARIL)
     object MGA: ZmanAuthority(Strings.MGA)
+    object MINCHAS_COHEN: ZmanAuthority(Strings.MINCHAS_COHEN)
     object NEIMAN: ZmanAuthority(Strings.NEIMAN)
+    object POSEN: ZmanAuthority(Strings.POSEN)
+    object PRI_MEGADIM: ZmanAuthority(Strings.PRI_MEGADIM)
     object RAAVAN: ZmanAuthority(Strings.RAAVAN)
     object RABEINU_TAM: ZmanAuthority(Strings.RABEINU_TAM)
     object RABEINU_YONAH: ZmanAuthority(Strings.RABEINU_YONAH)
@@ -57,6 +65,7 @@ open class ZmanAuthority(val name: String): ZmanCalculationMethod<String>(name) 
     object SHOR: ZmanAuthority(Strings.SHOR)
     object WEISS: ZmanAuthority(Strings.WEISS)
     object YAAVETZ: ZmanAuthority(Strings.YAAVETZ)
+    object YEREIM: ZmanAuthority(Strings.YEREIM)
     object ZILBER: ZmanAuthority(Strings.ZILBER)
 
     object Strings {
@@ -85,14 +94,17 @@ open class ZmanAuthority(val name: String): ZmanCalculationMethod<String>(name) 
         const val KRONGLASS = "Rabbi Dovid Kronglass (Divrei Chachamim)"
         const val LECHEM_MISHNAH = "Lechem Mishnah"
         const val MAAGALEI_TZEDEK = "Ma'agalei Tzedek"
+        const val MACHATZIS_HASHEKEL = "Machatzis Hashekel"
         const val MAHARIK = "Maharik"
         const val MAHARIL = "Maharil"
         const val MGA = "Magen Avraham"
+        const val MINCHAS_COHEN = "Minchas Cohen"
         const val NEIMAN = "Rabbi Yaakov Yitzchok Neiman (Kovetz Eitz Chaim)"
+        const val POSEN = "Rabbi Meir Posen (Ohr Meir)"
+        const val PRI_MEGADIM = "Pri Megadim"
         const val RAAVAN = "Ra'avan (R' Elazar Ben Nosson)"
         const val RABEINU_TAM = "Rabeinu Tam"
         const val RABEINU_YONAH = "Rabeinu Yonah"
-        const val RABEINU_TAM_DIVREI_YOSEF = "Rabeinu Tam acc. to Divrei Yosef"
         const val RAMBAM = "Rambam"
         const val RAZEH = "Chidushei U'Klalos HaRaze\"h/Menorah HaTehorah"//"חידושי וכללות הרז״ה/מנורה הטהורה"
         const val SATMER = "The Satmer Rav"
@@ -103,6 +115,7 @@ open class ZmanAuthority(val name: String): ZmanCalculationMethod<String>(name) 
         const val SHOR = "Rabbi Dovid Shor (Ayeles Hashachar Al Zmanim U'Shiurim)"
         const val WEISS = "Rabbi Yaakov Gershon Weiss (Yom Valayla Shel Torah)"
         const val YAAVETZ = "Rabbi Yaakov Emden (Yaavetz)"
+        const val YEREIM = "Sefer Yereim (Rabbi Eliezer of Metz)"
         const val ZILBER = "Rabbi Yechiel Avraham Zilber (Birur Halacha)"
     }
 }

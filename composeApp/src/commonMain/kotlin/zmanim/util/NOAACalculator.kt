@@ -50,6 +50,7 @@ class NOAACalculator : AstronomicalCalculator() {
             DateUtils.getJulianDay(LocalDate), geoLocation.latitude, -geoLocation.longitude,
             adjustedZenith
         )
+//        println("kelevation: $elevation, adjustedZenith: $adjustedZenith, sunrise: $sunrise")
         sunrise /= 60
 
         // ensure that the time is >= 0 and < 24
@@ -96,10 +97,12 @@ class NOAACalculator : AstronomicalCalculator() {
      * the longitude for calculating noon since it is the same time anywhere along the longitude line.
      * @return the time in minutes from zero UTC
      */
-    override fun getUTCNoon(LocalDate: LocalDate, geoLocation: GeoLocation): Double {
-        val julianDay: Double = DateUtils.getJulianDay(LocalDate)
+    override fun getUTCNoon(date: LocalDate, geoLocation: GeoLocation): Double {
+        val julianDay: Double = DateUtils.getJulianDay(date)
         val julianCenturies: Double = getJulianCenturiesFromJulianDay(julianDay)
         var noon: Double = getSolarNoonUTC(julianCenturies, -geoLocation.longitude)
+//        println("getUTCNoon($date, ${geoLocation.locationName})")
+//        println("JulianDay: $julianDay julianCenturies: $julianCenturies noon: $noon")
         noon /= 60
 
         // ensure that the time is >= 0 and < 24

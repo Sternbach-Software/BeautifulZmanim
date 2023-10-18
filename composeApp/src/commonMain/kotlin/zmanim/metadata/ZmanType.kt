@@ -1,4 +1,6 @@
-package com.kosherjava.zmanim
+package com.kosherjava.zmanim.metadata
+
+import kotlin.time.Duration
 
 enum class ZmanType(
     val friendlyNameEnglish: String,
@@ -28,5 +30,24 @@ enum class ZmanType(
     EARLIEST_MINCHA("Earliest Mincha", "מנחה הכי מוקדם"),
     EARLIEST_KIDDUSH_LEVANA("Earliest time to sanctify the moon", "תחילת זמן קידוש לבנה"),
     SOF_ZMAN_KIDDUSH_LEVANA("Latest time to sanctify the moon", "סוף זמן קידוש לבנה"),
-    CANDLE_LIGHTING("Candle lighting", "הדלקת נרות"),
+    CANDLE_LIGHTING("Candle lighting", "הדלקת נרות");
+
+    infix fun occurs(time: Duration) = Occurence(this, ZmanCalculationMethod.FixedDuration(time))
+    infix fun occurs(time: ZmanCalculationMethod.ZmaniyosDuration) = Occurence(this, time)
+    infix fun occurs(time: ZmanCalculationMethod.FixedDuration) = Occurence(this, time)
+    infix fun occurs(time: ZmanCalculationMethod.Degrees) = Occurence(this, time)
+
+    companion object {
+        val shaosZmaniyosIntoDay = mapOf(
+            SOF_ZMAN_KRIAS_SHEMA to 3F,
+            SOF_ZMAN_TEFILLAH to 4F,
+            SOF_ZMAN_BIUR_CHAMETZ to 5F,
+            MINCHA_GEDOLAH to 6.5F,
+            SAMUCH_LEMINCHA_KETANA to 9F,
+            MINCHA_KETANAH to 9.5F,
+            PLAG_HAMINCHA to 10.75F,
+//        SOF_ZMAN_KIDDUSH_LEVANA to 3F,
+//        SOF_ZMAN_ACHILAS_CHAMETZ to 5F,
+        )
+    }
 }

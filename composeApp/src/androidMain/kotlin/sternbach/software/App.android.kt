@@ -24,9 +24,6 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.kosherjava.zmanim.util.GeoLocation
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import sternbach.software.ZmanimViewModel.Companion.toLocation
 import java.util.Locale
@@ -114,14 +111,14 @@ suspend fun getGeoLocation(location: Location, context: Context, onLocationNameA
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) geo.getFromLocation(
         location.latitude,
         location.longitude, 1) {
-        val mainAddress = it[0]
+        println("Got addresses: $it")
         GlobalScope.launch {
             onLocationNameAvailable(
                 GeoLocation(
-                    "${mainAddress.featureName}, ${mainAddress.locality}, ${mainAddress.adminArea}, ${mainAddress.countryName}",
+                    it.firstOrNull()?.getAddressLine(0) ?: /*lat-long:*/ "Lat: ${location.latitude}, Long: ${location.longitude}",
                     location.latitude,
                     location.longitude,
-                    location.altitude, ZmanimViewModel.tz
+                    location.altitude.takeIf { location.hasAltitude() } ?: 0.0, ZmanimViewModel.tz
                 )
             )
         }
@@ -153,7 +150,7 @@ suspend fun getGeoLocation(location: Location, context: Context, onLocationNameA
 }
 
 @SuppressLint("MissingPermission")
-private fun getLocation(locationManager: LocationManager, context: Context): Flow<GeoLocation> = flow {
+private suspend fun getLocation(locationManager: LocationManager, context: Context, onLocationNameAvailable: suspend (GeoLocation) -> Unit) {
     locationManager.run {
         println("MainActivity - Providers: $allProviders, ${if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) isLocationEnabled else null}")
         val location = getLastKnnownLocation()
@@ -166,15 +163,11 @@ private fun getLocation(locationManager: LocationManager, context: Context): Flo
                     Executors.newSingleThreadExecutor()
                 ) {
                     GlobalScope.launch {
-                        getGeoLocation(it, context) {
-                            emit(it)
-                        }
+                        getGeoLocation(it, context, onLocationNameAvailable)
                     }
                 } else println("VERSION.SDK_INT < ${Build.VERSION_CODES.S}")
         } else {
-            getGeoLocation(location, context) {
-                emit(it)
-            }
+            getGeoLocation(location, context, onLocationNameAvailable)
         }
     }
 }
@@ -189,9 +182,8 @@ actual fun listenForPosition() {
     println("Listening for position on Android")
     println("Location: ${AndroidApp.locationManager.getLastKnnownLocation()}")
     runCatching {
-        val location = getLocation(AndroidApp.locationManager, AndroidApp.INSTANCE)
         GlobalScope.launch {
-            location.collectLatest {
+            getLocation(AndroidApp.locationManager, AndroidApp.INSTANCE) {
                 println("New location: $it")
                 kotlin.runCatching {
                     currentLocation.value = it.toLocation()

@@ -97,14 +97,14 @@ internal fun App(
         ) {
 
             nav.destination.collectAsState(Screen.Home).value.let {
+                val location = currentLocation.collectAsState(null)
                 when (it) {
                     is Screen.Home ->
                         if(!gpsSupported.value)
                             nav.navigateTo(Screen.InputLocation, true)
                         else {
                             vm.startListeningForPosition()
-                            currentLocation
-                            nav.navigateTo(Screen.ZmanimScreen(null, "Zmanim for ${currentLocation.value}"))
+                            nav.navigateTo(Screen.ZmanimScreen(null, null), false)
                         }
                     is Screen.InputLocation -> InputLocationScreen(
                         smallScreen,
@@ -112,7 +112,7 @@ internal fun App(
                         vm
                     ) {
                         println("Lat/long selected")
-                        nav.navigateTo(Screen.ZmanimScreen(null, "Zmanim for ${currentLocation.value}"))
+                        nav.navigateTo(Screen.ZmanimScreen(null, null))
                     }
 
                     is Screen.MultipleLocations -> MultipleLocationsList(it.locations) {
@@ -120,7 +120,7 @@ internal fun App(
                     }
 
                     is Screen.ZmanimScreen -> {
-                        if(it.zmanDescription != null) Text(it.zmanDescription, Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        Text(it.zmanDescription ?: "Zmanim for ${location.value?.locationName}", Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                         val zmanim =
                             it.zmanim?.also { println("Zmanim were passed as nav args") }
                                 ?: vm.allZmanimCardModels.collectAsState(emptyList()).value.also {
@@ -137,14 +137,14 @@ internal fun App(
                                 .filter { it?.mainZman is Zman.ValueBased }
                                 .let {
                                     it.ifEmpty { null }
-                                } as List<ZmanCardModel<Zman.ValueBased>>?,
+                                } as List<ZmanCardModel>?,
                             now.value,
                             vm,
                             zmanim
                                 .filter { it?.mainZman is Zman.DateBased }
                                 .let {
                                     it.ifEmpty { null }
-                                } as List<ZmanCardModel<Zman.DateBased>>?,
+                                } as List<ZmanCardModel>?,
                             zmanFormatter,
                             onValueBasedSelected = {
                                 println("On value based selected: $it")
@@ -157,12 +157,12 @@ internal fun App(
                         )
                         else ZmanimList(
                             smallScreen,
-                            if (containsValueBased) zmanim as List<ZmanCardModel<Zman.ValueBased>>?
-                            else null,
+                            (if (containsValueBased) zmanim
+                            else null) as List<ZmanCardModel>?,
                             now.value,
                             vm,
-                            if (containsDateBased) zmanim as List<ZmanCardModel<Zman.DateBased>>?
-                            else null,
+                            (if (containsDateBased) zmanim
+                            else null) as List<ZmanCardModel>?,
                             zmanFormatter,
                             onValueBasedSelected = {
                                 println("On value based selected: $it")
@@ -180,8 +180,8 @@ internal fun App(
     }
 }
 
-private fun <T: Zman> navigateToOtherOpinions(
-    it: ZmanCardModel<T>,
+private fun navigateToOtherOpinions(
+    it: ZmanCardModel,
     nav: Navigation<Screen>,
     zmanFormatter: ZmanDescriptionFormatter
 ) {
@@ -416,13 +416,13 @@ private fun InputLocationScreen(
 @Composable
 private fun ZmanimList(
     smallScreen: Boolean,
-    shaaZmanisValues: List<ZmanCardModel<Zman.ValueBased>>?,
+    shaaZmanisValues: List<ZmanCardModel>?,
     now: Instant,
     vm: ZmanimViewModel,
-    allZmanimToDisplay: List<ZmanCardModel<Zman.DateBased>>?,
+    allZmanimToDisplay: List<ZmanCardModel>?,
     zmanFormatter: ZmanDescriptionFormatter = ZmanDescriptionFormatter(),
-    onValueBasedSelected: (ZmanCardModel<Zman.ValueBased>) -> Unit = {},
-    onDateBasedSelected: (ZmanCardModel<Zman.DateBased>) -> Unit = {}
+    onValueBasedSelected: (ZmanCardModel) -> Unit = {},
+    onDateBasedSelected: (ZmanCardModel) -> Unit = {}
 ) {
     LazyVerticalGrid(
         GridCells.Fixed(if (smallScreen) 2 else 6),
@@ -508,11 +508,11 @@ private fun getSecondsUntilZmanAndTimeRemaining(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T : Zman> ZmanCard(
+fun ZmanCard(
     modifier: Modifier,
     currentTime: Instant,
     currentTimeZone: TimeZone,
-    model: ZmanCardModel<T>,
+    model: ZmanCardModel,
     showMomentOfOccurenceOrDuration: Boolean = false,
     showOpinion: Boolean = true,
     showTimeRemaining: Boolean = false,
@@ -530,7 +530,7 @@ fun <T : Zman> ZmanCard(
 ) {
     Column(verticalArrangement = Arrangement.SpaceEvenly) {
         Text(
-            model.mainZman.type.friendlyNameEnglish,
+            model.mainZman.rules.type.friendlyNameEnglish,
             Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center
@@ -548,7 +548,7 @@ fun <T : Zman> ZmanCard(
             textAlign = TextAlign.Center
         )
         if (showTimeRemaining && model.mainZman is Zman.DateBased) content(
-            Modifier, (model.mainZman as Zman.DateBased).momentOfOccurrence, currentTime
+            Modifier, (model.mainZman).momentOfOccurrence, currentTime
         )
         val startPadding = Modifier.padding(start = 2.dp)
     }

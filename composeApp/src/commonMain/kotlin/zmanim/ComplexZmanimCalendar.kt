@@ -15,7 +15,15 @@
  */
 package com.kosherjava.zmanim
 
+import com.kosherjava.zmanim.metadata.ZmanAuthority.DIVREI_YOSEF
+import com.kosherjava.zmanim.metadata.ZmanAuthority.RABEINU_TAM
+import com.kosherjava.zmanim.metadata.ZmanCalculationMethod.Companion.degrees
+import com.kosherjava.zmanim.metadata.ZmanCalculationMethod.Companion.zmaniyos
 import com.kosherjava.zmanim.hebrewcalendar.JewishCalendar
+import com.kosherjava.zmanim.metadata.ZmanAuthority
+import com.kosherjava.zmanim.metadata.ZmanCalculationMethod
+import com.kosherjava.zmanim.metadata.ZmanDefinition
+import com.kosherjava.zmanim.metadata.ZmanType
 import com.kosherjava.zmanim.util.AstronomicalCalculator
 import com.kosherjava.zmanim.util.GeoLocation
 import com.kosherjava.zmanim.util.GeoLocation.Companion.rawOffset
@@ -166,16 +174,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis19Point8Degrees: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(
                 alos19Point8Degrees.momentOfOccurrence,
                 tzais19Point8Degrees.momentOfOccurrence
             ).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._19_8,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._19_8),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -195,13 +201,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis18Degrees: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos18Degrees.momentOfOccurrence, tzais18Degrees.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._18,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._18),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -226,14 +230,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis26Degrees: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos26Degrees.momentOfOccurrence, tzais26Degrees.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._26,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._18),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
-
             )
         )
 
@@ -260,16 +261,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis16Point1Degrees: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(
                 alos16Point1Degrees.momentOfOccurrence,
                 tzais16Point1Degrees.momentOfOccurrence
             ).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._16_1,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -292,13 +291,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis60Minutes: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos60.momentOfOccurrence, tzais60.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._60,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._60),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -336,13 +333,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis72MinutesZmanis: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos72Zmanis.momentOfOccurrence, tzais72Zmanis.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._72,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -361,13 +356,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis90Minutes: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos90.momentOfOccurrence, tzais90.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._90,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -390,13 +383,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis90MinutesZmanis: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos90Zmanis.momentOfOccurrence, tzais90Zmanis.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._90,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -419,44 +410,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis96MinutesZmanis: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos96Zmanis.momentOfOccurrence, tzais96Zmanis.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._96,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
-            )
-        )
-
-    /**
-     * Method to return a *shaah zmanis* (temporal hour) according to the opinion of the
-     * *Chacham* Yosef Harari-Raful of Yeshivat Ateret Torah.
-     *
-     * Dawn for this calculation is 1/10th of sunrise to sunset day, or [72][alos72Zmanis] minutes *zmaniyos* of such a day before [sunrise].
-     * Dusk is usually calculated as [40][tzaisAteretTorah] (configurable to any offset via setting [ateretTorahSunsetOffset]) after [sunset].
-     * This day is split into 12 equal parts with each part being a *shaah zmanis*.
-     *
-     * Note that with this system, *chatzos* (mid-day) will not be the point that the sun is [halfway across][sunTransit].
-     *
-     * @return the `long` millisecond length of a *shaah zmanis*. If the calculation can't be computed
-     * such as in the Arctic Circle where there is at least one day a year where the sun does not rise, and one
-     * where it does not set, a [Long.MIN_VALUE] will be returned. See detailed explanation on top of the
-     * [AstronomicalCalendar] documentation.
-     * @see alos72Zmanis
-     * @see tzaisAteretTorah
-     * @see ateretTorahSunsetOffset
-     * @see ateretTorahSunsetOffset
-     */
-    val shaahZmanisAteretTorah: Zman.ValueBased
-        get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
-            getTemporalHour(alos72Zmanis.momentOfOccurrence, tzaisAteretTorah.momentOfOccurrence).milliseconds,
-            ZmanDefinition(
-                ZmanAuthority.AteretTorah(ateretTorahSunsetOffset),
-                null,
-                ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_72_ZMANIS_TO_DUSK_ATERET_TORAH
             )
         )
 
@@ -483,16 +441,46 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanisAlos16Point1ToTzais3Point8: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(
                 alos16Point1Degrees.momentOfOccurrence,
                 tzaisGeonim3Point8Degrees.momentOfOccurrence
             ).milliseconds,
             ZmanDefinition(
-                ZmanAuthority.AHAVAT_SHALOM,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_DUSK_3_8,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_DUSK_3_8
+                listOf(
+                    ZmanAuthority.AHAVAT_SHALOM
+                )
+            )
+        )
+
+    /**
+     * Method to return a *shaah zmanis* (temporal hour) according to the opinion of the
+     * *Chacham* Yosef Harari-Raful of Yeshivat Ateret Torah.
+     *
+     * Dawn for this calculation is 1/10th of sunrise to sunset day, or [72][alos72Zmanis] minutes *zmaniyos* of such a day before [sunrise].
+     * Dusk is usually calculated as [40][tzaisAteretTorah] (configurable to any offset via setting [ateretTorahSunsetOffset]) after [sunset].
+     * This day is split into 12 equal parts with each part being a *shaah zmanis*.
+     *
+     * Note that with this system, *chatzos* (mid-day) will not be the point that the sun is [halfway across][sunTransit].
+     *
+     * @return the `long` millisecond length of a *shaah zmanis*. If the calculation can't be computed
+     * such as in the Arctic Circle where there is at least one day a year where the sun does not rise, and one
+     * where it does not set, a [Long.MIN_VALUE] will be returned. See detailed explanation on top of the
+     * [AstronomicalCalendar] documentation.
+     * @see alos72Zmanis
+     * @see tzaisAteretTorah
+     * @see ateretTorahSunsetOffset
+     * @see ateretTorahSunsetOffset
+     */
+    val shaahZmanisAteretTorah: Zman.ValueBased
+        get() = Zman.ValueBased(
+            getTemporalHour(alos72Zmanis.momentOfOccurrence, tzaisAteretTorah.momentOfOccurrence).milliseconds,
+            ZmanDefinition(
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawn72ZmanisToDuskAteretTorah(ateretTorahSunsetOffset),
+                ZmanDefinition.UsesElevation.IF_SET,
             )
         )
 
@@ -517,16 +505,17 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanisAlos16Point1ToTzais3Point7: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(
                 alos16Point1Degrees.momentOfOccurrence,
                 tzaisGeonim3Point7Degrees.momentOfOccurrence
             ).milliseconds,
             ZmanDefinition(
-                ZmanAuthority.AHAVAT_SHALOM,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_DUSK_3_7,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_DUSK_3_7
+                listOf(
+                    ZmanAuthority.AHAVAT_SHALOM
+                )
             )
         )
 
@@ -545,13 +534,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis96Minutes: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos96.momentOfOccurrence, tzais96.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._96,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -575,13 +562,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis120Minutes: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos120.momentOfOccurrence, tzais120.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._120,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._120),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -608,13 +593,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val shaahZmanis120MinutesZmanis: Zman.ValueBased
         get() = Zman.ValueBased(
-            ZmanType.SHAA_ZMANIS,
             getTemporalHour(alos120Zmanis.momentOfOccurrence, tzais120Zmanis.momentOfOccurrence).milliseconds,
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._120,
-                null,
+                ZmanType.SHAA_ZMANIS,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._120),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -639,13 +622,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @get:Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")
     val plagHamincha120MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos120Zmanis.momentOfOccurrence, tzais120Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._120,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._120),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -669,13 +650,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @get:Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")
     val plagHamincha120Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos120.momentOfOccurrence, tzais120.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._120,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._120),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -717,14 +696,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos60: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getTimeOffset(
                 sunrise,
                 -60 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._60,
-                null,
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 60.minutes before ZmanType.HANAITZ),
                 ZmanDefinition.UsesElevation.ALWAYS,
             ),
         )
@@ -749,15 +727,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos72Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getZmanisBasedOffset(-1.2),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._72,
-                null,
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 72.minutes.zmaniyos before ZmanType.HANAITZ),
                 ZmanDefinition.UsesElevation.IF_SET,
-            ),
-            listOf(
-                ZmanAuthority.HISACHDUS_HARABONIM
+                listOf(
+                    ZmanAuthority.HISACHDUS_HARABONIM
+                ),
             )
         )
 
@@ -777,12 +754,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos96: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getTimeOffset(elevationAdjustedSunrise, -96 * MINUTE_MILLIS),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._96,
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 96.minutes before ZmanType.HANAITZ),
+                ZmanDefinition.UsesElevation.IF_SET,
             )
         )
 
@@ -803,12 +779,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos90Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getZmanisBasedOffset(-1.5),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._90,
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 90.minutes.zmaniyos before ZmanType.HANAITZ),
+                ZmanDefinition.UsesElevation.IF_SET,
             )
         )
 
@@ -828,12 +803,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos96Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getZmanisBasedOffset(-1.6),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._96,
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 96.minutes.zmaniyos before ZmanType.HANAITZ),
+                ZmanDefinition.UsesElevation.IF_SET,
             )
         )
 
@@ -851,12 +825,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos90: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getTimeOffset(elevationAdjustedSunrise, -90 * MINUTE_MILLIS),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._90,
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 90.minutes before ZmanType.HANAITZ),
+                ZmanDefinition.UsesElevation.IF_SET,
             )
         )
 
@@ -883,12 +856,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @get:Deprecated("This method should be used <em>lechumra</em> only (such as stopping to eat at this time on a fast day),\n" + "	          since it returns a very early time, and if used <em>lekula</em> can result in doing <em>mitzvos hayom</em>\n" + "	          too early according to most opinions. There is no current plan to remove this method from the API, and this\n" + "	          deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")
     val alos120: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getTimeOffset(elevationAdjustedSunrise, -120 * MINUTE_MILLIS),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._120,
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 120.minutes before ZmanType.HANAITZ),
+                ZmanDefinition.UsesElevation.IF_SET,
             )
         )
 
@@ -911,12 +883,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @get:Deprecated("This method should be used <em>lechumra</em> only (such as stopping to eat at this time on a fast day),\n" + "	          since it returns a very early time, and if used <em>lekula</em> can result in doing <em>mitzvos hayom</em>\n" + "	          too early according to most opinions. There is no current plan to remove this method from the API, and this\n" + "	          deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")
     val alos120Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getZmanisBasedOffset(-2.0),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._120,
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 120.minutes.zmaniyos before ZmanType.HANAITZ),
+                ZmanDefinition.UsesElevation.IF_SET,
             )
         )
 
@@ -942,12 +913,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @get:Deprecated("This method should be used <em>lechumra</em> only (such as stopping to eat at this time on a fast day),\n" + "	          since it returns a very early time, and if used <em>lekula</em> can result in doing <em>mitzvos hayom</em>\n" + "	          too early according to most opinions. There is no current plan to remove this  method from the API, and this\n" + "	          deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")
     val alos26Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getSunriseOffsetByDegrees(ZENITH_26_DEGREES),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._26,
-                null,
-                ZmanDefinition.UsesElevation.ALWAYS
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 26.degrees before ZmanType.HANAITZ),
+                ZmanDefinition.UsesElevation.ALWAYS,
             )
         )
 
@@ -963,11 +933,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos18Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getSunriseOffsetByDegrees(ASTRONOMICAL_ZENITH),
             ZmanDefinition(
+                ZmanType.ALOS,
                 ZmanCalculationMethod.Degrees._18,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -976,7 +945,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * A method to return *alos* (dawn) calculated when the sun is [19˚][ZENITH_19_DEGREES] below the
      * eastern geometric horizon before sunrise.
      * **Sources:**
-     * - This is the [Rambam](https://en.wikipedia.org/wiki/Maimonides)'s *alos* according to
+     * - This is the [Rambam](https://en.wikipedia.org/wiki/Maimonides) 's *alos* according to
      * - Rabbi Moshe Kosower's [Maaglei Tzedek](https://www.worldcat.org/oclc/145454098), page 88,
      * - Rabbi Dovid Shor's [Ayeles Hashachar Vol. I, page 12](https://hebrewbooks.org/pdfpager.aspx?req=33464&pgnum=13),
      * - Rabbi Yaakov Gershon Weiss's [Yom Valayla Shel Torah, Ch. 34, p. 222](https://hebrewbooks.org/pdfpager.aspx?req=55960&pgnum=258) and
@@ -990,19 +959,18 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos19Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getSunriseOffsetByDegrees(ZENITH_19_DEGREES),
             ZmanDefinition(
+                ZmanType.ALOS,
                 ZmanCalculationMethod.Degrees._19,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
-            ),
-            listOf(
-                ZmanAuthority.RAMBAM,
-                ZmanAuthority.MAAGALEI_TZEDEK,
-                ZmanAuthority.SHOR,
-                ZmanAuthority.WEISS,
-                ZmanAuthority.SHAKOW,
+                listOf(
+                    ZmanAuthority.RAMBAM,
+                    ZmanAuthority.MAAGALEI_TZEDEK,
+                    ZmanAuthority.SHOR,
+                    ZmanAuthority.WEISS,
+                    ZmanAuthority.SHAKOW,
+                )
             )
         )
 
@@ -1023,11 +991,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos19Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getSunriseOffsetByDegrees(ZENITH_19_POINT_8),
             ZmanDefinition(
+                ZmanType.ALOS,
                 ZmanCalculationMethod.Degrees._19_8,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
             )
         )
@@ -1051,11 +1018,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alos16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getSunriseOffsetByDegrees(ZENITH_16_POINT_1),
             ZmanDefinition(
+                ZmanType.ALOS,
                 ZmanCalculationMethod.Degrees._16_1,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
             )
         )
@@ -1075,11 +1041,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val misheyakir11Point5Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MISHEYAKIR,
             getSunriseOffsetByDegrees(ZENITH_11_POINT_5),
             ZmanDefinition(
+                ZmanType.MISHEYAKIR,
                 ZmanCalculationMethod.Degrees._11_5,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
             )
         )
@@ -1094,15 +1059,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * Circle and north of the Antarctic Circle where the sun may not reach low enough below the horizon for
      * this calculation, a null will be returned. See detailed explanation on top of the
      * [AstronomicalCalendar] documentation.
-     * @see .ZENITH_11_DEGREES
+     * @see ZENITH_11_DEGREES
      */
     val misheyakir11Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MISHEYAKIR,
             getSunriseOffsetByDegrees(ZENITH_11_DEGREES),
             ZmanDefinition(
+                ZmanType.MISHEYAKIR,
                 ZmanCalculationMethod.Degrees._11,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
             )
         )
@@ -1121,11 +1085,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val misheyakir10Point2Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MISHEYAKIR,
             getSunriseOffsetByDegrees(ZENITH_10_POINT_2),
             ZmanDefinition(
+                ZmanType.MISHEYAKIR,
                 ZmanCalculationMethod.Degrees._10_2,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
             )
         )
@@ -1159,18 +1122,17 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val misheyakir7Point65Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MISHEYAKIR,
             getSunriseOffsetByDegrees(ZENITH_7_POINT_65),
             ZmanDefinition(
+                ZmanType.MISHEYAKIR,
                 ZmanCalculationMethod.Degrees._7_65,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
-            ),
-            listOf(
-                ZmanAuthority.FEINSTEIN,
-                ZmanAuthority.KAMENETSKY,
-                ZmanAuthority.SHAKOW,
-                ZmanAuthority.SATMER,
+                listOf(
+                    ZmanAuthority.FEINSTEIN,
+                    ZmanAuthority.KAMENETSKY,
+                    ZmanAuthority.SHAKOW,
+                    ZmanAuthority.SATMER,
+                )
             )
         )
 
@@ -1203,22 +1165,21 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val misheyakir9Point5Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MISHEYAKIR,
             getSunriseOffsetByDegrees(ZENITH_9_POINT_5),
             ZmanDefinition(
+                ZmanType.MISHEYAKIR,
                 ZmanCalculationMethod.Degrees._9_5,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
-            ),
-            listOf(
-                ZmanAuthority.KRONGLASS,
-                ZmanAuthority.ZILBER,
-                ZmanAuthority.GREENWALD,
-                ZmanAuthority.EDELSTEIN,
-                ZmanAuthority.BICK,
-                ZmanAuthority.EIDOT_HAMIZRACH,
-                ZmanAuthority.KAMENETSKY,
-                ZmanAuthority.SHAKOW,
+                listOf(
+                    ZmanAuthority.KRONGLASS,
+                    ZmanAuthority.ZILBER,
+                    ZmanAuthority.GREENWALD,
+                    ZmanAuthority.EDELSTEIN,
+                    ZmanAuthority.BICK,
+                    ZmanAuthority.EIDOT_HAMIZRACH,
+                    ZmanAuthority.KAMENETSKY,
+                    ZmanAuthority.SHAKOW,
+                )
             )
         )
 
@@ -1242,13 +1203,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA19Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos19Point8Degrees.momentOfOccurrence, tzais19Point8Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._19_8,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._19_8),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1271,13 +1230,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos16Point1Degrees.momentOfOccurrence, tzais16Point1Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._16_1,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1298,13 +1255,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA18Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos18Degrees.momentOfOccurrence, tzais18Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._18,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._18),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1347,13 +1302,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA72MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos72Zmanis.momentOfOccurrence, tzais72Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._72,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1375,13 +1328,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA90Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos90.momentOfOccurrence, tzais90.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._90,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1402,13 +1353,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA90MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos90Zmanis.momentOfOccurrence, tzais90Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._90,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1429,13 +1378,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA96Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos96.momentOfOccurrence, tzais96.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._96,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1456,13 +1403,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA96MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos96Zmanis.momentOfOccurrence, tzais96Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._96,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1500,23 +1445,19 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShma3HoursBeforeChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getTimeOffset(chatzos.momentOfOccurrence, -180 * MINUTE_MILLIS),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(
-                    (-3).hours,
-                    ZmanType.CHATZOS_HAYOM
-                ),
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.Relationship(ZmanType.SOF_ZMAN_KRIAS_SHEMA occurs 3.hours before ZmanType.CHATZOS_HAYOM),
                 ZmanDefinition.UsesElevation.NEVER,
-            ),
-            listOf(
-                ZmanAuthority.KOMARNO,
-                ZmanAuthority.SHACH,
-                ZmanAuthority.LECHEM_MISHNAH,
-                ZmanAuthority.YAAVETZ,
-                ZmanAuthority.SHVUS_YAAKOV,
-                ZmanAuthority.CHASSAN_SOFER,
+                listOf(
+                    ZmanAuthority.KOMARNO,
+                    ZmanAuthority.SHACH,
+                    ZmanAuthority.LECHEM_MISHNAH,
+                    ZmanAuthority.YAAVETZ,
+                    ZmanAuthority.SHVUS_YAAKOV,
+                    ZmanAuthority.CHASSAN_SOFER,
+                ),
             )
         )
 
@@ -1538,13 +1479,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaMGA120Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos120.momentOfOccurrence, tzais120.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._120,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._120),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1571,15 +1510,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaAlos16Point1ToSunset: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos16Point1Degrees.momentOfOccurrence, elevationAdjustedSunset),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_ELEVATION_ADJUSTED_SUNSET,
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_ELEVATION_ADJUSTED_SUNSET
-            ),
-            listOf(ZmanAuthority.RAZEH)
+                listOf(ZmanAuthority.RAZEH)
+            )
         )
 
     /**
@@ -1605,16 +1542,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaAlos16Point1ToTzaisGeonim7Point083Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos16Point1Degrees.momentOfOccurrence, tzaisGeonim7Point083Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(
-                    3.hours,
-                    ZmanType.ALOS
-                ),
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_DUSK_7_083,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_DUSK_7_083
             )
         )
 
@@ -1638,13 +1570,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA19Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos19Point8Degrees.momentOfOccurrence, tzais19Point8Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._19_8,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._19_8),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1669,13 +1599,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos16Point1Degrees.momentOfOccurrence, tzais16Point1Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._16_1,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK,
             )
         )
 
@@ -1698,13 +1626,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA18Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos18Degrees.momentOfOccurrence, tzais18Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._18,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._18),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1746,13 +1672,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA72MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos72Zmanis.momentOfOccurrence, tzais72Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._72,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1774,13 +1698,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA90Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos90.momentOfOccurrence, tzais90.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._90,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1802,13 +1724,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA90MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos90Zmanis.momentOfOccurrence, tzais90Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._90,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1830,13 +1750,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA96Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos96.momentOfOccurrence, tzais96.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._96,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1858,13 +1776,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA96MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos96Zmanis.momentOfOccurrence, tzais96Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._96,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1887,13 +1803,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaMGA120Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos120.momentOfOccurrence, tzais120.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._120,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._120),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -1912,18 +1826,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfila2HoursBeforeChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getTimeOffset(chatzos.momentOfOccurrence, -120 * MINUTE_MILLIS),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(
-                    (-2).hours,
-                    ZmanType.CHATZOS_HAYOM
-                ),
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.Relationship(ZmanType.SOF_ZMAN_TEFILLAH occurs 2.hours before ZmanType.CHATZOS_HAYOM),
                 ZmanDefinition.UsesElevation.NEVER,
-            ),
-            listOf(
-                ZmanAuthority.KOMARNO,
+                listOf(
+                    ZmanAuthority.KOMARNO,
+                ),
             )
         )
 
@@ -1935,7 +1845,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * Some use this time to delay the start of *mincha* in the winter when 1/2 of a [*shaah zmanis*][shaahZmanisGra]
      * is less than 30 minutes.
      *
-     * See [mMinchaGedolaGreaterThan30] for a convenience method that returns the later of the 2 calculations.
+     * See [minchaGedolaGreaterThan30] for a convenience method that returns the later of the 2 calculations.
      *
      * One should not use this time to start *mincha* before the standard [*mincha gedola*][minchaGedola].
      * See Shulchan Aruch [Orach Chayim 234:1](https://hebrewbooks.org/pdfpager.aspx?req=49624&st=&pgnum=291) and
@@ -1950,14 +1860,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaGedola30Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
             getTimeOffset(chatzos.momentOfOccurrence, MINUTE_MILLIS * 30),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(
-                    30.minutes,
-                    ZmanType.CHATZOS_HAYOM
-                ),
-                null,
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.Relationship(ZmanType.MINCHA_GEDOLAH occurs 30.minutes after ZmanType.CHATZOS_HAYOM),
                 ZmanDefinition.UsesElevation.NEVER,
             ),
         )
@@ -1980,13 +1886,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaGedola72Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
             getMinchaGedola(alos72.momentOfOccurrence, tzais72.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._72,
-                null,
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2007,24 +1911,27 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaGedola16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
             getMinchaGedola(alos16Point1Degrees.momentOfOccurrence, tzais16Point1Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._16_1,
-                null,
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
     /**
      * This method returns the time of *mincha gedola* based on the opinion of [Rabbi Yaakov Moshe Hillel](https://en.wikipedia.org/wiki/Yaakov_Moshe_Hillel) as published in the *luach*
-     * of the Bais Horaah of Yeshivat Chevrat Ahavat Shalom that *mincha gedola* is calculated as half a *shaah
-     * zmanis* after *chatzos* with *shaos zmaniyos* calculated based on a day starting 72 minutes befoe sunrise
-     * [*alos* 16.1˚][alos16Point1Degrees] and ending 13.5 minutes after sunset [tzaisGeonim3Point7Degrees]. *Mincha gedola* is the earliest time to pray *mincha*.
-     * The later of this time or 30 clock minutes after *chatzos* is returned. See [minchaGedolaGreaterThan30]
-     * (though that calculation is based on *mincha gedola* GRA).
-     * For more information about *mincha gedola* see the documentation on [*mincha gedola*][.getMinchaGedola].
+     * of the Bais Horaah of Yeshivat Chevrat Ahavat Shalom.
+     *
+     * It will return the later time of the following two options:
+     * - half a *shaah zmanis* after *chatzos*
+     *     - with *shaos zmaniyos* calculated based on:
+     *          - a day starting 72 minutes before sunrise [*alos* 16.1˚][alos16Point1Degrees] and
+     *          - ending 13.5 minutes after sunset [tzaisGeonim3Point7Degrees].
+     * - 30 clock minutes after *chatzos*
+     *
+     * See [minchaGedolaGreaterThan30] (though that calculation is based on *mincha gedola* GRA).
+     * *Mincha gedola* is the earliest time to pray *mincha*. For more information about *mincha gedola* see the documentation on [*mincha gedola*][minchaGedola].
      *
      * @return the `Date` of the *mincha gedola*. If the calculation can't be computed such as northern and
      * southern locations even south of the Arctic Circle and north of the Antarctic Circle where the sun may not
@@ -2034,32 +1941,37 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * @see alos16Point1Degrees
      * @see tzaisGeonim3Point7Degrees
      * @see shaahZmanisAlos16Point1ToTzais3Point7
-     * @see .getMinchaGedolaGreaterThan30
+     * @see minchaGedolaGreaterThan30
      */
     val minchaGedolaAhavatShalom: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
-            if (minchaGedola30Minutes.momentOfOccurrence == null || minchaGedola.momentOfOccurrence == null) null
-            else if (minchaGedola30Minutes.momentOfOccurrence!! > getTimeOffset(
+            maxOf(
+                minchaGedola30Minutes.momentOfOccurrence,
+                /*minchaGedola30MinutesZmanis.momentOfOccurence = */getTimeOffset(
                     chatzos.momentOfOccurrence,
                     shaahZmanisAlos16Point1ToTzais3Point7.duration.div(2).inWholeMilliseconds
-                )!!
-            ) minchaGedola30Minutes.momentOfOccurrence
-            else getTimeOffset(
-                chatzos.momentOfOccurrence,
-                shaahZmanisAlos16Point1ToTzais3Point7.duration.inWholeMilliseconds / 2
+                )
             ),
             ZmanDefinition(
-                ZmanAuthority.AHAVAT_SHALOM,
-                null,
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.LaterOf(
+                    minchaGedola30Minutes.rules,
+                    shaahZmanisAlos16Point1ToTzais3Point7.rules.copy(
+                        type = ZmanType.MINCHA_GEDOLAH,
+                        calculationMethod = ZmanCalculationMethod.Relationship(
+                            ZmanType.MINCHA_GEDOLAH occurs 30.minutes.zmaniyos after ZmanType.CHATZOS_HAYOM
+                        )
+                    ),
+                ),
                 ZmanDefinition.UsesElevation.ALWAYS,
+                supportingAuthorities = listOf(ZmanAuthority.AHAVAT_SHALOM),
             )
         )
 
     /**
-     * This is a convenience method that returns the later of [.getMinchaGedola] and
-     * [.getMinchaGedola30Minutes]. In the winter when 1/2 of a [*shaah zmanis*][shaahZmanisGra] is
-     * less than 30 minutes [.getMinchaGedola30Minutes] will be returned, otherwise [.getMinchaGedola]
+     * This is a convenience method that returns the later of [minchaGedola] and
+     * [minchaGedola30Minutes]. In the winter when 1/2 of a [*shaah zmanis*][shaahZmanisGra] is
+     * less than 30 minutes [minchaGedola30Minutes] will be returned, otherwise [minchaGedola]
      * will be returned.
      *
      * @return the `Date` of the later of [.getMinchaGedola] and [.getMinchaGedola30Minutes].
@@ -2068,25 +1980,17 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * explanation on top of the [AstronomicalCalendar] documentation.
      */
     val minchaGedolaGreaterThan30: Zman.DateBased
-        get() =
-            if (minchaGedola30Minutes.momentOfOccurrence == null || minchaGedola.momentOfOccurrence == null) Zman.DateBased(
+        get() = Zman.DateBased(
+            maxOf(minchaGedola30Minutes.momentOfOccurrence, minchaGedola.momentOfOccurrence),
+            ZmanDefinition(
                 ZmanType.MINCHA_GEDOLAH,
-                null,
-                ZmanDefinition(
-                    ZmanCalculationMethod.FixedDuration._30,
-                )
+                ZmanCalculationMethod.LaterOf(
+                    minchaGedola30Minutes.rules,
+                    minchaGedola.rules,
+                ),
+                ZmanDefinition.UsesElevation.IF_SET
             )
-            else if (minchaGedola30Minutes.momentOfOccurrence!! > minchaGedola.momentOfOccurrence!!) minchaGedola30Minutes
-            else Zman.DateBased(
-                ZmanType.MINCHA_GEDOLAH,
-                minchaGedola.momentOfOccurrence,
-                ZmanDefinition(
-                    ZmanCalculationMethod.ZmaniyosDuration(6.5.hours, ZmanType.HANAITZ),
-                    null,
-                    ZmanDefinition.UsesElevation.IF_SET,
-                    ZmanDefinition.DayDefinition.SUNRISE_TO_SUNSET
-                )
-            )
+        )
 
     /**
      * This method returns the time of *mincha ketana* according to the Magen Avraham with the day starting and
@@ -2106,13 +2010,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaKetana16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_KETANAH,
             getMinchaKetana(alos16Point1Degrees.momentOfOccurrence, tzais16Point1Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._16_1,
-                null,
+                ZmanType.MINCHA_KETANAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2136,20 +2038,19 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaKetanaAhavatShalom: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_KETANAH,
             getTimeOffset(
                 tzaisGeonim3Point8Degrees.momentOfOccurrence,
                 (shaahZmanisAlos16Point1ToTzais3Point8.duration * -2.5).inWholeMilliseconds
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration((-2.5).hours, ZmanType.TZAIS),
-                null,
+                ZmanType.MINCHA_KETANAH,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_DUSK_3_8,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_DUSK_3_8
-            ),
-            listOf(
-                ZmanAuthority.AHAVAT_SHALOM,
-            )
+                listOf(
+                    ZmanAuthority.AHAVAT_SHALOM,
+                ),
+            ) // TODO is this relationship just a day definition? ZmanType.MINCHA_KETANAH occurs 2.5.hours.zmaniyos before ZmanType.TZAIS
+
         )
 
     /**
@@ -2170,13 +2071,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaKetana72Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_KETANAH,
             getMinchaKetana(alos72.momentOfOccurrence, tzais72.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._72,
-                null,
+                ZmanType.MINCHA_KETANAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2196,13 +2095,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val plagHamincha60Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos60.momentOfOccurrence, tzais60.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._60,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._60),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2223,13 +2120,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha72Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos72.momentOfOccurrence, tzais72.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._72,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2250,13 +2145,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha90Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos90.momentOfOccurrence, tzais90.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._90,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2276,13 +2169,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha96Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos96.momentOfOccurrence, tzais96.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._96,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2299,13 +2190,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha96MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos96Zmanis.momentOfOccurrence, tzais96Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._96,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._96),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2322,13 +2211,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha90MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos90Zmanis.momentOfOccurrence, tzais90Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._90,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._90),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2346,13 +2233,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha72MinutesZmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos72Zmanis.momentOfOccurrence, tzais72Zmanis.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._72,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.ZmaniyosDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2373,13 +2258,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos16Point1Degrees.momentOfOccurrence, tzais16Point1Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._16_1,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2399,13 +2282,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha19Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos19Point8Degrees.momentOfOccurrence, tzais19Point8Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._19_8,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._19_8),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2425,13 +2306,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha26Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos26Degrees.momentOfOccurrence, tzais26Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._26,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._26),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2450,13 +2329,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagHamincha18Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos18Degrees.momentOfOccurrence, tzais18Degrees.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees._18,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._18),
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
@@ -2478,13 +2355,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val plagAlosToSunset: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos16Point1Degrees.momentOfOccurrence, elevationAdjustedSunset),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_ELEVATION_ADJUSTED_SUNSET,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_ELEVATION_ADJUSTED_SUNSET
             )
         )
 
@@ -2506,13 +2381,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val plagAlos16Point1ToTzaisGeonim7Point083Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos16Point1Degrees.momentOfOccurrence, tzaisGeonim7Point083Degrees.momentOfOccurrence),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_DUSK_7_083,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_DUSK_7_083
             )
         )
 
@@ -2535,26 +2408,24 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val plagAhavatShalom: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getTimeOffset(
                 tzaisGeonim3Point8Degrees.momentOfOccurrence,
                 (shaahZmanisAlos16Point1ToTzais3Point8.duration * -1.25).inWholeMilliseconds
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration((-1.25).hours, ZmanType.TZAIS),
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_DUSK_3_8,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_DUSK_3_8
-            ),
-            listOf(
-                ZmanAuthority.AHAVAT_SHALOM
+                listOf(
+                    ZmanAuthority.AHAVAT_SHALOM
+                )
             )
         )
 
     /**
      * Method to return the beginning of *bain hashmashos* of Rabbeinu Tam calculated when the sun is
-     * [13.24˚][.ZENITH_13_POINT_24] below the western [geometric horizon][AstronomicalCalendar.GEOMETRIC_ZENITH] (90)
-     * after sunset. This calculation is based on the same calculation of [*bain hashmashos* Rabbeinu Tam 58.5 minutes][.getBainHashmashosRT58Point5Minutes] but uses a degree-based calculation instead of 58.5 exact
+     * [13.24˚][ZENITH_13_POINT_24] below the western [geometric horizon][AstronomicalCalendar.GEOMETRIC_ZENITH] (90)
+     * after sunset. This calculation is based on the same calculation of [*bain hashmashos* Rabbeinu Tam 58.5 minutes][bainHashmashosRT58Point5Minutes] but uses a degree-based calculation instead of 58.5 exact
      * minutes. This calculation is based on the position of the sun 58.5 minutes after sunset in Jerusalem [around the equinox / equilux](https://kosherjava.com/2022/01/12/equinox-vs-equilux-zmanim-calculations/),
      * which calculates to 13.24 below [geometric zenith][AstronomicalCalendar.GEOMETRIC_ZENITH].
      * NOTE: As per Yisrael Vehazmanim Vol. III page 1028, No. 50, a dip of slightly less than 13 should be used.
@@ -2570,21 +2441,20 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * for this calculation, a null will be returned. See detailed explanation on top of the
      * [AstronomicalCalendar] documentation.
      *
-     * @see .ZENITH_13_POINT_24
+     * @see ZENITH_13_POINT_24
      *
-     * @see .getBainHashmashosRT58Point5Minutes
+     * @see bainHashmashosRT58Point5Minutes
      */
     val bainHashmashosRT13Point24Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getSunsetOffsetByDegrees(ZENITH_13_POINT_24),
             ZmanDefinition(
+                ZmanType.BAIN_HASHMASHOS,
                 ZmanCalculationMethod.Degrees._13_24,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS,
-            ),
-            listOf(
-                ZmanAuthority.RABEINU_TAM
+                listOf(
+                    RABEINU_TAM
+                )
             )
         )
 
@@ -2600,15 +2470,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val bainHashmashosRT58Point5Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getTimeOffset(elevationAdjustedSunset, 58.5 * MINUTE_MILLIS),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(58.5.minutes, ZmanType.SHKIAH),
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
-            ),
-            listOf(
-                ZmanAuthority.RABEINU_TAM
+                ZmanType.BAIN_HASHMASHOS,
+                ZmanCalculationMethod.Relationship(ZmanType.BAIN_HASHMASHOS occurs 58.5.minutes after ZmanType.SHKIAH),
+                ZmanDefinition.UsesElevation.IF_SET,
+                listOf(
+                    RABEINU_TAM
+                ),
             )
         )
 
@@ -2625,18 +2494,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val bainHashmashosRT13Point5MinutesBefore7Point083Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getTimeOffset(
-                getSunsetOffsetByDegrees(ZENITH_7_POINT_083),
+                tzaisGeonim7Point083Degrees.momentOfOccurrence,
                 -13.5 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration(
-                    (-13.5).minutes,
-                    ZmanType.SHKIAH
-                ),//TODO this hard to catalog. Revisit.
-                null,
-                ZmanDefinition.UsesElevation.ALWAYS
+                ZmanType.BAIN_HASHMASHOS,
+                ZmanCalculationMethod.Relationship(ZmanType.BAIN_HASHMASHOS occurs 13.5.minutes before tzaisGeonim7Point083Degrees),
+                ZmanDefinition.UsesElevation.ALWAYS,
             ),
         )
 
@@ -2654,21 +2519,20 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val bainHashmashosRT2Stars: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             alos19Point8Degrees.momentOfOccurrence?.let { alos19Point8 ->
                 elevationAdjustedSunrise?.let { sunrise ->
                     getTimeOffset(
                         elevationAdjustedSunset,
-                        ((sunrise - alos19Point8) * (5 / 18.0)).inWholeMilliseconds
+                        ((sunrise - alos19Point8) * (5 / 18.0)).inWholeMilliseconds //(five-eighteenths of the time between alos and sunrise) after sunset
                     )
                 }
             },
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration(5.minutes, ZmanType.SHKIAH),//TODO this hard to catalog. Revisit.
-                null,
-                ZmanDefinition.UsesElevation.ALWAYS
-            ),
-            listOf(ZmanAuthority.RABEINU_TAM_DIVREI_YOSEF)
+                ZmanType.BAIN_HASHMASHOS,
+                ZmanCalculationMethod.Unspecified,//TODO this hard to catalog. Revisit.
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(RABEINU_TAM accordingTo DIVREI_YOSEF)
+            )
         )
 
     /**
@@ -2680,27 +2544,27 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * Arctic Circle where there is at least one day a year where the sun does not rise, and one where it does
      * not set, a null will be returned. See detailed explanation on top of the [AstronomicalCalendar]
      * documentation.
-     * @see .getBainHashmashosYereim3Point05Degrees
+     * @see bainHashmashosYereim3Point05Degrees
      */
     val bainHashmashosYereim18Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 -18 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration((-18).minutes, ZmanType.SHKIAH),
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.BAIN_HASHMASHOS,
+                ZmanCalculationMethod.Relationship(ZmanType.BAIN_HASHMASHOS occurs 18.minutes before ZmanType.SHKIAH),
+                ZmanDefinition.UsesElevation.IF_SET,
+                listOf(ZmanAuthority.YEREIM),
             ),
         )
 
     /**
      * This method returns the beginning of *bain hashmashos* (twilight) according to the [Yereim (Rabbi Eliezer of Metz)](https://en.wikipedia.org/wiki/Eliezer_ben_Samuel) calculated as the sun's
      * position 3.05 above the horizon [around the equinox / equilux](https://kosherjava.com/2022/01/12/equinox-vs-equilux-zmanim-calculations/),
-     * its position 18 minutes or 3/4 of an 24-minute *mil* before sunset. According to the Yereim, *bain
-     * hashmashos* starts 3/4 of a *Mil* before sunset and *tzais* or nightfall starts at sunset.
+     * its position 18 minutes or 3/4 of a 24-minute *mil* before sunset. According to the Yereim, *bain
+     * hashmashos* starts 3/4 of a *Mil* before sunset, and *tzais* /nightfall starts at sunset.
      * Note that *lechumra* (of about 14 seconds) a refraction value of 0.5166 as opposed to the traditional
      * 0.566 is used. This is more inline with the actual refraction in *Eretz Yisrael* and is brought down
      * by [Rabbi Yedidya Manet](http://beinenu.com/rabbis/%D7%94%D7%A8%D7%91-%D7%99%D7%93%D7%99%D7%93%D7%99%D7%94-%D7%9E%D7%A0%D7%AA) in his [Zmanei Halacha Lema’aseh](https://www.nli.org.il/en/books/NNL_ALEPH002542826/NLI) (p. 11). That is the first source that I am aware of that calculates degree-based Yereim
@@ -2713,19 +2577,18 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * rise, and one where it does not set, a null will be returned. See detailed explanation on top of the
      * [AstronomicalCalendar] documentation.
      *
-     * @see .ZENITH_MINUS_3_POINT_05
+     * @see ZENITH_MINUS_3_POINT_05
      *
-     * @see .getBainHashmashosYereim18Minutes
-     * @see .getBainHashmashosYereim2Point8Degrees
-     * @see .getBainHashmashosYereim2Point1Degrees
+     * @see bainHashmashosYereim18Minutes
+     * @see bainHashmashosYereim2Point8Degrees
+     * @see bainHashmashosYereim2Point1Degrees
      */
     val bainHashmashosYereim3Point05Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getSunsetOffsetByDegrees(ZENITH_MINUS_3_POINT_05),
             ZmanDefinition(
-                ZmanCalculationMethod.Degrees(-3.05F, ZmanType.SHKIAH),
-                null,
+                ZmanType.BAIN_HASHMASHOS,
+                ZmanCalculationMethod.Degrees(-3.05F),
                 ZmanDefinition.UsesElevation.ALWAYS
             ),
         )
@@ -2740,19 +2603,19 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * not set, a null will be returned. See detailed explanation on top of the [AstronomicalCalendar]
      * documentation.
      *
-     * @see .getBainHashmashosYereim2Point8Degrees
+     * @see bainHashmashosYereim2Point8Degrees
      */
     val bainHashmashosYereim16Point875Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 -16.875 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration((-16.875).minutes, ZmanType.SHKIAH),
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.BAIN_HASHMASHOS,
+                ZmanCalculationMethod.Relationship(ZmanType.BAIN_HASHMASHOS occurs 16.875.minutes before ZmanType.SHKIAH),
+                ZmanDefinition.UsesElevation.IF_SET,
+                listOf(ZmanAuthority.YEREIM),
             ),
         )
 
@@ -2762,26 +2625,25 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * its position 16.875 minutes or 3/4 of an 18-minute *Mil* before sunset. According to the Yereim, *bain
      * hashmashos* starts 3/4 of a *Mil* before sunset and *tzais* or nightfall starts at sunset.
      * Details, including how the degrees were calculated can be seen in the documentation of
-     * [.getBainHashmashosYereim3Point05Degrees].
+     * [bainHashmashosYereim3Point05Degrees].
      *
      * @return the `Date` of the sun's position 2.8 minutes before sunset. If the calculation can't
      * be computed such as in the Arctic Circle where there is at least one day a year where the sun does not
      * rise, and one where it does not set, a null will be returned. See detailed explanation on top of the
      * [AstronomicalCalendar] documentation.
      *
-     * @see .ZENITH_MINUS_2_POINT_8
+     * @see ZENITH_MINUS_2_POINT_8
      *
-     * @see .getBainHashmashosYereim16Point875Minutes
-     * @see .getBainHashmashosYereim3Point05Degrees
-     * @see .getBainHashmashosYereim2Point1Degrees
+     * @see bainHashmashosYereim16Point875Minutes
+     * @see bainHashmashosYereim3Point05Degrees
+     * @see bainHashmashosYereim2Point1Degrees
      */
     val bainHashmashosYereim2Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getSunsetOffsetByDegrees(ZENITH_MINUS_2_POINT_8),
             ZmanDefinition(
+                ZmanType.BAIN_HASHMASHOS,
                 ZmanCalculationMethod.Degrees(2.8F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -2796,18 +2658,19 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * not set, a null will be returned. See detailed explanation on top of the [AstronomicalCalendar]
      * documentation.
      *
-     * @see .getBainHashmashosYereim2Point1Degrees
+     * @see bainHashmashosYereim2Point1Degrees
      */
     val bainHashmashosYereim13Point5Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS, getTimeOffset(
+            getTimeOffset(
                 elevationAdjustedSunset,
                 -13.5 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedMinutesFloat(13.5F),
-                null,
-                ZmanDefinition.UsesElevation.IF_SET
+                ZmanType.BAIN_HASHMASHOS,
+                ZmanCalculationMethod.Relationship(ZmanType.BAIN_HASHMASHOS occurs 13.5.minutes before ZmanType.SHKIAH),
+                ZmanDefinition.UsesElevation.IF_SET,
+                listOf(ZmanAuthority.YEREIM),
             )
         )
 
@@ -2817,84 +2680,79 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * in Yerushalayim, its position 13.5 minutes or 3/4 of an 18-minute *Mil* before sunset. According to the Yereim,
      * *bain hashmashos* starts 3/4 of a *mil* before sunset and *tzais* or nightfall starts at sunset.
      * Details, including how the degrees were calculated can be seen in the documentation of
-     * [.getBainHashmashosYereim3Point05Degrees].
+     * [bainHashmashosYereim3Point05Degrees].
      *
      * @return the `Date` of the sun's position 2.1 minutes before sunset. If the calculation can't
      * be computed such as in the Arctic Circle where there is at least one day a year where the sun does not
      * rise, and one where it does not set, a null will be returned. See detailed explanation on top of the
      * [AstronomicalCalendar] documentation.
      *
-     * @see .ZENITH_MINUS_2_POINT_1
+     * @see ZENITH_MINUS_2_POINT_1
      *
-     * @see .getBainHashmashosYereim13Point5Minutes
-     * @see .getBainHashmashosYereim2Point8Degrees
-     * @see .getBainHashmashosYereim3Point05Degrees
+     * @see bainHashmashosYereim13Point5Minutes
+     * @see bainHashmashosYereim2Point8Degrees
+     * @see bainHashmashosYereim3Point05Degrees
      */
     val bainHashmashosYereim2Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.BAIN_HASHMASHOS,
             getSunsetOffsetByDegrees(ZENITH_MINUS_2_POINT_1), //TODO figure out how to catalog this
             ZmanDefinition(
-
+                ZmanType.BAIN_HASHMASHOS,
                 ZmanCalculationMethod.Degrees(2.1F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
 
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated at the
-     * sun's position at [3.7˚][.ZENITH_3_POINT_7] below the western horizon.
+     * sun's position at [3.7˚][ZENITH_3_POINT_7] below the western horizon.
      *
      * @return the `Date` representing the time when the sun is 3.7 below sea level.
-     * @see .ZENITH_3_POINT_7
+     * @see ZENITH_3_POINT_7
      */
     val tzaisGeonim3Point7Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_3_POINT_7),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(3.7F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
 
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated at the
-     * sun's position at [3.8˚][.ZENITH_3_POINT_8] below the western horizon.
+     * sun's position at [3.8˚][ZENITH_3_POINT_8] below the western horizon.
      *
      * @return the `Date` representing the time when the sun is 3.8 below sea level.
-     * @see .ZENITH_3_POINT_8
+     * @see ZENITH_3_POINT_8
      */
     val tzaisGeonim3Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_3_POINT_8),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._3_8,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
 
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated at the
-     * sun's position at [5.95˚][.ZENITH_5_POINT_95] below the western horizon.
+     * sun's position at [5.95˚][ZENITH_5_POINT_95] below the western horizon.
      *
      * @return the `Date` representing the time when the sun is 5.95 below sea level. If the calculation
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
      * the Antarctic Circle where the sun may not reach low enough below the horizon for this calculation, a
      * null will be returned. See detailed explanation on top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_5_POINT_95
+     * @see ZENITH_5_POINT_95
      */
     val tzaisGeonim5Point95Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_5_POINT_95),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(5.95F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -2902,22 +2760,21 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated as 3/4
      * of a [Mil](https://en.wikipedia.org/wiki/Biblical_and_Talmudic_units_of_measurement) based on an 18
-     * minute Mil, or 13.5 minutes. It is the sun's position at [3.65˚][.ZENITH_3_POINT_65] below the western
+     * minute Mil, or 13.5 minutes. It is the sun's position at [3.65˚][ZENITH_3_POINT_65] below the western
      * horizon. This is a very early *zman* and should not be relied on without Rabbinical guidance.
      *
      * @return the `Date` representing the time when the sun is 3.65 below sea level. If the calculation
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
      * the Antarctic Circle where the sun may not reach low enough below the horizon for this calculation, a
      * null will be returned. See detailed explanation on top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_3_POINT_65
+     * @see ZENITH_3_POINT_65
      */
     val tzaisGeonim3Point65Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_3_POINT_65),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(3.65F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -2925,7 +2782,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated as 3/4
      * of a [Mil](https://en.wikipedia.org/wiki/Biblical_and_Talmudic_units_of_measurement) based on an 18
-     * minute Mil, or 13.5 minutes. It is the sun's position at [3.676˚][.ZENITH_3_POINT_676] below the western
+     * minute Mil, or 13.5 minutes. It is the sun's position at [3.676˚][ZENITH_3_POINT_676] below the western
      * horizon based on the calculations of Stanley Fishkind. This is a very early *zman* and should not be
      * relied on without Rabbinical guidance.
      *
@@ -2934,15 +2791,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * north of the Antarctic Circle where the sun may not reach low enough below the horizon for this
      * calculation, a null will be returned. See detailed explanation on top of the [AstronomicalCalendar]
      * documentation.
-     * @see .ZENITH_3_POINT_676
+     * @see ZENITH_3_POINT_676
      */
     val tzaisGeonim3Point676Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_3_POINT_676),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(3.676F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -2950,22 +2806,21 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated as 3/4
      * of a *[mil](https://en.wikipedia.org/wiki/Biblical_and_Talmudic_units_of_measurement)* based
-     * on a 24-minute Mil, or 18 minutes. It is the sun's position at [4.61˚][.ZENITH_4_POINT_61] below the
+     * on a 24-minute Mil, or 18 minutes. It is the sun's position at [4.61˚][ZENITH_4_POINT_61] below the
      * western horizon. This is a very early *zman* and should not be relied on without Rabbinical guidance.
      *
      * @return the `Date` representing the time when the sun is 4.61 below sea level. If the calculation
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
      * the Antarctic Circle where the sun may not reach low enough below the horizon for this calculation, a
      * null will be returned. See detailed explanation on top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_4_POINT_61
+     * @see ZENITH_4_POINT_61
      */
     val tzaisGeonim4Point61Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_4_POINT_61),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(4.61F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -2973,22 +2828,21 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated as 3/4
      * of a [Mil](https://en.wikipedia.org/wiki/Biblical_and_Talmudic_units_of_measurement), based on a 22.5
-     * minute Mil, or 16 7/8 minutes. It is the sun's position at [4.37˚][.ZENITH_4_POINT_37] below the western
+     * minute Mil, or 16 7/8 minutes. It is the sun's position at [4.37˚][ZENITH_4_POINT_37] below the western
      * horizon. This is a very early *zman* and should not be relied on without Rabbinical guidance.
      *
      * @return the `Date` representing the time when the sun is 4.37 below sea level. If the calculation
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
      * the Antarctic Circle where the sun may not reach low enough below the horizon for this calculation, a
      * null will be returned. See detailed explanation on top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_4_POINT_37
+     * @see ZENITH_4_POINT_37
      */
     val tzaisGeonim4Point37Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_4_POINT_37),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(4.37F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -2997,7 +2851,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated as 3/4
      * of a 24-minute *[Mil](https://en.wikipedia.org/wiki/Biblical_and_Talmudic_units_of_measurement)*,
      * based on a *Mil* being 24 minutes, and is calculated as 18 + 2 + 4 for a total of 24 minutes. It is the
-     * sun's position at [5.88˚][.ZENITH_5_POINT_88] below the western horizon. This is a very early
+     * sun's position at [5.88˚][ZENITH_5_POINT_88] below the western horizon. This is a very early
      * *zman* and should not be relied on without Rabbinical guidance.
      *
      * @todo Additional detailed documentation needed.
@@ -3005,15 +2859,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
      * the Antarctic Circle where the sun may not reach low enough below the horizon for this calculation, a
      * null will be returned. See detailed explanation on top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_5_POINT_88
+     * @see ZENITH_5_POINT_88
      */
     val tzaisGeonim5Point88Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_5_POINT_88),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(5.88F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -3021,7 +2874,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated as 3/4
      * of a [Mil](https://en.wikipedia.org/wiki/Biblical_and_Talmudic_units_of_measurement) based on the
-     * sun's position at [4.8˚][.ZENITH_4_POINT_8] below the western horizon. This is based on Rabbi Leo Levi's
+     * sun's position at [4.8˚][ZENITH_4_POINT_8] below the western horizon. This is based on Rabbi Leo Levi's
      * calculations. This is the This is a very early *zman* and should not be relied on without Rabbinical guidance.
      * @todo Additional documentation needed.
      *
@@ -3029,15 +2882,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
      * the Antarctic Circle where the sun may not reach low enough below the horizon for this calculation, a
      * null will be returned. See detailed explanation on top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_4_POINT_8
+     * @see ZENITH_4_POINT_8
      */
     val tzaisGeonim4Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_4_POINT_8),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(4.8F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -3055,15 +2907,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * north of the Antarctic Circle where the sun may not reach low enough below the horizon for this
      * calculation, a null will be returned. See detailed explanation on top of the [AstronomicalCalendar]
      * documentation.
-     * @see .ZENITH_6_POINT_45
+     * @see ZENITH_6_POINT_45
      */
     val tzaisGeonim6Point45Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_6_POINT_45),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees(6.45F),
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             )
         )
@@ -3100,14 +2951,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzaisGeonim7Point083Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_7_POINT_083),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._7_083,
-                null,
-                ZmanDefinition.UsesElevation.ALWAYS
-            ),
-            listOf(ZmanAuthority.GEONIM)
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.GEONIM)
+            )
         )
 
     /**
@@ -3137,39 +2987,37 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzaisGeonim7Point67Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_7_POINT_67),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._7_67,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             ),
         )
 
     /**
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated at the
-     * sun's position at [8.5˚][.ZENITH_8_POINT_5] below the western horizon.
+     * sun's position at [8.5˚][ZENITH_8_POINT_5] below the western horizon.
      *
      * @return the `Date` representing the time when the sun is 8.5 below sea level. If the calculation
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
      * the Antarctic Circle where the sun may not reach low enough below the horizon for this calculation, a
      * null will be returned. See detailed explanation on top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_8_POINT_5
+     * @see ZENITH_8_POINT_5
      */
     val tzaisGeonim8Point5Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_8_POINT_5),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._8_5,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             ),
         )
 
     /**
      * This method returns the *tzais* (nightfall) based on the calculations used in the [Luach Itim Lebinah](https://www.worldcat.org/oclc/243303103) as the stringent time for *tzais*.  It is
-     * calculated at the sun's position at [9.3˚][.ZENITH_9_POINT_3] below the western horizon.
+     * calculated at the sun's position at [9.3˚][ZENITH_9_POINT_3] below the western horizon.
      *
      * @return the `Date` representing the time when the sun is 9.3 below sea level. If the calculation
      * can't be computed such as northern and southern locations even south of the Arctic Circle and north of
@@ -3178,11 +3026,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzaisGeonim9Point3Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_9_POINT_3),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._9_3,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             ),
         )
@@ -3191,7 +3038,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * This method returns the *tzais* (nightfall) based on the opinion of the *Geonim* calculated as 60
      * minutes after sunset [around the equinox / equilux](https://kosherjava.com/2022/01/12/equinox-vs-equilux-zmanim-calculations/), the
      * day that a solar hour is 60 minutes in New York. The sun's position at this time computes to
-     * [9.75˚][.ZENITH_9_POINT_75] below the western horizon. This is the opinion of [Rabbi Eliyahu Henkin](https://en.wikipedia.org/wiki/Yosef_Eliyahu_Henkin).  This also follows the opinion of
+     * [9.75˚][ZENITH_9_POINT_75] below the western horizon. This is the opinion of [Rabbi Eliyahu Henkin](https://en.wikipedia.org/wiki/Yosef_Eliyahu_Henkin).  This also follows the opinion of
      * [Rabbi Shmuel Kamenetsky](https://en.wikipedia.org/wiki/Shmuel_Kamenetsky). Rabbi Yaakov Shakow presented
      * these degree-based times to Rabbi Shmuel Kamenetsky who agreed to them.
      *
@@ -3205,11 +3052,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzaisGeonim9Point75Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_9_POINT_75),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._9_75,
-                null,
                 ZmanDefinition.UsesElevation.ALWAYS
             ),
         )
@@ -3230,15 +3076,15 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais60: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 60 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._60,
-                null,
-                ZmanDefinition.UsesElevation.ALWAYS
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 60.minutes after ZmanType.SHKIAH),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.CHAVAS_YAIR, ZmanAuthority.DIVREI_MALKIEL),
             ),
         )
 
@@ -3260,15 +3106,15 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzaisAteretTorah: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 ateretTorahSunsetOffset * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration.AteretTorah(ateretTorahSunsetOffset),//ZmanAuthority.AteretTorah(ateretTorahSunsetOffset),
-                null,
-                ZmanDefinition.UsesElevation.NEVER
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs ateretTorahSunsetOffset.minutes after ZmanType.SHKIAH),
+                ZmanDefinition.UsesElevation.NEVER,
+                listOf(ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)),
             ),
         )
 
@@ -3295,20 +3141,25 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaAteretTorah: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(alos72Zmanis.momentOfOccurrence, tzaisAteretTorah.momentOfOccurrence),
             ZmanDefinition(
-                ZmanAuthority.AteretTorah(ateretTorahSunsetOffset),
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(
+                    ZmanCalculationMethod.ZmaniyosDuration._72,
+                    ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)
+                ),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
+                listOf(ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)),
             )
         )
 
     /**
      * This method returns the latest *zman tfila* (time to recite the morning prayers) based on the calculation
-     * of *Chacham* Yosef Harari-Raful of Yeshivat Ateret Torah, that the day starts [1/10th of the day][alos72Zmanis] before sunrise and is usually calculated as ending [40 minutes][tzaisAteretTorah] (configurable to any offset via [.setAteretTorahSunsetOffset]). *shaos zmaniyos*
-     * are calculated based on this day and added to [*alos*][alos72Zmanis] to reach this time. This time
+     * of *Chacham* Yosef Harari-Raful of Yeshivat Ateret Torah, that the day starts [1/10th of the day][alos72Zmanis]
+     * before sunrise and is usually calculated as ending [40 minutes][tzaisAteretTorah] (configurable to any offset via
+     * setting [ateretTorahSunsetOffset]).
+     *
+     * *shaos zmaniyos* are calculated based on this day and added to [*alos*][alos72Zmanis] to reach this time. This time
      * is 4 * [*shaos zmaniyos*][shaahZmanisAteretTorah] (temporal hours) after
      * [*alos* 72 zmaniyos][alos72Zmanis].
      * **Note: ** Based on this calculation *chatzos* will not be at midday.
@@ -3324,13 +3175,15 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilahAteretTorah: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(alos72Zmanis.momentOfOccurrence, tzaisAteretTorah.momentOfOccurrence),
             ZmanDefinition(
-                ZmanAuthority.AteretTorah(ateretTorahSunsetOffset),
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(
+                    ZmanCalculationMethod.ZmaniyosDuration._72,
+                    ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)
+                ),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
+                listOf(ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)),
             )
         )
 
@@ -3357,13 +3210,15 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaGedolaAteretTorah: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
             getMinchaGedola(alos72Zmanis.momentOfOccurrence, tzaisAteretTorah.momentOfOccurrence),
             ZmanDefinition(
-                ZmanAuthority.AteretTorah(ateretTorahSunsetOffset),
-                null,
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(
+                    ZmanCalculationMethod.ZmaniyosDuration._72,
+                    ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)
+                ),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
+                listOf(ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)),
             )
         )
 
@@ -3392,13 +3247,15 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaKetanaAteretTorah: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_KETANAH,
             getMinchaKetana(alos72Zmanis.momentOfOccurrence, tzaisAteretTorah.momentOfOccurrence),
             ZmanDefinition(
-                ZmanAuthority.AteretTorah(ateretTorahSunsetOffset),
-                null,
+                ZmanType.MINCHA_KETANAH,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(
+                    ZmanCalculationMethod.ZmaniyosDuration._72,
+                    ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)
+                ),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
+                listOf(ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)),
             )
         )
 
@@ -3421,13 +3278,15 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val plagHaminchaAteretTorah: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(alos72Zmanis.momentOfOccurrence, tzaisAteretTorah.momentOfOccurrence),
             ZmanDefinition(
-                ZmanAuthority.AteretTorah(ateretTorahSunsetOffset),
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(
+                    ZmanCalculationMethod.ZmaniyosDuration._72,
+                    ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)
+                ),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
+                listOf(ZmanAuthority.AteretTorah(ateretTorahSunsetOffset)),
             )
         )
     /**
@@ -3468,15 +3327,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais72Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getZmanisBasedOffset(1.2),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._72,
-                null,
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 72.minutes.zmaniyos after ZmanType.SHKIAH),
                 ZmanDefinition.UsesElevation.IF_SET,
+                listOf(RABEINU_TAM accordingTo ZmanAuthority.MINCHAS_COHEN),
             ),
-
-            )
+        )
 
     /**
      * A utility method to return *alos* (dawn) or *tzais* (dusk) based on a fractional day offset.
@@ -3513,11 +3371,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais90Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getZmanisBasedOffset(1.5),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._90,
-                null,
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 90.minutes.zmaniyos after ZmanType.SHKIAH),
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3534,11 +3391,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais96Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getZmanisBasedOffset(1.6),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._96,
-                null,
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 96.minutes.zmaniyos after ZmanType.SHKIAH),
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3560,14 +3416,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais90: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 90 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(90.minutes, ZmanType.SHKIAH),
-                null,
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 90.minutes after ZmanType.SHKIAH),
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3591,14 +3446,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val tzais120: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 120 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(120.minutes, ZmanType.SHKIAH),
-                null,
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 120.minutes after ZmanType.SHKIAH),
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3620,11 +3474,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val tzais120Zmanis: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getZmanisBasedOffset(2.0),
             ZmanDefinition(
-                ZmanCalculationMethod.ZmaniyosDuration._120,
-                null,
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 120.minutes.zmaniyos after ZmanType.SHKIAH),
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3648,11 +3501,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_16_POINT_1),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._16_1,
-                null,
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3674,11 +3526,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     @Deprecated("This method should be used <em>lechumra</em> only since it returns a very late time, and if used\n" + "	          <em>lekula</em> can result in <em>chillul Shabbos</em> etc. There is no current plan to remove this\n" + "	          method from the API, and this deprecation is intended to alert developers of the danger of using it.\n" + "	  \n" + "	  ")  // (forRemoval=false) // add back once Java 9 is the minimum supported version
     val tzais26Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_26_DEGREES),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._26,
-                null,
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3694,11 +3545,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais18Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ASTRONOMICAL_ZENITH),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._18,
-                null,
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3715,11 +3565,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais19Point8Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_19_POINT_8),
             ZmanDefinition(
+                ZmanType.TZAIS,
                 ZmanCalculationMethod.Degrees._19_8,
-                null,
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3736,14 +3585,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais96: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 96 * MINUTE_MILLIS
             ),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(96.minutes, ZmanType.SHKIAH),
-                null,
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 96.minutes after ZmanType.SHKIAH),
                 ZmanDefinition.UsesElevation.IF_SET,
             ),
         )
@@ -3762,21 +3610,21 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val fixedLocalChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.CHATZOS_HAYOM,
             getTimeOffset(
                 getDateFromTime(
                     12.0 - geoLocation.timeZone.rawOffset
                             / HOUR_MILLIS.toDouble(), true
-                ), -geoLocation.localMeanTimeOffset
+                ),
+                -geoLocation.localMeanTimeOffset
             ),
             ZmanDefinition(
+                ZmanType.CHATZOS_HAYOM,
                 ZmanCalculationMethod.FixedLocalChatzos,//TODO
-                null,
                 ZmanDefinition.UsesElevation.NEVER,
-            ),
-            listOf(
-                ZmanAuthority.ARUCH_HASHULCHAN,
-                ZmanAuthority.FEINSTEIN,
+                listOf(
+                    ZmanAuthority.ARUCH_HASHULCHAN,
+                    ZmanAuthority.FEINSTEIN,
+                )
             )
         )
 
@@ -3861,20 +3709,20 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * halfway between *molad* and *molad*. This adds half the 29 days, 12 hours and 793 chalakim time between
      * *molad* and *molad* (14 days, 18 hours, 22 minutes and 666 milliseconds) to the month's *molad*.
      * The *sof zman Kiddush Levana* will be returned even if it occurs during the day. To limit the time to between
-     * *tzais* and *alos*, see [sofZmanKidushLevanaBetweenMoldos].
+     * *tzais* and *alos*, see [JewishCalendar.sofZmanKidushLevanaBetweenMoldos].
      *
      * @return the Date representing the moment halfway between molad and molad. If the time occurs between
      * *alos* and *tzais*, *alos* will be returned
      * @see sofZmanKidushLevanaBetweenMoldos
      * @see sofZmanKidushLevana15Days
-     * @see JewishCalendar.getSofZmanKidushLevanaBetweenMoldos
+     * @see JewishCalendar.sofZmanKidushLevanaBetweenMoldos
      */
     val sofZmanKidushLevanaBetweenMoldos: Zman.DateBased
         get() =
             Zman.DateBased(
-                ZmanType.SOF_ZMAN_KIDDUSH_LEVANA,
                 getSofZmanKidushLevanaBetweenMoldos(null, null),
                 ZmanDefinition(
+                    ZmanType.SOF_ZMAN_KIDDUSH_LEVANA,
                     ZmanAuthority.MAHARIL
                 )
             )
@@ -3934,10 +3782,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanKidushLevana15Days: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KIDDUSH_LEVANA,
             getSofZmanKidushLevana15Days(null, null),
             ZmanDefinition(
-                ZmanAuthority.SHULCHAN_ARUCH,
+                ZmanType.SOF_ZMAN_KIDDUSH_LEVANA,
+                ZmanCalculationMethod.Relationship(ZmanType.SOF_ZMAN_KIDDUSH_LEVANA occurs 15.days after ZmanType.MOLAD),
+                supportingAuthorities = listOf(ZmanAuthority.SHULCHAN_ARUCH),
             )
         )
 
@@ -3953,10 +3802,11 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tchilasZmanKidushLevana3Days: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KIDDUSH_LEVANA,
             getTchilasZmanKidushLevana3Days(null, null),
             ZmanDefinition(
-                ZmanAuthority.RABEINU_YONAH,
+                ZmanType.EARLIEST_KIDDUSH_LEVANA,
+                ZmanCalculationMethod.Relationship(ZmanType.SOF_ZMAN_KIDDUSH_LEVANA occurs 3.days after ZmanType.MOLAD),
+                supportingAuthorities = listOf(ZmanAuthority.RABEINU_YONAH),
             )
         )
 
@@ -4019,7 +3869,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
             // Iti in French Polynesia on Dec 2027 occurs on the night of the 27th of Kislev. In the case of Anadyr, Russia on
             // Jan 2071, the molad will be on the 2nd day of Shevat. See Rabbi Dovid Heber's Shaarei Zmanim chapter 4 (pages 28 and 32).
             if (jewishCalendar.jewishDayOfMonth in 3..26) {
-                return Zman.DateBased(ZmanType.MOLAD, null, ZmanDefinition.empty)
+                return Zman.DateBased(null, ZmanDefinition(ZmanType.MOLAD, ZmanAuthority.Unanimous))
             }
             var molad: Instant? = getMoladBasedTime(jewishCalendar.moladAsInstant, null, null, true)
 
@@ -4028,7 +3878,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
                 jewishCalendar.forward(DateTimeUnit.MONTH, 1)
                 molad = getMoladBasedTime(jewishCalendar.moladAsInstant, null, null, true)
             }
-            return Zman.DateBased(ZmanType.MOLAD, molad, ZmanDefinition(ZmanAuthority.Unanimous))
+            return Zman.DateBased(molad, ZmanDefinition(ZmanType.MOLAD, ZmanAuthority.Unanimous))
         }
 
     /**
@@ -4095,10 +3945,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tchilasZmanKidushLevana7Days: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.EARLIEST_KIDDUSH_LEVANA,
             getTchilasZmanKidushLevana7Days(null, null),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(7.days)
+                ZmanType.EARLIEST_KIDDUSH_LEVANA,
+                ZmanCalculationMethod.Relationship(ZmanType.EARLIEST_KIDDUSH_LEVANA occurs 7.days after ZmanType.MOLAD),
             )
         )
 
@@ -4118,10 +3968,9 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanAchilasChametzGRA: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ,
             if (jewishCalendar.isErevPesach) sofZmanTfilaGRA.momentOfOccurrence
             else null,
-            ZmanDefinition(ZmanAuthority.GRA)
+            sofZmanTfilaGRA.rules.copy(type = ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ)
         )
 
     /**
@@ -4142,10 +3991,9 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanAchilasChametzMGA72Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ,
             if (jewishCalendar.isErevPesach) sofZmanTfilaMGA72Minutes.momentOfOccurrence
             else null,
-            ZmanDefinition(ZmanCalculationMethod.FixedDuration._72)
+            sofZmanTfilaMGA72Minutes.rules.copy(type = ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ)
         )
 
     /**
@@ -4167,10 +4015,9 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanAchilasChametzMGA16Point1Degrees: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ,
             if (jewishCalendar.isErevPesach) sofZmanTfilaMGA16Point1Degrees.momentOfOccurrence
             else null,
-            ZmanDefinition(ZmanCalculationMethod.Degrees._16_1)
+            sofZmanTfilaMGA16Point1Degrees.rules.copy(type = ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ)
         )
 
     /**
@@ -4187,13 +4034,16 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanBiurChametzGRA: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
             if (jewishCalendar.isErevPesach) getTimeOffset(
                 elevationAdjustedSunrise,
                 shaahZmanisGra * 5
             )
             else null,
-            ZmanDefinition(ZmanAuthority.GRA)
+            ZmanDefinition(
+                ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
+                ZmanCalculationMethod.Relationship(ZmanType.SOF_ZMAN_BIUR_CHAMETZ occurs 5.hours.zmaniyos after ZmanType.HANAITZ),
+                supportingAuthorities = listOf(ZmanAuthority.GRA),
+            )
         )
 
     /**
@@ -4212,13 +4062,17 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanBiurChametzMGA72Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
             if (jewishCalendar.isErevPesach) getTimeOffset(
                 alos72.momentOfOccurrence,
                 (shaahZmanisMGA.duration * 5).inWholeMilliseconds
             )
             else null,
-            ZmanDefinition(ZmanCalculationMethod.FixedDuration._72)
+            ZmanDefinition(
+                ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
+                ZmanDefinition.UsesElevation.NEVER,
+                listOf(ZmanAuthority.MGA),
+            )
         )
 
     /**
@@ -4240,13 +4094,17 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     val sofZmanBiurChametzMGA16Point1Degrees: Zman.DateBased
         get() =
             Zman.DateBased(
-                ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
                 if (jewishCalendar.isErevPesach) getTimeOffset(
                     alos16Point1Degrees.momentOfOccurrence,
                     (shaahZmanis16Point1Degrees.duration * 5).inWholeMilliseconds
                 )
                 else null,
-                ZmanDefinition(ZmanCalculationMethod.Degrees._16_1)
+                ZmanDefinition(
+                    ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
+                    ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
+                    ZmanDefinition.UsesElevation.ALWAYS,
+                    listOf(ZmanAuthority.MGA)
+                )
             )
 
     /**
@@ -4268,8 +4126,8 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
                 .toLocalDateTime(tz)
             val tomorrowChatzos = clonedCal.chatzos
             val thisChatzos = this.chatzos
+            //println("Date: ${clonedCal.localDateTime}, tomorrowChatzos: ${tomorrowChatzos.momentOfOccurrence}, thisChatzos: ${thisChatzos.momentOfOccurrence}")
             return Zman.DateBased(
-                ZmanType.CHATZOS_HALAYLAH,
                 if (tomorrowChatzos.momentOfOccurrence == null || thisChatzos.momentOfOccurrence == null) null
                 else getTimeOffset(
                     thisChatzos.momentOfOccurrence,
@@ -4277,12 +4135,15 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
                         .div(2)
                         .inWholeMilliseconds
                 ),
-                ZmanDefinition(ZmanAuthority.Unanimous)
+                ZmanDefinition(
+                    ZmanType.CHATZOS_HALAYLAH,
+                    ZmanAuthority.Unanimous
+                )
             )
         }
 
     /**
-     * A method that returns the [Baal Hatanya](https://en.wikipedia.org/wiki/Shneur_Zalman_of_Liadi)'s
+     * A method that returns the [Baal Hatanya](https://en.wikipedia.org/wiki/Shneur_Zalman_of_Liadi) 's
      * *netz amiti* (sunrise) without [elevation adjustment][AstronomicalCalculator.getElevationAdjustment]. This forms the base for the Baal Hatanya's dawn-based calculations that are
      * calculated as a dip below the horizon before sunrise.
      *
@@ -4290,13 +4151,12 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * disk is visible at an elevation similar to the mountains of Eretz Yisrael. The time is calculated as the point at which
      * the center of the sun's disk is 1.583 below the horizon. This degree-based calculation can be found in Rabbi Shalom
      * DovBer Levine's commentary on The [Baal
- * Hatanya's Seder Hachnasas Shabbos](https://www.chabadlibrary.org/books/pdf/Seder-Hachnosas-Shabbos.pdf). From an elevation of 546 meters, the top of [Har Hacarmel](https://en.wikipedia.org/wiki/Mount_Carmel), the sun disappears when it is 1 35' or 1.583
+     * Hatanya's Seder Hachnasas Shabbos](https://www.chabadlibrary.org/books/pdf/Seder-Hachnosas-Shabbos.pdf). From an elevation of 546 meters, the top of [Har Hacarmel](https://en.wikipedia.org/wiki/Mount_Carmel), the sun disappears when it is 1 35' or 1.583
      * below the sea level horizon. This in turn is based on the Gemara [Shabbos 35a](https://hebrewbooks.org/shas.aspx?mesechta=2&daf=35). There are other opinions brought down by
      * Rabbi Levine, including Rabbi Yosef Yitzchok Feigelstock who calculates it as the degrees below the horizon 4 minutes after
      * sunset in Yerushalayim (on the equinox). That is brought down as 1.583. This is identical to the 1 35' *zman*
      * and is probably a typo and should be 1.683. These calculations are used by most [Chabad](https://en.wikipedia.org/wiki/Chabad) calendars that use the Baal Hatanya's *zmanim*. See
-     * [About Our
- * *Zmanim* Calculations @ Chabad.org](https://www.chabad.org/library/article_cdo/aid/3209349/jewish/About-Our-Zmanim-Calculations.htm).
+     * [About Our *Zmanim* Calculations @ Chabad.org](https://www.chabad.org/library/article_cdo/aid/3209349/jewish/About-Our-Zmanim-Calculations.htm).
      *
      * Note: *netz amiti* is used only for calculating certain *zmanim*, and is intentionally unpublished. For
      * practical purposes, daytime *mitzvos* like *shofar* and *lulav* should not be done until after the
@@ -4309,7 +4169,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * @see sunrise
      * @see seaLevelSunrise
      * @see sunsetBaalHatanya
-     * @see .ZENITH_1_POINT_583
+     * @see ZENITH_1_POINT_583
      */
     private val sunriseBaalHatanya: Instant? get() = getSunriseOffsetByDegrees(ZENITH_1_POINT_583)
 
@@ -4363,16 +4223,16 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * @see .temporalHour
      * @see sunriseBaalHatanya
      * @see sunsetBaalHatanya
-     * @see .ZENITH_1_POINT_583
+     * @see ZENITH_1_POINT_583
      */
     val shaahZmanisBaalHatanya: Long get() = getTemporalHour(sunriseBaalHatanya, sunsetBaalHatanya)
 
     /**
-     * Returns the [Baal Hatanya](https://en.wikipedia.org/wiki/Shneur_Zalman_of_Liadi)'s *alos*
+     * Returns the [Baal Hatanya](https://en.wikipedia.org/wiki/Shneur_Zalman_of_Liadi) 's *alos*
      * (dawn) calculated as the time when the sun is 16.9 below the eastern [geometric horizon][AstronomicalCalendar.GEOMETRIC_ZENITH]
-     * before [sunrise]. For more information the source of 16.9 see [.ZENITH_16_POINT_9].
+     * before [sunrise]. For more information the source of 16.9 see [ZENITH_16_POINT_9].
      *
-     * @see .ZENITH_16_POINT_9
+     * @see ZENITH_16_POINT_9
      *
      * @return The `Date` of dawn. If the calculation can't be computed such as northern and southern
      * locations even south of the Arctic Circle and north of the Antarctic Circle where the sun may not reach
@@ -4381,9 +4241,12 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val alosBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.ALOS,
             getSunriseOffsetByDegrees(ZENITH_16_POINT_9),
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.ALOS,
+                ZmanCalculationMethod.Degrees(16.9F),
+                supportingAuthorities = listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
@@ -4400,12 +4263,16 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanShmaBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getSofZmanShma(
                 sunriseBaalHatanya,
                 sunsetBaalHatanya
             ),
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.sunriseToSunset(ZmanCalculationMethod.Degrees(1.583F)),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
@@ -4423,12 +4290,16 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanTfilaBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getSofZmanTfila(
                 sunriseBaalHatanya,
                 sunsetBaalHatanya
             ),
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.sunriseToSunset(ZmanCalculationMethod.Degrees(1.583F)),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
@@ -4446,10 +4317,9 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanAchilasChametzBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ,
             if (jewishCalendar.isErevPesach) sofZmanTfilaBaalHatanya.momentOfOccurrence
             else null,
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            sofZmanTfilaBaalHatanya.rules.copy(type = ZmanType.SOF_ZMAN_ACHILAS_CHAMETZ)
         )
 
     /**
@@ -4466,13 +4336,17 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val sofZmanBiurChametzBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
             if (jewishCalendar.isErevPesach) getTimeOffset(
                 sunriseBaalHatanya,
                 shaahZmanisBaalHatanya * 5
             )
             else null,
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.SOF_ZMAN_BIUR_CHAMETZ,
+                ZmanCalculationMethod.DayDefinition.sunriseToSunset(ZmanCalculationMethod.Degrees(1.583F)),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
@@ -4495,9 +4369,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaGedolaBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
             getMinchaGedola(sunriseBaalHatanya, sunsetBaalHatanya),
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.DayDefinition.sunriseToSunset(ZmanCalculationMethod.Degrees(1.583F)),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
@@ -4512,15 +4390,18 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaGedolaBaalHatanyaGreaterThan30: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
-            minchaGedola30Minutes.momentOfOccurrence?.let { mg30 ->
-                minchaGedolaBaalHatanya.momentOfOccurrence?.let { mgBH ->
-                    maxOf(mg30, mgBH)
-                    //if (_minchaGedola30Minutes!! > _minchaGedolaBaalHatanya) _minchaGedola30Minutes else _minchaGedolaBaalHatanya
-                }
-            },
+            maxOf(
+                minchaGedola30Minutes.momentOfOccurrence,
+                minchaGedolaBaalHatanya.momentOfOccurrence
+            ),
             ZmanDefinition(
-                ZmanAuthority.AccordingTo(null, ZmanAuthority.BAAL_HATANYA, ZmanCalculationMethod.FixedDuration(30.minutes, ZmanType.CHATZOS_HAYOM),)
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.LaterOf(
+                    minchaGedola30Minutes.rules,
+                    minchaGedolaBaalHatanya.rules
+                ),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
             )
         )
 
@@ -4541,9 +4422,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val minchaKetanaBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_KETANAH,
             getMinchaKetana(sunriseBaalHatanya, sunsetBaalHatanya),
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.MINCHA_KETANAH,
+                ZmanCalculationMethod.DayDefinition.sunriseToSunset(ZmanCalculationMethod.Degrees(1.583F)),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
@@ -4560,32 +4445,40 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val plagHaminchaBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getPlagHamincha(sunriseBaalHatanya, sunsetBaalHatanya),
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.sunriseToSunset(ZmanCalculationMethod.Degrees(1.583F)),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
      * A method that returns *tzais* (nightfall) when the sun is 6 below the western geometric horizon
      * (90) after [sunset][sunset]. For information on the source of this calculation see
-     * [.ZENITH_6_DEGREES].
+     * [ZENITH_6_DEGREES].
      *
      * @return The `Date` of nightfall. If the calculation can't be computed such as northern and southern
      * locations even south of the Arctic Circle and north of the Antarctic Circle where the sun may not reach
      * low enough below the horizon for this calculation, a null will be returned. See detailed explanation on
      * top of the [AstronomicalCalendar] documentation.
-     * @see .ZENITH_6_DEGREES
+     * @see ZENITH_6_DEGREES
      */
     val tzaisBaalHatanya: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getSunsetOffsetByDegrees(ZENITH_6_DEGREES),
-            ZmanDefinition(ZmanAuthority.BAAL_HATANYA)
+            ZmanDefinition(
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Degrees(6F),
+                ZmanDefinition.UsesElevation.ALWAYS,
+                listOf(ZmanAuthority.BAAL_HATANYA)
+            )
         )
 
     /**
-     * A utility methos to calculate zmanim based on [Rav Moshe
- * Feinstein](https://en.wikipedia.org/wiki/Moshe_Feinstein) as calculated in [MTJ](https://en.wikipedia.org/wiki/Mesivtha_Tifereth_Jerusalem), [Yeshiva of Staten Island](https://en.wikipedia.org/wiki/Mesivtha_Tifereth_Jerusalem), and Camp Yeshiva
+     * A utility methos to calculate zmanim based on [Rav Moshe Feinstein](https://en.wikipedia.org/wiki/Moshe_Feinstein)
+     * as calculated in [MTJ](https://en.wikipedia.org/wiki/Mesivtha_Tifereth_Jerusalem), [Yeshiva of Staten Island](https://en.wikipedia.org/wiki/Mesivtha_Tifereth_Jerusalem), and Camp Yeshiva
      * of Staten Island. The day is split in two, from *alos* / sunrise to fixed local *chatzos*, and the
      * second half of the day, from fixed local *chatzos* to sunset / *tzais*. Morning based times are calculated
      * based on the first 6 hours, and afternoon times based on the second half of the day.
@@ -4604,7 +4497,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * where the sun does not rise, and one where it does not set, a null will be returned. See detailed
      * explanation on top of the [AstronomicalCalendar] documentation.
      *
-     * @see ComplexZmanimCalendar.getFixedLocalChatzos
+     * @see ComplexZmanimCalendar.fixedLocalChatzos
      */
     fun getFixedLocalChatzosBasedZmanim(
         startOfHalfDay: Instant?,
@@ -4625,32 +4518,30 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * calculation of *sof zman krias shema* (latest time to recite *Shema* in the morning) according to the
      * opinion of the [Magen Avraham (MGA)](https://en.wikipedia.org/wiki/Avraham_Gombinern) that the
      * day is calculated from dawn to nightfall, but calculated using the first half of the day only. The half a day starts
-     * at *alos* defined as [18˚][alos18Degrees] and ends at [fixed local][.getFixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after *alos* or half of this half-day.
+     * at *alos* defined as [18˚][alos18Degrees] and ends at [fixed local]fixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after *alos* or half of this half-day.
      *
      * @return the `Date` of the latest *zman krias shema*. If the calculation can't be computed such
      * as northern and southern locations even south of the Arctic Circle and north of the Antarctic Circle
      * where the sun may not reach low enough below the horizon for this calculation, a null will be returned.
      * See detailed explanation on top of the [AstronomicalCalendar] documentation.
      * @see alos18Degrees
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getFixedLocalChatzosBasedZmanim
      */
     val sofZmanShmaMGA18DegreesToFixedLocalChatzos: Zman.DateBased
         get() =
             Zman.DateBased(
-                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
                 getFixedLocalChatzosBasedZmanim(
                     alos18Degrees.momentOfOccurrence,
                     fixedLocalChatzos.momentOfOccurrence,
                     3.0
                 ),
                 ZmanDefinition(
-                    null,
-                    null,
+                    ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                    ZmanCalculationMethod.DayDefinition.DAWN_18_TO_FIXED_LOCAL_CHATZOS,
                     ZmanDefinition.UsesElevation.ALWAYS,
-                    ZmanDefinition.DayDefinition.DAWN_18_TO_FIXED_LOCAL_CHATZOS
+                    listOf(ZmanAuthority.MGA accordingTo ZmanAuthority.FEINSTEIN)
                 ),
-                listOf(ZmanAuthority.AccordingTo(ZmanAuthority.MGA, ZmanAuthority.FEINSTEIN))
             )
 
     /**
@@ -4658,31 +4549,29 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * calculation of *sof zman krias shema* (latest time to recite *Shema* in the morning) according to the
      * opinion of the [Magen Avraham (MGA)](https://en.wikipedia.org/wiki/Avraham_Gombinern) that the
      * day is calculated from dawn to nightfall, but calculated using the first half of the day only. The half a day starts
-     * at *alos* defined as [16.1˚][alos16Point1Degrees] and ends at [fixed local][.getFixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after this *alos* or half of this half-day.
+     * at *alos* defined as [16.1˚][alos16Point1Degrees] and ends at [fixed local]fixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after this *alos* or half of this half-day.
      *
      * @return the `Date` of the latest *zman krias shema*. If the calculation can't be computed such
      * as northern and southern locations even south of the Arctic Circle and north of the Antarctic Circle
      * where the sun may not reach low enough below the horizon for this calculation, a null will be returned.
      * See detailed explanation on top of the [AstronomicalCalendar] documentation.
      * @see alos16Point1Degrees
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getFixedLocalChatzosBasedZmanim
      */
     val sofZmanShmaMGA16Point1DegreesToFixedLocalChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getFixedLocalChatzosBasedZmanim(
                 alos16Point1Degrees.momentOfOccurrence,
                 fixedLocalChatzos.momentOfOccurrence,
                 3.0
             ),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.DAWN_16_1_TO_FIXED_LOCAL_CHATZOS,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_16_1_TO_FIXED_LOCAL_CHATZOS
-            ),
-            listOf(ZmanAuthority.AccordingTo(ZmanAuthority.MGA, ZmanAuthority.FEINSTEIN))
+                listOf(ZmanAuthority.MGA accordingTo ZmanAuthority.FEINSTEIN)
+            )
         )
 
     /**
@@ -4690,7 +4579,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * calculation of *sof zman krias shema* (latest time to recite *Shema* in the morning) according to the
      * opinion of the [Magen Avraham (MGA)](https://en.wikipedia.org/wiki/Avraham_Gombinern) that the
      * day is calculated from dawn to nightfall, but calculated using the first half of the day only. The half a day starts
-     * at *alos* defined as [90 minutes before sunrise][alos90] and ends at [fixed local chatzos][.getFixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after this *alos* or
+     * at *alos* defined as [90 minutes before sunrise][alos90] and ends at [fixed local chatzos]fixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after this *alos* or
      * half of this half-day.
      *
      * @return the `Date` of the latest *zman krias shema*. If the calculation can't be computed such
@@ -4698,20 +4587,18 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * where the sun may not reach low enough below the horizon for this calculation, a null will be returned.
      * See detailed explanation on top of the [AstronomicalCalendar] documentation.
      * @see alos90
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getFixedLocalChatzosBasedZmanim
      */
     val sofZmanShmaMGA90MinutesToFixedLocalChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getFixedLocalChatzosBasedZmanim(alos90.momentOfOccurrence, fixedLocalChatzos.momentOfOccurrence, 3.0),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.DAWN_90_MINUTES_TO_FIXED_LOCAL_CHATZOS,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_90_MINUTES_TO_FIXED_LOCAL_CHATZOS
-            ),
-            listOf(ZmanAuthority.AccordingTo(ZmanAuthority.MGA, ZmanAuthority.FEINSTEIN))
+                listOf(ZmanAuthority.MGA accordingTo ZmanAuthority.FEINSTEIN)
+            )
         )
 
     /**
@@ -4719,7 +4606,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * calculation of *sof zman krias shema* (latest time to recite *Shema* in the morning) according to the
      * opinion of the [Magen Avraham (MGA)](https://en.wikipedia.org/wiki/Avraham_Gombinern) that the
      * day is calculated from dawn to nightfall, but calculated using the first half of the day only. The half a day starts
-     * at *alos* defined as [72 minutes before sunrise][alos72] and ends at [fixed local chatzos][.getFixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after this *alos* or
+     * at *alos* defined as [72 minutes before sunrise][alos72] and ends at [fixed local chatzos]fixedLocalChatzos]. *Sof Zman Shema* is 3 *shaos zmaniyos* (solar hours) after this *alos* or
      * half of this half-day.
      *
      * @return the `Date` of the latest *zman krias shema*. If the calculation can't be computed such
@@ -4727,27 +4614,25 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * where the sun may not reach low enough below the horizon for this calculation, a null will be returned.
      * See detailed explanation on top of the [AstronomicalCalendar] documentation.
      * @see alos72
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getFixedLocalChatzosBasedZmanim
      */
     val sofZmanShmaMGA72MinutesToFixedLocalChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getFixedLocalChatzosBasedZmanim(alos72.momentOfOccurrence, fixedLocalChatzos.momentOfOccurrence, 3.0),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.DAWN_72_MINUTES_TO_FIXED_LOCAL_CHATZOS,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.DAWN_72_MINUTES_TO_FIXED_LOCAL_CHATZOS
-            ),
-            listOf(ZmanAuthority.AccordingTo(ZmanAuthority.MGA, ZmanAuthority.FEINSTEIN))
+                listOf(ZmanAuthority.MGA accordingTo ZmanAuthority.FEINSTEIN)
+            )
         )
 
     /**
      * This method returns [Rav Moshe Feinstein's](https://en.wikipedia.org/wiki/Moshe_Feinstein) opinion of the
      * calculation of *sof zman krias shema* (latest time to recite *Shema* in the morning) according to the
      * opinion of the [GRA](https://en.wikipedia.org/wiki/Vilna_Gaon) that the day is calculated from
-     * sunrise to sunset, but calculated using the first half of the day only. The half a day starts at [sunrise][sunrise] and ends at [fixed local chatzos][.getFixedLocalChatzos]. *Sof zman Shema* is 3 *shaos
+     * sunrise to sunset, but calculated using the first half of the day only. The half a day starts at [sunrise][sunrise] and ends at [fixed local chatzos]fixedLocalChatzos]. *Sof zman Shema* is 3 *shaos
      * zmaniyos* (solar hours) after sunrise or half of this half-day.
      *
      * @return the `Date` of the latest *zman krias shema*. If the calculation can't be computed such
@@ -4755,20 +4640,18 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * where the sun may not reach low enough below the horizon for this calculation, a null will be returned.
      * See detailed explanation on top of the [AstronomicalCalendar] documentation.
      * @see sunrise
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getFixedLocalChatzosBasedZmanim
      */
     val sofZmanShmaGRASunriseToFixedLocalChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_KRIAS_SHEMA,
             getFixedLocalChatzosBasedZmanim(sunrise, fixedLocalChatzos.momentOfOccurrence, 3.0),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.SOF_ZMAN_KRIAS_SHEMA,
+                ZmanCalculationMethod.DayDefinition.SUNRISE_TO_FIXED_LOCAL_CHATZOS,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.SUNRISE_TO_FIXED_LOCAL_CHATZOS
-            ),
-            listOf(ZmanAuthority.AccordingTo(ZmanAuthority.GRA, ZmanAuthority.FEINSTEIN))
+                listOf(ZmanAuthority.GRA accordingTo ZmanAuthority.FEINSTEIN)
+            )
         )
 
     /**
@@ -4776,7 +4659,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * calculation of *sof zman tfila* (*zman tfilah* (the latest time to recite the morning prayers))
      * according to the opinion of the [GRA](https://en.wikipedia.org/wiki/Vilna_Gaon) that the day is
      * calculated from sunrise to sunset, but calculated using the first half of the day only. The half a day starts at
-     * [sunrise] and ends at [fixed local chatzos][.getFixedLocalChatzos]. *Sof zman tefila*
+     * [sunrise] and ends at [fixed local chatzos]fixedLocalChatzos]. *Sof zman tefila*
      * is 4 *shaos zmaniyos* (solar hours) after sunrise or 2/3 of this half-day.
      *
      * @return the `Date` of the latest *zman krias shema*. If the calculation can't be computed such
@@ -4784,20 +4667,18 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * where the sun may not reach low enough below the horizon for this calculation, a null will be returned.
      * See detailed explanation on top of the [AstronomicalCalendar] documentation.
      * @see sunrise
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getFixedLocalChatzosBasedZmanim
      */
     val sofZmanTfilaGRASunriseToFixedLocalChatzos: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SOF_ZMAN_TEFILLAH,
             getFixedLocalChatzosBasedZmanim(sunrise, fixedLocalChatzos.momentOfOccurrence, 4.0),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.SOF_ZMAN_TEFILLAH,
+                ZmanCalculationMethod.DayDefinition.SUNRISE_TO_FIXED_LOCAL_CHATZOS,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.SUNRISE_TO_FIXED_LOCAL_CHATZOS
-            ),
-            listOf(ZmanAuthority.AccordingTo(ZmanAuthority.GRA, ZmanAuthority.FEINSTEIN))
+                listOf(ZmanAuthority.GRA accordingTo ZmanAuthority.FEINSTEIN)
+            )
         )
 
     /**
@@ -4810,22 +4691,17 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * documentation.
      *
      * @see .getMinchaGedola
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getMinchaKetanaGRAFixedLocalChatzosToSunset
      */
     val minchaGedolaGRAFixedLocalChatzos30Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_GEDOLAH,
             getTimeOffset(fixedLocalChatzos.momentOfOccurrence, MINUTE_MILLIS * 30),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration(
-                    30.minutes,
-                    ZmanType.CHATZOS_HAYOM/*TODO after the gra's chaatzos, not just regular*/
-                ),
-                mapOf(
-                    ZmanType.CHATZOS_HAYOM to ZmanCalculationMethod.FixedLocalChatzos
-                ),
+                ZmanType.MINCHA_GEDOLAH,
+                ZmanCalculationMethod.Relationship(ZmanType.MINCHA_GEDOLAH occurs 30.minutes after fixedLocalChatzos),
                 ZmanDefinition.UsesElevation.ALWAYS,
+                supportingAuthorities = listOf(ZmanAuthority.GRA accordingTo ZmanAuthority.FEINSTEIN),
             ),
         )
 
@@ -4834,7 +4710,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * of the calculation of *mincha ketana* (the preferred time to recite the *mincha prayers* according to
      * the opinion of the [Rambam](https://en.wikipedia.org/wiki/Maimonides) and others) calculated according
      * to the [GRA](https://en.wikipedia.org/wiki/Vilna_Gaon) that is 3.5 *shaos zmaniyos* (solar
-     * hours) after [fixed local chatzos][.getFixedLocalChatzos].
+     * hours) after [fixed local chatzos][fixedLocalChatzos].
      *
      * @return the `Date` of the time of *mincha gedola*. If the calculation can't be computed such as
      * in the Arctic Circle where there is at least one day a year where the sun does not rise, and one where it
@@ -4842,27 +4718,20 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * documentation.
      *
      * @see .getMinchaGedola
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getMinchaGedolaGRAFixedLocalChatzos30Minutes
      */
     val minchaKetanaGRAFixedLocalChatzosToSunset: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.MINCHA_KETANAH,
             getFixedLocalChatzosBasedZmanim(fixedLocalChatzos.momentOfOccurrence, sunset, 3.5),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.MINCHA_KETANAH,
+                ZmanCalculationMethod.DayDefinition.FIXED_LOCAL_CHATZOS_TO_SUNSET,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.FIXED_LOCAL_CHATZOS_TO_SUNSET
-            ),
-            listOf(
-                ZmanAuthority.AccordingTo(
-                    ZmanAuthority.AccordingTo(
-                        ZmanAuthority.RAMBAM,
-                        ZmanAuthority.GRA
-                    ),
-                    ZmanAuthority.FEINSTEIN
-                )
+                listOf(
+                    ZmanAuthority.GRA accordingTo ZmanAuthority.FEINSTEIN
+                ),
+                //TODO is this relationship just day definition? ZmanType.MINCHA_KETANAH occurs 3.5.hours after fixedLocalChatzos
             )
         )
 
@@ -4870,7 +4739,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * This method returns [Rav Moshe Feinstein's](https://en.wikipedia.org/wiki/Moshe_Feinstein) opinion
      * of the calculation of *plag hamincha*. This method returns *plag hamincha* calculated according to the
      * [GRA](https://en.wikipedia.org/wiki/Vilna_Gaon) that the day ends at sunset and is 4.75 *shaos
-     * zmaniyos* (solar hours) after [fixed local chatzos][.getFixedLocalChatzos].
+     * zmaniyos* (solar hours) after [fixed local chatzos][fixedLocalChatzos].
      *
      * @return the `Date` of the time of *mincha gedola*. If the calculation can't be computed such as
      * in the Arctic Circle where there is at least one day a year where the sun does not rise, and one where it
@@ -4878,25 +4747,20 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      * documentation.
      *
      * @see .getPlagHamincha
-     * @see .getFixedLocalChatzos
+     * @see fixedLocalChatzos
      * @see .getMinchaKetanaGRAFixedLocalChatzosToSunset
      *
      * @see .getMinchaGedolaGRAFixedLocalChatzos30Minutes
      */
     val plagHaminchaGRAFixedLocalChatzosToSunset: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.PLAG_HAMINCHA,
             getFixedLocalChatzosBasedZmanim(fixedLocalChatzos.momentOfOccurrence, sunset, 4.75),
             ZmanDefinition(
-                null,
-                null,
+                ZmanType.PLAG_HAMINCHA,
+                ZmanCalculationMethod.DayDefinition.FIXED_LOCAL_CHATZOS_TO_SUNSET,
                 ZmanDefinition.UsesElevation.ALWAYS,
-                ZmanDefinition.DayDefinition.FIXED_LOCAL_CHATZOS_TO_SUNSET
-            ),
-            listOf(
-                ZmanAuthority.AccordingTo(
-                    ZmanAuthority.GRA,
-                    ZmanAuthority.FEINSTEIN
+                listOf(
+                    ZmanAuthority.GRA accordingTo ZmanAuthority.FEINSTEIN
                 )
             )
         )
@@ -4913,12 +4777,18 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val tzais50: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.TZAIS,
             getTimeOffset(
                 elevationAdjustedSunset,
                 50 * MINUTE_MILLIS
             ),
-            ZmanDefinition(ZmanCalculationMethod.FixedDuration(50.minutes, ZmanType.SHKIAH))
+            ZmanDefinition(
+                ZmanType.TZAIS,
+                ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 50.minutes after ZmanType.SHKIAH),
+                ZmanDefinition.UsesElevation.IF_SET,
+                listOf(
+                    ZmanAuthority.FEINSTEIN
+                ),
+            )
         )
 
     /**
@@ -4938,13 +4808,12 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val samuchLeMinchaKetanaGRA: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SAMUCH_LEMINCHA_KETANA,
             getSamuchLeMinchaKetana(elevationAdjustedSunrise, elevationAdjustedSunset),
             ZmanDefinition(
-                ZmanAuthority.GRA,
-                null,
+                ZmanType.SAMUCH_LEMINCHA_KETANA,
+                ZmanCalculationMethod.DayDefinition.SUNRISE_TO_SUNSET,
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.SUNRISE_TO_SUNSET
+                listOf(ZmanAuthority.GRA)
             ),
         )
 
@@ -4964,13 +4833,14 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
     val samuchLeMinchaKetana16Point1Degrees: Zman.DateBased
         get() =
             Zman.DateBased(
-                ZmanType.SAMUCH_LEMINCHA_KETANA,
-                getSamuchLeMinchaKetana(alos16Point1Degrees.momentOfOccurrence, tzais16Point1Degrees.momentOfOccurrence),
+                getSamuchLeMinchaKetana(
+                    alos16Point1Degrees.momentOfOccurrence,
+                    tzais16Point1Degrees.momentOfOccurrence
+                ),
                 ZmanDefinition(
-                    ZmanCalculationMethod.Degrees._16_1,
-                    null,
+                    ZmanType.SAMUCH_LEMINCHA_KETANA,
+                    ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.Degrees._16_1),
                     ZmanDefinition.UsesElevation.ALWAYS,
-                    ZmanDefinition.DayDefinition.DAWN_TO_DUSK
                 )
             )
 
@@ -4988,24 +4858,21 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
      */
     val samuchLeMinchaKetana72Minutes: Zman.DateBased
         get() = Zman.DateBased(
-            ZmanType.SAMUCH_LEMINCHA_KETANA,
             getSamuchLeMinchaKetana(alos72.momentOfOccurrence, tzais72.momentOfOccurrence),
             ZmanDefinition(
-                ZmanCalculationMethod.FixedDuration._72,
-                null,
+                ZmanType.SAMUCH_LEMINCHA_KETANA,
+                ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
                 ZmanDefinition.UsesElevation.IF_SET,
-                ZmanDefinition.DayDefinition.DAWN_TO_DUSK
             )
         )
 
     operator fun get(zmanType: ZmanType) =
         if (zmanType == ZmanType.SHAA_ZMANIS) allShaosZmaniyos
-        else allZmanim.filter { it.type == zmanType }
+        else allZmanim.filter { it.rules.type == zmanType }
 
-    operator fun get(zmanCalculationMethod: ZmanCalculationMethod<*>): List<Zman> =
+    operator fun get(zmanCalculationMethod: ZmanCalculationMethod<*>): List<Zman<*>> =
         (allShaosZmaniyos + allZmanim).filter {
-            it.rules.mainCalculationMethodUsed == zmanCalculationMethod ||
-                    it.rules.zmanToCalcMethodUsed?.values?.contains(zmanCalculationMethod) != null
+            it.rules.calculationMethod == zmanCalculationMethod
         }
 
     /**
@@ -5112,10 +4979,10 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
             bainHashmashosYereim2Point8Degrees,
             bainHashmashosYereim13Point5Minutes,
             bainHashmashosYereim2Point1Degrees,
-            Zman.DateBased(ZmanType.SHKIAH, sunset, ZmanDefinition(ZmanAuthority.Unanimous)),
-            Zman.DateBased(ZmanType.SHKIAH, seaLevelSunset, ZmanDefinition(ZmanAuthority.Unanimous)),
-            Zman.DateBased(ZmanType.HANAITZ, sunrise, ZmanDefinition(ZmanAuthority.Unanimous)),
-            Zman.DateBased(ZmanType.HANAITZ, seaLevelSunrise, ZmanDefinition(ZmanAuthority.Unanimous)),
+            Zman.DateBased(sunset, ZmanDefinition(ZmanType.SHKIAH, ZmanAuthority.Unanimous)),
+            Zman.DateBased(seaLevelSunset, ZmanDefinition(ZmanType.SHKIAH, ZmanAuthority.Unanimous)),
+            Zman.DateBased(sunrise, ZmanDefinition(ZmanType.HANAITZ, ZmanAuthority.Unanimous)),
+            Zman.DateBased(seaLevelSunrise, ZmanDefinition(ZmanType.HANAITZ, ZmanAuthority.Unanimous)),
             tzaisGeonim3Point7Degrees,
             tzaisGeonim3Point8Degrees,
             tzaisGeonim5Point95Degrees,
@@ -5192,6 +5059,13 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
 
         const val ATERET_TORAH_DEFAULT_OFFSET = 40.0
 
+        fun <T> maxOf(a: T?, b: T?): T? where T : Comparable<T> =
+            if (a == null && b == null) null
+            else if (a == null) b
+            else if (b == null) a
+            else if (a > b) a
+            else b
+
         val MIDNIGHT = LocalTime(0, 0, 0)
 
 
@@ -5239,7 +5113,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
          * @todo Hyperlink the proper sources.
          *
          * @see tzaisGeonim7Point083Degrees
-         * @see .getBainHashmashosRT13Point5MinutesBefore7Point083Degrees
+         * @see bainHashmashosRT13Point5MinutesBefore7Point083Degrees
          */
         const val ZENITH_7_POINT_083: Double = GEOMETRIC_ZENITH + 7 + (5.0 / 60)
 
@@ -5276,9 +5150,9 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
         /**
          * The zenith of 13.24 below [geometric zenith][AstronomicalCalendar.GEOMETRIC_ZENITH] (90). This calculation is used for
          * calculating Rabbeinu Tam's *bain hashmashos* according to some opinions.
-         * NOTE: See comments on [.getBainHashmashosRT13Point24Degrees] for additional details about the degrees.
+         * NOTE: See comments on [bainHashmashosRT13Point24Degrees] for additional details about the degrees.
          *
-         * @see .getBainHashmashosRT13Point24Degrees
+         * @see bainHashmashosRT13Point24Degrees
          */
         const val ZENITH_13_POINT_24: Double = GEOMETRIC_ZENITH + 13.24
 
@@ -5287,7 +5161,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
          * calculating *alos* according to some opinions.
          *
          * @see alos19Degrees
-         * @see .ZENITH_19_POINT_8
+         * @see ZENITH_19_POINT_8
          */
         const val ZENITH_19_DEGREES: Double = GEOMETRIC_ZENITH + 19
 
@@ -5301,7 +5175,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
          * @see alos19Point8Degrees
          * @see alos90
          * @see tzais90
-         * @see .ZENITH_19_DEGREES
+         * @see ZENITH_19_DEGREES
          */
         const val ZENITH_19_POINT_8: Double = GEOMETRIC_ZENITH + 19.8
 
@@ -5465,7 +5339,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
          * according to the Yereim. As is traditional with degrees below the horizon, this is calculated without refraction
          * and from the center of the sun. It would be 0.833 less without this.
          *
-         * @see .getBainHashmashosYereim2Point1Degrees
+         * @see bainHashmashosYereim2Point1Degrees
          */
         const val ZENITH_MINUS_2_POINT_1: Double = GEOMETRIC_ZENITH - 2.1
 
@@ -5475,7 +5349,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
          * according to the Yereim. As is traditional with degrees below the horizon, this is calculated without refraction
          * and from the center of the sun. It would be 0.833 less without this.
          *
-         * @see .getBainHashmashosYereim2Point8Degrees
+         * @see bainHashmashosYereim2Point8Degrees
          */
         const val ZENITH_MINUS_2_POINT_8: Double = GEOMETRIC_ZENITH - 2.8
 
@@ -5485,7 +5359,7 @@ class ComplexZmanimCalendar(location: GeoLocation = GeoLocation()) : ZmanimCalen
          * according to the Yereim. As is traditional with degrees below the horizon, this is calculated without refraction
          * and from the center of the sun. It would be 0.833 less without this.
          *
-         * @see .getBainHashmashosYereim3Point05Degrees
+         * @see bainHashmashosYereim3Point05Degrees
          */
         const val ZENITH_MINUS_3_POINT_05: Double = GEOMETRIC_ZENITH - 3.05
     }

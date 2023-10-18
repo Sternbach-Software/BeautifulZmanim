@@ -1,5 +1,6 @@
 package com.kosherjava.zmanim
 
+import com.kosherjava.zmanim.metadata.ZmanDefinition
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -9,28 +10,24 @@ import kotlin.time.Duration
  * This class represents a halachic moment in time or duration of time.
  * Some zmanim, like [sha'os zmaniyos][ZmanType.SHAA_ZMANIS], don't have a moment when they occur. Rather, they carry a value.
  * Others, like [sunset][ZmanType.SHKIAH] happen at a specific moment in time.
- * @param T the type of zman opinion which this zman was calculated using. See [ZmanCalculationMethod] for options.
+ * @param T the type of value that this zman represents ([Instant], [Duration], etc.). This is the type of the [value] property.
  * */
-sealed class Zman(
-    open val type: ZmanType,
-    open val rules: ZmanDefinition = ZmanDefinition.empty,
-    open val supportingAuthorities: List<ZmanAuthority> = listOf()
-): Comparable<Zman> {
+sealed class Zman<T>(
+    val value: T,
+    open val rules: ZmanDefinition,
+): Comparable<Zman<T>> {
     /**
      * This class represents a zman that has a moment in which it occurs.
      * @param momentOfOccurrence null if zman never occurs or does not apply (e.g. time to say kiddush levana after time
-     * has passed). Some zmanim can occasionally not occur (e.g. sunrise in the Arctic Circle).
+     * has passed). Some zmanim can occasionally not occur (e.g. sunrise in the Arctic Circle) - see [AstronomicalCalendar] for more details.
      * */
     data class DateBased(
-        override val type: ZmanType,
         val momentOfOccurrence: Instant?,
-        override val rules: ZmanDefinition = ZmanDefinition.empty,
-        override val supportingAuthorities: List<ZmanAuthority> = listOf()
-    ) : Zman(type, rules) {
-        override fun compareTo(other: Zman): Int {
+        override val rules: ZmanDefinition
+    ) : Zman<Instant?>(momentOfOccurrence, rules) {
+        override fun compareTo(other: Zman<Instant?>): Int {
             if(this === other) return 0
 //            if(this.type != other.type) return this.type.compareTo(other.type)
-            if(other is ValueBased) return 1 //not sure why DateBased should go after ValueBased, but why are you comparing them?
             other as DateBased
             return when {
                 //null goes at the beginning
@@ -50,15 +47,13 @@ sealed class Zman(
      * [*shaah Zmanis 16.1˚*][com.kosherjava.zmanim.ComplexZmanimCalendar.shaahZmanis16Point1Degrees]).
      * */
     data class ValueBased(
-        override val type: ZmanType,
         val duration: Duration,
-        override val rules: ZmanDefinition = ZmanDefinition.empty,
-        override val supportingAuthorities: List<ZmanAuthority> = listOf()
-    ) : Zman(type, rules) {
-        override fun compareTo(other: Zman): Int {
+        override val rules: ZmanDefinition
+    ) : Zman<Duration>(duration, rules) {
+        override fun compareTo(other: Zman<Duration>): Int {
             if(this === other) return 0
-            if(this.type != other.type) return this.type.compareTo(other.type)
-            if(other is DateBased) return -1  //not sure why DateBased should go after ValueBased, but why are you comparing them?
+//            if(this.type != other.type) return this.type.compareTo(other.type)
+//            if(other is DateBased) return -1  //not sure why DateBased should go after ValueBased, but why are you comparing them?
             other as ValueBased
             return when {
                 duration.isInfinite() && other.duration.isInfinite() -> 0
@@ -70,7 +65,6 @@ sealed class Zman(
     }
     fun formatted(tz: TimeZone) = formatted(tz, rules.toString())
     fun formatted(tz: TimeZone, inEnglish: Boolean) = formatted(tz, rules.toString()/*.format(inEnglish)*/)
-    private fun Int.pad() = toString().padStart(2,'0')
     fun formatted(tz: TimeZone, opinion: String) = opinion +
             if (this is ValueBased) this.duration.toString()
             else {
@@ -83,4 +77,5 @@ sealed class Zman(
                     }
                     ?: "N/A"
             }
+    private fun Int.pad() = toString().padStart(2,'0')
 }
