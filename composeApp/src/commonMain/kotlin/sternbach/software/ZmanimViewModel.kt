@@ -27,10 +27,32 @@ import kotlinx.datetime.TimeZone
 import kotlinx.serialization.json.Json
 import presentation.ZmanCardModel
 
-class ZmanimViewModel(
-    val scope: CoroutineScope,
-    val alwaysObserveLiveLocation: Boolean = false,
-) {
+class ZmanimViewModel {
+
+    lateinit var scope: CoroutineScope
+    var alwaysObserveLiveLocation: Boolean = false
+        private set
+    constructor(scope: CoroutineScope,
+                alwaysObserveLiveLocation: Boolean = false,) {
+        this.scope = scope
+        this.alwaysObserveLiveLocation = alwaysObserveLiveLocation
+        if (alwaysObserveLiveLocation && gpsSupported.value) scope.launch(Dispatchers.Default) {
+            println("Starting to listen for position")
+            currentLocation.collect {
+                println("Got location: $it")
+                _calculatingZmanim.value = true
+                calculateZmanimBasedOnLocation(it)
+            }
+        }
+        //tick every second and update [now]
+        scope.launch(Dispatchers.Default) {
+            while (isActive) {
+                val instant = Clock.System.now()
+                if (instant != null && _now != null) runCatching { _now.value = instant }
+                delay(1000)
+            }
+        }
+    }
     /**
      * @param engine the [ComplexZmanimCalendar] used to immediately emit zmanim to the flows
      * [allZmanimCardModels] & [shaaZmanisCardModel].
@@ -79,24 +101,6 @@ class ZmanimViewModel(
         }
     }
 
-    init {
-        if (alwaysObserveLiveLocation && gpsSupported.value) scope.launch(Dispatchers.Default) {
-            currentLocation.collect {
-                _calculatingZmanim.value = true
-                calculateZmanimBasedOnLocation(it)
-            }
-        }
-        //tick every second and update [now]
-        scope.launch(Dispatchers.Default) {
-            /*while (isActive) {
-                val instant = Clock.System.now()
-                if (instant != null && _now != null) runCatching { _now.value = instant }
-                delay(1000)
-            }*/
-        }
-    }
-
-    val tz by lazy { TimeZone.currentSystemDefault() }
     private val client by lazy { HttpClient() }
 
     private var _isOnline: Boolean = false
@@ -217,21 +221,6 @@ class ZmanimViewModel(
     private suspend fun calculateZmanimBasedOnLocation(it: Location?) = it?.let {
         calculateZmanimBasedOnLocation(it.toGeoLocation())
     }
-
-    private fun GeoLocation.toLocation() = Location(
-        latitude,
-        longitude,
-        elevation,
-        tz = timeZone,
-        locationName = locationName
-    )
-    private fun Location.toGeoLocation() = GeoLocation(
-        locationName ?: "Current Location",
-        latitude,
-        longitude,
-        elevation ?: 0.0,
-        tz ?: this@ZmanimViewModel.tz
-    )
 
     private suspend fun calculateZmanimBasedOnLocation(it: GeoLocation?) {
         println("calculateZmanimBasedOnLocation($it)")
@@ -410,6 +399,22 @@ class ZmanimViewModel(
 
     companion object {
         private const val OPEN_STREET_MAP_BASE_URL = "https://nominatim.openstreetmap.org"
+        val tz by lazy { TimeZone.currentSystemDefault() }
 
+        fun GeoLocation.toLocation() = Location(
+            latitude,
+            longitude,
+            elevation,
+            tz = timeZone,
+            locationName = locationName
+        )
+
+        fun Location.toGeoLocation() = GeoLocation(
+            locationName ?: "Current Location",
+            latitude,
+            longitude,
+            elevation ?: 0.0,
+            tz ?: this@Companion.tz
+        )
     }
 }

@@ -64,9 +64,9 @@ import kotlin.math.absoluteValue
 @Composable
 internal fun App(
     smallScreen: Boolean = false,
-    nav: Navigation<Screen> = remember { Navigation(Screen.InputLocation) }
+    nav: Navigation<Screen> = remember { Navigation(Screen.Home) }
 ) = AppTheme {
-    val vm = remember { ZmanimViewModel(MainScope()) }
+    val vm = remember { ZmanimViewModel(MainScope(), gpsSupported.value) }
     val now = vm.now.collectAsState(Clock.System.now())
     val zmanFormatter = remember { ZmanDescriptionFormatter() }
     Scaffold(topBar = {
@@ -96,15 +96,23 @@ internal fun App(
             )
         ) {
 
-            nav.destination.collectAsState(Screen.InputLocation).value.let {
+            nav.destination.collectAsState(Screen.Home).value.let {
                 when (it) {
+                    is Screen.Home ->
+                        if(!gpsSupported.value)
+                            nav.navigateTo(Screen.InputLocation, true)
+                        else {
+                            vm.startListeningForPosition()
+                            currentLocation
+                            nav.navigateTo(Screen.ZmanimScreen(null, "Zmanim for ${currentLocation.value}"))
+                        }
                     is Screen.InputLocation -> InputLocationScreen(
                         smallScreen,
                         { nav.navigateTo(Screen.MultipleLocations(it)) },
                         vm
                     ) {
                         println("Lat/long selected")
-                        nav.navigateTo(Screen.ZmanimScreen(null))
+                        nav.navigateTo(Screen.ZmanimScreen(null, "Zmanim for ${currentLocation.value}"))
                     }
 
                     is Screen.MultipleLocations -> MultipleLocationsList(it.locations) {
@@ -114,7 +122,7 @@ internal fun App(
                     is Screen.ZmanimScreen -> {
                         if(it.zmanDescription != null) Text(it.zmanDescription, Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                         val zmanim =
-                            it.zmanim.also { println("Zmanim were passed as nav args") }
+                            it.zmanim?.also { println("Zmanim were passed as nav args") }
                                 ?: vm.allZmanimCardModels.collectAsState(emptyList()).value.also {
                                     println(
                                         "Observing zmanim"
@@ -426,7 +434,7 @@ private fun ZmanimList(
                 ZmanCard(
                     Modifier.fillMaxSize().padding(8.dp),
                     now,
-                    vm.tz,
+                    ZmanimViewModel.tz,
                     model,
                     formatter = zmanFormatter,
                     showOpinion = true,
@@ -446,7 +454,7 @@ private fun ZmanimList(
                 ZmanCard(
                     Modifier.fillMaxSize().padding(8.dp),
                     now,
-                    vm.tz,
+                    ZmanimViewModel.tz,
                     model,
                     formatter = zmanFormatter,
                     showMomentOfOccurenceOrDuration = true,

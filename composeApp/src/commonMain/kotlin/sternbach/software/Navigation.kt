@@ -15,8 +15,9 @@ class Navigation<T>(initialDestination: T) {
             true
         } else false
     }
-    fun navigateTo(screen: T) {
+    fun navigateTo(screen: T, replaceCurrent: Boolean = false) {
         println("Navigating to $screen; backstack = $backstack, current = ${_destination.value}")
+        if (replaceCurrent) backstack.removeLastOrNull()
         backstack.addLast(_destination.value)
         _destination.value = screen
     }
