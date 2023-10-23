@@ -1,47 +1,24 @@
 package sternbach.software
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Switch
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import com.kosherjava.zmanim.Zman
 import com.kosherjava.zmanim.ZmanDescriptionFormatter
 import com.kosherjava.zmanim.util.Location
@@ -52,16 +29,11 @@ import compose.icons.feathericons.Compass
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.until
 import presentation.ZmanCardModel
 import presentation.components.ZmanimList
 import presentation.screens.InputLocationScreen
 import presentation.screens.MultipleLocationsList
 import sternbach.software.theme.AppTheme
-import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,24 +44,26 @@ internal fun App(
     val vm = remember { ZmanimViewModel(MainScope(), gpsSupported.value) }
     val now = vm.now.collectAsState(Clock.System.now())
     val zmanFormatter = remember { ZmanDescriptionFormatter() }
-    Scaffold(topBar = {
-        TopAppBar(
-            { Text("Beautiful Zmanim") },
-            navigationIcon = {
-                IconButton({ nav.navigateToPrevious() }) {
-                    Icon(
-                        if (LocalLayoutDirection.current == LayoutDirection.Ltr) FeatherIcons.ArrowLeft
-                        else FeatherIcons.ArrowRight, "Back"
-                    )
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                { Text("Beautiful Zmanim") },
+                navigationIcon = {
+                    IconButton({ nav.navigateToPrevious() }) {
+                        Icon(
+                            if (LocalLayoutDirection.current == LayoutDirection.Ltr) FeatherIcons.ArrowLeft
+                            else FeatherIcons.ArrowRight, "Back"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton({ nav.navigateTo(Screen.InputLocation) }) {
+                        Icon(FeatherIcons.Compass, "Location")
+                    }
                 }
-            },
-            actions = {
-                IconButton({ nav.navigateTo(Screen.InputLocation) }) {
-                    Icon(FeatherIcons.Compass, "Location")
-                }
-            }
-        )
-    }) {
+            )
+        }
+    ) {
         Column(
             Modifier.padding(
                 start = it.calculateStartPadding(LocalLayoutDirection.current),
