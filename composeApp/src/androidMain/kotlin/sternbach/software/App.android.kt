@@ -50,11 +50,10 @@ class AppActivity : ComponentActivity() {
         AndroidApp.locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         setContent {
             //check if permission granted:
-            val hasLocationPermission = (ContextCompat.checkSelfPermission(
+            val hasLocationPermission = ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
-            )
-                    == PackageManager.PERMISSION_GRANTED)
+            ) == PackageManager.PERMISSION_GRANTED
             val content = @Composable {
                 nav = remember { Navigation(Screen.Home) }
                 App(true, nav!!)
