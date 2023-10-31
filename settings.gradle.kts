@@ -1,4 +1,4 @@
-rootProject.name = "Compose-Template"
+rootProject.name = "Beautiful Zmanim"
 include(":composeApp")
 include(":iosApp")
 
