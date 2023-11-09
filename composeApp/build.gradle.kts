@@ -135,8 +135,12 @@ android {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        buildTypes.release.proguard {
+            isEnabled.set(false)
+            obfuscate.set(false)
+        }
 
+        mainClass = "MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "sternbach.software.desktopApp"
