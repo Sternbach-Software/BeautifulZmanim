@@ -94,8 +94,8 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation(compose.web.core)
-                implementation(npm("@js-joda/timezone","2.3.0"))
+                implementation(compose.html)
+                implementation(npm("@js-joda/timezone", "2.3.0"))
             }
         }
 
@@ -128,7 +128,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    packagingOptions {
+    packaging {
         resources.excludes.add("META-INF/**")
     }
 }
