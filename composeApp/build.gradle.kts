@@ -94,7 +94,7 @@ kotlin {
 
         val jsMain by getting {
             dependencies {
-                implementation(compose.html)
+                implementation(compose.html.core)
                 implementation(npm("@js-joda/timezone", "2.3.0"))
             }
         }
@@ -119,6 +119,7 @@ android {
         applicationId = "sternbach.software.androidApp"
         versionCode = 1
         versionName = "1.0.0"
+        println("Proguard files: ${proguardFiles.map { it.absolutePath }}")
     }
     sourceSets["main"].apply {
         manifest.srcFile("src/androidMain/AndroidManifest.xml")
@@ -164,6 +165,6 @@ dependencies {
 }
 
 buildConfig {
-  // BuildConfig configuration here.
-  // https://github.com/gmazzo/gradle-buildconfig-plugin#usage-in-kts
+    // BuildConfig configuration here.
+    // https://github.com/gmazzo/gradle-buildconfig-plugin#usage-in-kts
 }
