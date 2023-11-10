@@ -65,15 +65,14 @@ class ZmanDescriptionFormatter {
         val endZman = mainCalculationMethodUsed?.dayEnd?.type
         val mainCalculationMethod =
             {
-                if (rules.calculationMethod != null) "${if (result.isNotBlank()) " - " else ""}${rules.calculationMethod.valueToString()}"
-                else null
+                "${if (result.isNotBlank()) " - " else ""}${rules.calculationMethod.valueToString()}"
             }
 
         result.apply {
             if (startZman != null && endZman != null) {
                 append(startZman.friendlyNameEnglish)
                 val startCalcMethod = mainCalculationMethodUsed.dayStart.calculationMethod
-                if (startCalcMethod != null && startCalcMethod != ZmanCalculationMethod.Unspecified) {
+                if (startCalcMethod != ZmanCalculationMethod.Unspecified) {
                     append("(")
                     append(startCalcMethod.valueToString())
                     append(")")
@@ -81,7 +80,7 @@ class ZmanDescriptionFormatter {
                 append("-")
                 append(endZman.friendlyNameEnglish)
                 val endCalcMethod = mainCalculationMethodUsed.dayEnd.calculationMethod
-                if (endCalcMethod != null && endCalcMethod != ZmanCalculationMethod.Unspecified) {
+                if (endCalcMethod != ZmanCalculationMethod.Unspecified) {
                     append("(")
                     append(endCalcMethod.valueToString())
                     append(")")

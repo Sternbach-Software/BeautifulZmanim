@@ -1,11 +1,11 @@
 package sternbach.software
 
-import com.kosherjava.zmanim.ComplexZmanimCalendar
-import com.kosherjava.zmanim.Zman
-import com.kosherjava.zmanim.metadata.ZmanCalculationMethod
-import com.kosherjava.zmanim.metadata.ZmanType
-import com.kosherjava.zmanim.util.GeoLocation
-import com.kosherjava.zmanim.util.Location
+import sternbach.software.kosherkotlin.ComplexZmanimCalendar
+import sternbach.software.kosherkotlin.Zman
+import sternbach.software.kosherkotlin.metadata.ZmanCalculationMethod
+import sternbach.software.kosherkotlin.metadata.ZmanType
+import sternbach.software.kosherkotlin.util.GeoLocation
+import sternbach.software.kosherkotlin.util.Location
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText

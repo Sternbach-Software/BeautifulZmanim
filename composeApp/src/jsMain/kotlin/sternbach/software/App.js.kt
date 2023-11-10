@@ -2,7 +2,7 @@ package sternbach.software
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.kosherjava.zmanim.util.Location
+import sternbach.software.kosherkotlin.util.Location
 import kotlinx.browser.window
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope

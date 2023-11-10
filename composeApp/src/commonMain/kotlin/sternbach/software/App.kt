@@ -19,9 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
-import com.kosherjava.zmanim.Zman
-import com.kosherjava.zmanim.ZmanDescriptionFormatter
-import com.kosherjava.zmanim.util.Location
+import sternbach.software.kosherkotlin.Zman
+import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
+import sternbach.software.kosherkotlin.util.Location
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 import compose.icons.feathericons.ArrowRight

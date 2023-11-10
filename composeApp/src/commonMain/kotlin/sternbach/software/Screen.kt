@@ -1,6 +1,6 @@
 package sternbach.software
 
-import com.kosherjava.zmanim.Zman
+import sternbach.software.kosherkotlin.Zman
 import presentation.ZmanCardModel
 
 sealed class Screen {

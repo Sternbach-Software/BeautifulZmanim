@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.kosherjava.zmanim.Zman
-import com.kosherjava.zmanim.ZmanDescriptionFormatter
+import sternbach.software.kosherkotlin.Zman
+import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone

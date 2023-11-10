@@ -1,6 +1,6 @@
 package presentation
 
-import com.kosherjava.zmanim.Zman
+import sternbach.software.kosherkotlin.Zman
 
 /**
  * @param mainZmanOpinion the user-readable opinion of how the zman was generated (e.g. 72 minutes)
