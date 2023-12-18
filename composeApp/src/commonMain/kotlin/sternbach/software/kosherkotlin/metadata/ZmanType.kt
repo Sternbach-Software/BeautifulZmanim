@@ -32,10 +32,10 @@ enum class ZmanType(
     SOF_ZMAN_KIDDUSH_LEVANA("Latest time to sanctify the moon", "סוף זמן קידוש לבנה"),
     CANDLE_LIGHTING("Candle lighting", "הדלקת נרות");
 
-    infix fun occurs(time: Duration) = Occurence(this, ZmanCalculationMethod.FixedDuration(time))
-    infix fun occurs(time: ZmanCalculationMethod.ZmaniyosDuration) = Occurence(this, time)
-    infix fun occurs(time: ZmanCalculationMethod.FixedDuration) = Occurence(this, time)
-    infix fun occurs(time: ZmanCalculationMethod.Degrees) = Occurence(this, time)
+    infix fun occurs(magnitudeOfOccurrence: Duration) = Occurrence(this, ZmanCalculationMethod.FixedDuration(magnitudeOfOccurrence))
+    infix fun occurs(magnitudeOfOccurrence: ZmanCalculationMethod.ZmaniyosDuration) = Occurrence(this, magnitudeOfOccurrence)
+    infix fun occurs(magnitudeOfOccurrence: ZmanCalculationMethod.FixedDuration) = Occurrence(this, magnitudeOfOccurrence)
+    infix fun occurs(time: ZmanCalculationMethod.Degrees) = Occurrence(this, time)
 
     companion object {
         val shaosZmaniyosIntoDay = mapOf(

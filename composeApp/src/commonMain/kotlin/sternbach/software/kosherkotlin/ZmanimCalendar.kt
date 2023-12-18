@@ -22,6 +22,8 @@ import sternbach.software.kosherkotlin.metadata.ZmanDefinition
 import sternbach.software.kosherkotlin.metadata.ZmanType
 import sternbach.software.kosherkotlin.util.GeoLocation
 import kotlinx.datetime.Instant
+import sternbach.software.kosherkotlin.metadata.UsesElevation
+import sternbach.software.kosherkotlin.metadata.ZmanCalculationMethod.Companion.degrees
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
@@ -79,7 +81,8 @@ import kotlin.time.Duration.Companion.minutes
  *
  * @author  Eliyahu Hershfeld 2004 - 2022
  */
-open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : AstronomicalCalendar(geoLocation) {
+open class ZmanimCalendar(
+    geoLocation: GeoLocation = GeoLocation(),
     /**
      * Is elevation above sea level calculated for times besides sunrise and sunset. According to Rabbi Dovid Yehuda
      * Bursztyn in his [Zmanim Kehilchasam (second edition published
@@ -97,20 +100,18 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
      *
      * @return if the use of elevation is active
      *
-     * @see .setUseElevation
+     * @see isUseElevation
      */
     /**
      * Sets whether elevation above sea level is factored into *zmanim* calculations for times besides sunrise and sunset.
      * See [isUseElevation] for more details.
-     * @see .isUseElevation
      * @param useElevation set to true to use elevation in *zmanim* calculations
      */
     /**
      * Is elevation factored in for some zmanim (see [isUseElevation] for additional information).
-     * @see .isUseElevation
-     * @see .setUseElevation
+     * @see isUseElevation
      */
-    var isUseElevation: Boolean = false
+    var isUseElevation: Boolean = false,
     /**
      * A method to get the offset in minutes before [sea level sunset][AstronomicalCalendar.seaLevelSunset] which
      * is used in calculating candle lighting time. The default time used is 18 minutes before sea level sunset. Some
@@ -136,6 +137,8 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
      * [candleLightingOffset] and retrieved by the [candleLightingOffset].
      */
     var candleLightingOffset: Double = 18.0
+) : AstronomicalCalendar(geoLocation) {
+
 
     /**
      * This method will return [sea level sunrise][seaLevelSunrise] if [isUseElevation] is false (the
@@ -181,8 +184,8 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
         get() = Zman.DateBased(
             ZmanDefinition(
                 ZmanType.TZAIS,
-                ZmanCalculationMethod.Degrees._8_5,
-                ZmanDefinition.UsesElevation.ALWAYS,
+                8.5F.degrees,
+                UsesElevation.ALWAYS,
                 supportingAuthorities = listOf(ZmanAuthority.POSEN)
             )
         ) {
@@ -209,8 +212,8 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
         get() = Zman.DateBased(
             ZmanDefinition(
                 ZmanType.ALOS,
-                ZmanCalculationMethod.Degrees._16_1,
-                ZmanDefinition.UsesElevation.ALWAYS
+                16.1F.degrees,
+                UsesElevation.ALWAYS
             )
         ) {
             getSunriseOffsetByDegrees(ZENITH_16_POINT_1)
@@ -234,7 +237,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.ALOS,
                 ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 72.minutes before ZmanType.HANAITZ),
-                ZmanDefinition.UsesElevation.NEVER,
+                UsesElevation.NEVER,
             )
         ) {
             getTimeOffset(elevationAdjustedSunrise, -72 * MINUTE_MILLIS)
@@ -257,7 +260,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.CHATZOS_HAYOM,
                 ZmanAuthority.Unanimous,
-                ZmanDefinition.UsesElevation.NEVER
+                UsesElevation.NEVER
             )
         ) {
             sunTransit
@@ -308,7 +311,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.SOF_ZMAN_KRIAS_SHEMA,
                 ZmanCalculationMethod.DayDefinition.SUNRISE_TO_SUNSET,
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
                 listOf(ZmanAuthority.GRA)
             )
         ) {
@@ -335,7 +338,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.SOF_ZMAN_KRIAS_SHEMA,
                 ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
             )
         ) {
             getSofZmanShma(alos72.momentOfOccurrence, tzais72.momentOfOccurrence)
@@ -361,7 +364,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.TZAIS,
                 ZmanCalculationMethod.Relationship(ZmanType.TZAIS occurs 72.minutes after ZmanType.SHKIAH),
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
                 supportingAuthorities = listOf(
                     ZmanAuthority.MACHATZIS_HASHEKEL,
                     ZmanAuthority.PRI_MEGADIM,
@@ -392,7 +395,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.CANDLE_LIGHTING,
                 ZmanCalculationMethod.Relationship(ZmanType.CANDLE_LIGHTING occurs candleLightingOffset.minutes before ZmanType.SHKIAH),
-                ZmanDefinition.UsesElevation.NEVER,
+                UsesElevation.NEVER,
             )
         ) {
             getTimeOffset(seaLevelSunset, -candleLightingOffset * MINUTE_MILLIS)
@@ -442,7 +445,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.SOF_ZMAN_TEFILLAH,
                 ZmanCalculationMethod.DayDefinition.SUNRISE_TO_SUNSET,
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
                 listOf(ZmanAuthority.GRA)
             )
         ) {
@@ -468,7 +471,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.SOF_ZMAN_TEFILLAH,
                 ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
             )
         ) {
             getSofZmanTfila(alos72.momentOfOccurrence, tzais72.momentOfOccurrence)
@@ -523,7 +526,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.MINCHA_GEDOLAH,
                 ZmanCalculationMethod.DayDefinition.SUNRISE_TO_SUNSET,
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
                 listOf(ZmanAuthority.GRA)
             )
         ) {
@@ -607,7 +610,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.MINCHA_KETANAH,
                 ZmanCalculationMethod.DayDefinition.SUNRISE_TO_SUNSET,
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
                 listOf(ZmanAuthority.GRA)
             )
         ) {
@@ -654,7 +657,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.PLAG_HAMINCHA,
                 ZmanCalculationMethod.DayDefinition.SUNRISE_TO_SUNSET,
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
                 listOf(ZmanAuthority.GRA)
             )
         ) {
@@ -698,7 +701,7 @@ open class ZmanimCalendar(geoLocation: GeoLocation = GeoLocation()) : Astronomic
             ZmanDefinition(
                 ZmanType.SHAA_ZMANIS,
                 ZmanCalculationMethod.DayDefinition.dawnToDusk(ZmanCalculationMethod.FixedDuration._72),
-                ZmanDefinition.UsesElevation.IF_SET,
+                UsesElevation.IF_SET,
                 listOf(ZmanAuthority.MGA)
             )
         ) {
