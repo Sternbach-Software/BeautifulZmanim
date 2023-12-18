@@ -89,7 +89,7 @@ fun AndroidAppPreview() {
     App(true)
 }
 
-internal actual fun openUrl(url: String?) {
+/*internal actual fun openUrl(url: String?) {
     val uri = url?.let { Uri.parse(it) } ?: return
     val intent = Intent().apply {
         action = Intent.ACTION_VIEW
@@ -97,13 +97,7 @@ internal actual fun openUrl(url: String?) {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
     AndroidApp.INSTANCE.startActivity(intent)
-}
-/**
- * Check if google play services installed (so that it can be installed on kosher phones)
- * */
-fun isGooglePlayServicesAvailable(context: Context) =
-    GoogleApiAvailability.getInstance()
-        .isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
+}*/
 @OptIn(DelicateCoroutinesApi::class)
 suspend fun getGeoLocation(location: Location, context: Context, onLocationNameAvailable: suspend (GeoLocation) -> Unit) {
     val geo = Geocoder(context, Locale.getDefault())
@@ -195,7 +189,15 @@ actual fun listenForPosition() {
 actual fun stopListening() {
 }
 
-actual var gpsSupported: androidx.compose.runtime.State<Boolean> = ImmutableBool(true)//TODO change to true and implement getting permissions
+/**
+ * Check if google play services installed (so that it can be installed on kosher phones)
+ * */
+fun isGooglePlayServicesAvailable(context: Context) =
+    GoogleApiAvailability.getInstance()
+        .isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS
+actual var gpsSupported: androidx.compose.runtime.State<Boolean> = ImmutableBool(
+    true/* TODO isGooglePlayServicesAvailable(AndroidApp.INSTANCE)*/)
+
 actual fun getLocationOnce() {
 
 }
