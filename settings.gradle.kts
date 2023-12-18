@@ -1,6 +1,5 @@
-rootProject.name = "Beautiful Zmanim"
+rootProject.name = "Beautiful-Zmanim"
 include(":composeApp")
-include(":iosApp")
 
 pluginManagement {
     repositories {

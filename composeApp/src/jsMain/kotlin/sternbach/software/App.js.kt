@@ -13,12 +13,12 @@ import kotlinx.datetime.Clock
 private var geolocation: dynamic = null
 private var listener: dynamic = null
 private var options: Options? = null
-
+/*
 internal actual fun openUrl(url: String?) {
     url?.let { window.open(it) }
 //    println(jsJodaTz.ZoneId.systemDefault().rules().isDaylightSavings(jsJodaTz.Instant.now()))
 
-}
+}*/
 
 private data class Options(
     val enableHighAccuracy: Boolean = true,
@@ -86,11 +86,11 @@ fun onError(error: dynamic) {
     }*/
 }
 
-@JsModule("@js-joda/timezone")
-@JsNonModule
-external object JsJodaTimeZoneModule
+//@JsModule("@js-joda/timezone")
+//@JsNonModule
+//external object JsJodaTimeZoneModule
 
-private val jsJodaTz = JsJodaTimeZoneModule
+//private val jsJodaTz = JsJodaTimeZoneModule
 actual var gpsSupported: androidx.compose.runtime.State<Boolean> = mutableStateOf(true).also { state ->
 //    getIsOnline {
 //        state.value = it

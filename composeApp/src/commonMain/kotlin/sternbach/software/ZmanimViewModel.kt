@@ -47,8 +47,7 @@ class ZmanimViewModel {
         //tick every second and update [now]
         scope.launch(Dispatchers.Default) {
             while (isActive) {
-                val instant = Clock.System.now()
-                if (instant != null && _now != null) runCatching { _now.value = instant }
+                runCatching { _now.value = Clock.System.now() }
                 delay(1000)
             }
         }

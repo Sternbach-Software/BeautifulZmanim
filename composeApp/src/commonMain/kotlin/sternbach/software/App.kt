@@ -294,7 +294,6 @@ private fun isAllowed(c: Char, allow: String?): Boolean =
 
 val currentLocation = MutableStateFlow<Location?>(null)
 val errorInGettingLocation = MutableStateFlow<String?>(null)
-internal expect fun openUrl(url: String?)
 expect fun listenForPosition()
 expect fun stopListening()
 expect fun getLocationOnce()

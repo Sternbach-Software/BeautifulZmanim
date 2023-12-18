@@ -9,12 +9,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:name=".AndroidApp"
+        android:name="sternbach.software.AndroidApp"
         android:icon="@android:drawable/ic_menu_compass"
         android:label="Beautiful Zmanim"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
         <activity
-            android:name=".AppActivity"
+            android:name="sternbach.software.AppActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustResize"
