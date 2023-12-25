@@ -47,7 +47,7 @@ internal fun ZmanCard(
 ) {
     Column(verticalArrangement = Arrangement.SpaceEvenly) {
         Text(
-            model.mainZman.rules.type.friendlyNameEnglish,
+            model.mainZman.definition.type.friendlyNameEnglish,
             Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center

@@ -1,11 +1,5 @@
 package sternbach.software
 
-import sternbach.software.kosherkotlin.ComplexZmanimCalendar
-import sternbach.software.kosherkotlin.Zman
-import sternbach.software.kosherkotlin.metadata.ZmanCalculationMethod
-import sternbach.software.kosherkotlin.metadata.ZmanType
-import sternbach.software.kosherkotlin.util.GeoLocation
-import sternbach.software.kosherkotlin.util.Location
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
@@ -26,6 +20,12 @@ import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.serialization.json.Json
 import presentation.ZmanCardModel
+import sternbach.software.kosherkotlin.ComplexZmanimCalendar
+import sternbach.software.kosherkotlin.Zman
+import sternbach.software.kosherkotlin.metadata.ZmanCalculationMethod
+import sternbach.software.kosherkotlin.metadata.ZmanType
+import sternbach.software.kosherkotlin.util.GeoLocation
+import sternbach.software.kosherkotlin.util.Location
 
 class ZmanimViewModel {
 
@@ -106,17 +106,19 @@ class ZmanimViewModel {
     private var _calculatingZmanim: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _listeningForPosition: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private var _location: MutableStateFlow<Location?> = MutableStateFlow(null)
-    private var _shaaZmanisValues: MutableStateFlow<List<Zman.ValueBased>?> =
+    private var _shaaZmanisValuesToDisplay: MutableStateFlow<List<Zman.ValueBased>?> =
         MutableStateFlow(null)
     private var _allZmanimToDisplay: MutableStateFlow<List<Zman.DateBased>?> =
         MutableStateFlow(null)
+    val allShaosZmaniyos = MutableStateFlow<List<Zman.ValueBased>?>(null)
+    val allZmanim = MutableStateFlow<List<Zman.DateBased>?>(null)
     private var _now: MutableStateFlow<Instant> = MutableStateFlow(Clock.System.now())
     val calculatingZmanim: Flow<Boolean> get() = _calculatingZmanim
 
     val location: Flow<Location?> get() = _location
     val listeningForPosition: Flow<Boolean> get() = _listeningForPosition
     val shaaZmanisCardModel: Flow<ZmanCardModel>
-        get() = _shaaZmanisValues
+        get() = _shaaZmanisValuesToDisplay
             .transform {
                 println("Transforming _shaaZmanisVaues: $it")
                 if (it != null) {
@@ -167,19 +169,19 @@ class ZmanimViewModel {
         this
             .filter { it.momentOfOccurrence != null }
             .pipelineOp()
-            .groupBy { it.rules.type }
+            .groupBy { it.definition.type }
             .mapNotNullToCardModel(transform)
             .sortedBy { it.mainZman }
 
     val now: Flow<Instant> get() = _now
 
-    fun getZmanimByOpinions(opinions: Iterable<ZmanCalculationMethod<*>>): Flow<List<ZmanCardModel?>> {
+    fun getZmanimByOpinions(opinions: Iterable<ZmanCalculationMethod>): Flow<List<ZmanCardModel?>> {
         val noOtherOpinions =
             emptyList<Zman.DateBased>() //when by opinion, every card should be its own opinion
         return _allZmanimToDisplay
             .transform {
                 it
-                    ?.filter { it.rules.calculationMethod in opinions }
+                    ?.filter { it.definition.calculationMethod in opinions }
                     ?.map { ZmanCardModel(it, noOtherOpinions) }
                     ?.let { emit(it) }
             }
@@ -190,7 +192,7 @@ class ZmanimViewModel {
             .transform {
                 it
                     ?.transformToZmanCardModels(preferredOpinionTransform) {
-                        filter { it.rules.type in types }
+                        filter { it.definition.type in types }
                     }
                     ?.let { emit(it) }
             }
@@ -201,14 +203,14 @@ class ZmanimViewModel {
      * return a [Flow] containing two [ZmanCardModel]s: one for the [ZmanOpinion.Authority.GRA]'s opinion on [ZmanType.ALOS]
      * and one for the [ZmanOpinion.Authority.MGA]'s opinion on [ZmanType.ALOS].
      * */
-    fun getZmanimByTypeAndOpinions(typeToOpinions: Map<ZmanType, Iterable<ZmanCalculationMethod<*>>>): Flow<List<ZmanCardModel?>> {
+    fun getZmanimByTypeAndOpinions(typeToOpinions: Map<ZmanType, Iterable<ZmanCalculationMethod>>): Flow<List<ZmanCardModel?>> {
         return _allZmanimToDisplay
             .transform {
                 it
                     ?.transformToZmanCardModels(preferredOpinionTransform) {
                         filter {
-                            typeToOpinions[it.rules.type]?.let { opinions ->
-                                it.rules.calculationMethod in opinions
+                            typeToOpinions[it.definition.type]?.let { opinions ->
+                                it.definition.calculationMethod in opinions
                             }
                                 ?: false
                         }
@@ -236,16 +238,15 @@ class ZmanimViewModel {
 
     private suspend fun calculateAndEmitZmanim(cal: ComplexZmanimCalendar) {
         println("Calculating zmanim for $cal")
-        val values = cal.allShaosZmaniyos.sortedBy { it.duration }
-        val listOfZmanim =
-            cal.allZmanim.distinct().sortedBy { it.momentOfOccurrence }
+        allShaosZmaniyos.emit(cal.allShaosZmaniyos.sortedBy { it.duration })
+        allZmanim.emit(cal.allZmanim.distinct().sortedBy { it.momentOfOccurrence })
         //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
-        println("Got zmanim: values=$values, listOfZmanim=$listOfZmanim")
-        _shaaZmanisValues.emit(
-            values
+        println("Got zmanim: values=$allShaosZmaniyos, listOfZmanim=$allZmanim")
+        _shaaZmanisValuesToDisplay.emit(
+            allShaosZmaniyos.value
         )
         _allZmanimToDisplay.emit(
-            listOfZmanim
+            allZmanim.value
         )
         _calculatingZmanim.emit(false)
         println("Emitted all values")
@@ -337,15 +338,15 @@ class ZmanimViewModel {
 
     fun getOtherOpinions(shaaZmanisValues: List<Zman<*>>): List<Zman<*>> {
         val preferredOpinionForZmanType =
-            shaaZmanisValues.firstOrNull()?.rules?.calculationMethod //TODO implement with settings
+            shaaZmanisValues.firstOrNull()?.definition?.calculationMethod //TODO implement with settings
         return getOtherOpinons(shaaZmanisValues, preferredOpinionForZmanType)
     }
 
     private fun getOtherOpinons(
         shaaZmanisValues: List<Zman<*>>,
-        preferredOpinionForZmanType: ZmanCalculationMethod<*>?,
+        preferredOpinionForZmanType: ZmanCalculationMethod?,
     ): List<Zman<*>> {
-        val index = shaaZmanisValues.indexOfFirst { it.rules.calculationMethod == preferredOpinionForZmanType }
+        val index = shaaZmanisValues.indexOfFirst { it.definition.calculationMethod == preferredOpinionForZmanType }
         return index
             .takeIf { it >= 0 }
             ?.let {
@@ -359,8 +360,8 @@ class ZmanimViewModel {
      * */
     fun <T> getZmanForZmanTypePreferredOpinion(type: ZmanType, zmanim: List<Zman<T>>): Zman<T>? {
         val preferredOpinionForZmanType =
-            zmanim.firstOrNull()?.rules //TODO implement with settings
-        return zmanim.firstOrNull { it.rules == preferredOpinionForZmanType }
+            zmanim.firstOrNull()?.definition //TODO implement with settings
+        return zmanim.firstOrNull { it.definition == preferredOpinionForZmanType }
     }
 
     val isOnline: Flow<Boolean> = channelFlow {

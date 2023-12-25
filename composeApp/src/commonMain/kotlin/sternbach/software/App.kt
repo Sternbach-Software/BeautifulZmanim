@@ -19,20 +19,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
-import sternbach.software.kosherkotlin.Zman
-import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
-import sternbach.software.kosherkotlin.util.Location
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 import compose.icons.feathericons.ArrowRight
 import compose.icons.feathericons.Compass
+import compose.icons.feathericons.Settings
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.datetime.Clock
 import presentation.ZmanCardModel
+import presentation.components.ListOfAllZmanDefinitions
 import presentation.components.ZmanimList
 import presentation.screens.InputLocationScreen
 import presentation.screens.MultipleLocationsList
+import presentation.screens.SettingsScreen
+import sternbach.software.kosherkotlin.Zman
+import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
+import sternbach.software.kosherkotlin.util.Location
 import sternbach.software.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +62,9 @@ internal fun App(
                 actions = {
                     IconButton({ nav.navigateTo(Screen.InputLocation) }) {
                         Icon(FeatherIcons.Compass, "Location")
+                    }
+                    IconButton({ nav.navigateTo(Screen.Settings.Root) }) {
+                        Icon(FeatherIcons.Settings, "Settings")
                     }
                 }
             )
@@ -95,6 +101,11 @@ internal fun App(
 
                     is Screen.MultipleLocations -> MultipleLocationsList(it.locations) {
                         vm.getZmanimByLocationString(it.display_name) //TODO if this somehow has multiple options, the user is screwed because they can't see the screen. TODO what if they lose connection between the beggining of onClick and when this function is called again?
+                    }
+
+                    is Screen.Settings -> when (it) {
+                        is Screen.Settings.Root -> SettingsScreen(nav)
+                        is Screen.Settings.Opinions -> ListOfAllZmanDefinitions(vm)
                     }
 
                     is Screen.ZmanimScreen -> {

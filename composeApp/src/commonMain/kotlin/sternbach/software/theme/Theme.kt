@@ -2,6 +2,7 @@ package sternbach.software.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.MaterialTheme
@@ -58,25 +59,19 @@ private val AppTypography = Typography(
         fontSize = 16.sp
     )
 )
-
+@Composable
+expect fun getColorScheme(useDarkTheme: Boolean): ColorScheme
+fun defaultColorScheme(useDarkTheme: Boolean) = if (!useDarkTheme) LightColorScheme else DarkColorScheme
 @Composable
 internal fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
+    colors: ColorScheme = getColorScheme(useDarkTheme),
     content: @Composable () -> Unit
-) {
-
-    val colors = if (!useDarkTheme) {
-        LightColorScheme
-    } else {
-        DarkColorScheme
+) = MaterialTheme(
+    colorScheme = colors,
+    typography = AppTypography,
+    shapes = AppShapes,
+    content = {
+        Surface(content = content)
     }
-
-    MaterialTheme(
-        colorScheme = colors,
-        typography = AppTypography,
-        shapes = AppShapes,
-        content = {
-            Surface(content = content)
-        }
-    )
-}
+)
