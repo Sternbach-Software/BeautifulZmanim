@@ -1,10 +1,11 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.cli.common.isWindows
 
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose)
     alias(libs.plugins.android.application)
-    alias(libs.plugins.libres)
+//    alias(libs.plugins.libres)
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.sqlDelight)
@@ -36,13 +37,30 @@ kotlin {
             isStatic = true
         }
     }
+    //generate executable binaries:
+//    linuxX64 {
+//        binaries.executable()
+//    }
+//    mingwX64 {
+//        binaries.executable()
+//    }
+//    macosX64 {
+//        binaries.executable()
+//    }
+//    linuxArm64 {
+//        binaries.executable()
+//    }
+//    macosArm64 {
+//        binaries.executable()
+//    }
+
 
     sourceSets {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.material3)
             implementation(compose.materialIconsExtended)
-            implementation(libs.libres)
+//            implementation(libs.libres)
             implementation(libs.voyager.navigator)
             implementation(libs.composeImageLoader)
             implementation(libs.napier)
@@ -135,12 +153,12 @@ compose.experimental {
     web.application {}
 }
 
-libres {
+//libres {
     // https://github.com/Skeptick/libres#setup
-}
-tasks.getByPath("jvmProcessResources").dependsOn("libresGenerateResources")
-tasks.getByPath("jvmSourcesJar").dependsOn("libresGenerateResources")
-tasks.getByPath("jsProcessResources").dependsOn("libresGenerateResources")
+//}
+//tasks.getByPath("jvmProcessResources").dependsOn("libresGenerateResources")
+//tasks.getByPath("jvmSourcesJar").dependsOn("libresGenerateResources")
+//tasks.getByPath("jsProcessResources").dependsOn("libresGenerateResources")
 
 buildConfig {
     // BuildConfig configuration here.
