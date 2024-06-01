@@ -46,5 +46,5 @@ To run the application on an iPhone device/simulator:
 Run the browser application: `./gradlew :composeApp:jsBrowserDevelopmentRun`
 
 # License
-Licensed under the [AGPL 3.0](https://www.gnu.org/licenses/agpl-3.0.en.html). One of the things this means is that if you use any code in this repository, you must make your code publicly available. See the license for the full terms.
+Licensed under the [AGPL 3.0](https://www.gnu.org/licenses/agpl-3.0.en.html). One of the things this means is that if you use any code in this repository, you must make your code publicly available.  It also means that you must state the modifications you made to the code. See the license for the full terms.
 
