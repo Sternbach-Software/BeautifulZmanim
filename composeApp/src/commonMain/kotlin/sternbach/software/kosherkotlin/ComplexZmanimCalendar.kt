@@ -747,7 +747,7 @@ class ComplexZmanimCalendar(
             ZmanDefinition(
                 ZmanType.ALOS,
                 ZmanCalculationMethod.Relationship(ZmanType.ALOS occurs 60.minutes before ZmanType.HANAITZ),
-                UsesElevation.ALWAYS,
+                UsesElevation.IF_SET,
             )
         ) {
             getTimeOffset(
@@ -3507,7 +3507,8 @@ class ComplexZmanimCalendar(
      * or sunset based. See detailed explanation on top of the [AstronomicalCalendar] documentation.
      */
     private fun getZmanisBasedOffset(hours: Double): Instant? {
-        val shaahZmanis: Long = shaahZmanisGra
+        val shaahZmanis =
+            getTemporalHour(elevationAdjustedSunrise, elevationAdjustedSunset)//shaaZmanisGra
         if (shaahZmanis == Long.MIN_VALUE || hours == 0.0) {
             return null
         }
@@ -3950,18 +3951,18 @@ class ComplexZmanimCalendar(
     /**
      * Returns the earliest time of *Kiddush Levana* according to [Rabbeinu Yonah](https://en.wikipedia.org/wiki/Yonah_Gerondi)'s opinion that it can be said 3 days after the
      * *molad*. The time will be returned even if it occurs during the day when *Kiddush Levana* can't be said.
-     * Use [.getTchilasZmanKidushLevana3Days] if you want to limit the time to night hours.
+     * Use [getTchilasZmanKidushLevana3Days] if you want to limit the time to night hours.
      *
      * @return the Date representing the moment 3 days after the molad.
-     * @see .getTchilasZmanKidushLevana3Days
-     * @see .getTchilasZmanKidushLevana7Days
+     * @see getTchilasZmanKidushLevana3Days
+     * @see getTchilasZmanKidushLevana7Days
      * @see JewishCalendar.tchilasZmanKidushLevana3Days
      */
     val tchilasZmanKidushLevana3Days: Zman.DateBased
         get() = Zman.DateBased(
             ZmanDefinition(
                 ZmanType.EARLIEST_KIDDUSH_LEVANA,
-                ZmanCalculationMethod.Relationship(ZmanType.SOF_ZMAN_KIDDUSH_LEVANA occurs 3.days after ZmanType.MOLAD),
+                ZmanCalculationMethod.Relationship(ZmanType.EARLIEST_KIDDUSH_LEVANA occurs 3.days after ZmanType.MOLAD),
                 supportingAuthorities = listOf(ZmanAuthority.RABEINU_YONAH),
             )
         ) {
@@ -4206,7 +4207,7 @@ class ComplexZmanimCalendar(
             )
         ) {
             if (jewishCalendar.isErevPesach) getTimeOffset(
-                elevationAdjustedSunrise, shaahZmanisGra * 5
+                elevationAdjustedSunrise, (shaahZmanisGra.duration * 5).inWholeMilliseconds
             )
             else null
         }
@@ -5059,8 +5060,8 @@ class ComplexZmanimCalendar(
     /**
      * An unsorted list of all opinions for the length of a sha'ah zmanis (given the time and place this class holds).
      * */
-    val allShaosZmaniyos by lazy {
-        listOf(
+    override val allShaosZmaniyos by lazy {
+        (super.allShaosZmaniyos + listOf(
             shaahZmanis19Point8Degrees,
             shaahZmanis18Degrees,
             shaahZmanis26Degrees,
@@ -5076,7 +5077,7 @@ class ComplexZmanimCalendar(
             shaahZmanis96Minutes,
             shaahZmanis120Minutes,
             shaahZmanis120MinutesZmanis
-        )
+        )).distinct()
     }
     val typeToZman by lazy {
         mapOf(
@@ -5101,8 +5102,8 @@ class ComplexZmanimCalendar(
     /**
      * An unsorted list of all zmanim this class exposes. Zmanim are only computed when list is accessed.
      */
-    val allZmanim by lazy {
-        listOf(
+    override val allZmanim by lazy {
+        (super.allZmanim + listOf(
             plagHamincha120MinutesZmanis,
             plagHamincha120Minutes,
             alos60,
@@ -5272,7 +5273,7 @@ class ComplexZmanimCalendar(
             samuchLeMinchaKetanaGRA,
             samuchLeMinchaKetana16Point1Degrees,
             samuchLeMinchaKetana72Minutes
-        )
+        )).distinct()
     }
 
     companion object {
