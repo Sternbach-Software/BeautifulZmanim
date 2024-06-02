@@ -64,9 +64,9 @@ internal fun App(
                     IconButton({ nav.navigateTo(Screen.InputLocation) }) {
                         Icon(FeatherIcons.Compass, "Location")
                     }
-                    IconButton({ nav.navigateTo(Screen.Settings.Root) }) {
+                    /*IconButton({ nav.navigateTo(Screen.Settings.Root) }) {
                         Icon(FeatherIcons.Settings, "Settings")
-                    }
+                    }*/
                 }
             )
         }
