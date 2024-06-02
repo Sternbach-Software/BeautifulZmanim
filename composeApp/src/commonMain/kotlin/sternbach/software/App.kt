@@ -26,6 +26,7 @@ import compose.icons.feathericons.Compass
 import compose.icons.feathericons.Settings
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.transform
 import kotlinx.datetime.Clock
 import presentation.ZmanCardModel
 import presentation.components.ListOfAllZmanDefinitions
@@ -114,57 +115,19 @@ internal fun App(
                             Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
-                        val zmanim =
-                            it.zmanim?.also { println("Zmanim were passed as nav args") }
-                                ?: vm.allZmanimCardModels.collectAsState(emptyList()).value.also {
-                                    println(
-                                        "Observing zmanim"
-                                    )
-                                }
-                                ?: emptyList()
-                        val containsValueBased = zmanim.any { it?.mainZman is Zman.ValueBased }
-                        val containsDateBased = zmanim.any { it?.mainZman is Zman.DateBased }
-                        if (containsValueBased && containsDateBased) ZmanimList(
-                            smallScreen,
-                            zmanim
-                                .filter { it?.mainZman is Zman.ValueBased }
-                                .let {
-                                    it.ifEmpty { null }
-                                } as List<ZmanCardModel>?,
-                            now.value,
-                            vm,
-                            zmanim
-                                .filter { it?.mainZman is Zman.DateBased }
-                                .let {
-                                    it.ifEmpty { null }
-                                } as List<ZmanCardModel>?,
-                            zmanFormatter,
-                            onValueBasedSelected = {
-                                println("On value based selected: $it")
-                                navigateToOtherOpinions(it, nav, zmanFormatter)
-                            },
-                            onDateBasedSelected = {
+                        val zmanim = vm.allZmanim.transform { emit(it?.filter { it.momentOfOccurrence != null }) }.collectAsState(emptyList())
+                        val favoritedZmanim = vm.favoriteZmanim.collectAsState(emptyList())
+                        ZmanimList(
+                            zmanim.value ?: emptyList(),
+                            favoritedZmanim.value ?: emptyList(),
+                            { isFavorite, zman ->
                                 println("On date based selected: $it")
-                                navigateToOtherOpinions(it, nav, zmanFormatter)
-                            }
-                        )
-                        else ZmanimList(
-                            smallScreen,
-                            (if (containsValueBased) zmanim
-                            else null) as List<ZmanCardModel>?,
-                            now.value,
-                            vm,
-                            (if (containsDateBased) zmanim
-                            else null) as List<ZmanCardModel>?,
-                            zmanFormatter,
-                            onValueBasedSelected = {
-                                println("On value based selected: $it")
-                                navigateToOtherOpinions(it, nav, zmanFormatter)
+                                if(isFavorite) vm.favoriteZman(zman)
+                                else vm.unfavoriteZman(zman)
+//                                navigateToOtherOpinions(it, nav, zmanFormatter)
                             },
-                            onDateBasedSelected = {
-                                println("On date based selected: $it")
-                                navigateToOtherOpinions(it, nav, zmanFormatter)
-                            }
+                            now.value,
+                            zmanFormatter,
                         )
                     }
                 }

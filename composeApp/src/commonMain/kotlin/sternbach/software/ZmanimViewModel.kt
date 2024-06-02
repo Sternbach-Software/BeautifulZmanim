@@ -22,6 +22,7 @@ import kotlinx.serialization.json.Json
 import presentation.ZmanCardModel
 import sternbach.software.kosherkotlin.ComplexZmanimCalendar
 import sternbach.software.kosherkotlin.Zman
+import sternbach.software.kosherkotlin.ZmanimCalendar
 import sternbach.software.kosherkotlin.metadata.ZmanCalculationMethod
 import sternbach.software.kosherkotlin.metadata.ZmanType
 import sternbach.software.kosherkotlin.util.GeoLocation
@@ -58,7 +59,7 @@ class ZmanimViewModel {
      * */
     constructor(
         scope: CoroutineScope,
-        engine: ComplexZmanimCalendar,
+        engine: ZmanimCalendar,
         alwaysObserveLiveLocation: Boolean = false,
     ) : this(scope, alwaysObserveLiveLocation) {
         _calculatingZmanim.value = true
@@ -112,6 +113,8 @@ class ZmanimViewModel {
         MutableStateFlow(null)
     val allShaosZmaniyos = MutableStateFlow<List<Zman.ValueBased>?>(null)
     val allZmanim = MutableStateFlow<List<Zman.DateBased>?>(null)
+    val favoriteZmanim = MutableStateFlow<List<Zman<*>>?>(null)
+
     private var _now: MutableStateFlow<Instant> = MutableStateFlow(Clock.System.now())
     val calculatingZmanim: Flow<Boolean> get() = _calculatingZmanim
 
@@ -161,6 +164,7 @@ class ZmanimViewModel {
                 )
             }
         }
+
 
     private fun List<Zman.DateBased>.transformToZmanCardModels(
         transform: (Map.Entry<ZmanType, List<Zman.DateBased>>) -> ZmanCardModel?,
@@ -236,10 +240,10 @@ class ZmanimViewModel {
         }
     }
 
-    private suspend fun calculateAndEmitZmanim(cal: ComplexZmanimCalendar) {
+    private suspend fun calculateAndEmitZmanim(cal: ZmanimCalendar) {
         println("Calculating zmanim for $cal")
         allShaosZmaniyos.emit(cal.allShaosZmaniyos.sortedBy { it.duration })
-        allZmanim.emit(cal.allZmanim.distinct().sortedBy { it.momentOfOccurrence })
+        allZmanim.emit(cal.allZmanim.sortedBy { it.momentOfOccurrence })
         //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
         println("Got zmanim: values=$allShaosZmaniyos, listOfZmanim=$allZmanim")
         _shaaZmanisValuesToDisplay.emit(
@@ -395,6 +399,15 @@ class ZmanimViewModel {
                 .exceptionOrNull()
                 ?.printStackTrace()
         }
+    }
+
+    fun favoriteZman(it: Zman<*>) = scope.launch(Dispatchers.Default) {
+
+        favoriteZmanim.emit((favoriteZmanim.value ?: emptyList()) + it)
+    }
+
+    fun unfavoriteZman(zman: Zman<*>) = scope.launch(Dispatchers.Default) {
+        favoriteZmanim.emit((favoriteZmanim.value ?: emptyList()) - zman)
     }
 
     companion object {
