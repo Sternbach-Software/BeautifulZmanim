@@ -130,9 +130,7 @@ internal fun ZmanimList(
                 )
             }
             ZmanList(
-                if(allZmanim == null) null
-                else if (favoriteZmanim == null) allZmanim
-                else allZmanim - favoriteZmanim,
+                allZmanim,
                 onlyUpcoming,
                 false,
                 now,

@@ -425,7 +425,10 @@ class ZmanimViewModel {
             settings[FAVORITE_ZMANIM_PREF_KEY] = newPrefsString
             println("Zmanim saved correctly: ${settings.getStringOrNull(FAVORITE_ZMANIM_PREF_KEY) == newPrefsString}")
         }
-        favoriteZmanim.emit((favoriteZmanim.value ?: emptyList()) + it)
+        val newFavorites = (favoriteZmanim.value ?: emptyList()) + it
+        favoriteZmanim.emit(newFavorites)
+        allShaosZmaniyos.emit(allShaosZmaniyos.value?.minus(newFavorites.filterIsInstance<Zman.ValueBased>().toSet()))
+        allZmanim.emit(allZmanim.value?.minus(newFavorites.filterIsInstance<Zman.DateBased>().toSet()))
     }
 
     fun unfavoriteZman(it: Zman<*>) = scope.launch(Dispatchers.Default) {
@@ -434,7 +437,10 @@ class ZmanimViewModel {
             val zmanim = Json.Default.decodeFromString<List<ZmanDefinition>>(prefsString)
             settings[FAVORITE_ZMANIM_PREF_KEY] = Json.Default.encodeToString(zmanim - it.definition)
         }
-        favoriteZmanim.emit((favoriteZmanim.value ?: emptyList()) - it)
+        val newFavorites = (favoriteZmanim.value ?: emptyList()) - it
+        favoriteZmanim.emit(newFavorites)
+        allShaosZmaniyos.emit(allShaosZmaniyos.value?.minus(newFavorites.filterIsInstance<Zman.ValueBased>().toSet()))
+        allZmanim.emit(allZmanim.value?.minus(newFavorites.filterIsInstance<Zman.DateBased>().toSet()))
     }
 
     companion object {
