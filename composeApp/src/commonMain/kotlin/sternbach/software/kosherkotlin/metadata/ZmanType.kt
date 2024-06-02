@@ -1,7 +1,9 @@
 package sternbach.software.kosherkotlin.metadata
 
+import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
+@Serializable
 enum class ZmanType(
     val friendlyNameEnglish: String,
     val friendlyNameHebrew: String

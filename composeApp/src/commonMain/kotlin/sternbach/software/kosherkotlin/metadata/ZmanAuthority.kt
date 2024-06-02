@@ -1,5 +1,6 @@
 package sternbach.software.kosherkotlin.metadata
 
+import kotlinx.serialization.Serializable
 import sternbach.software.kosherkotlin.ComplexZmanimCalendar
 import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
 
@@ -10,6 +11,7 @@ import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
  * the sha'ah zmanis is calculated. And, sometimes authority's calculations cannot be easily described in terms of simple [ZmanCalculationMethod]s.
  * It is also more meaningful to the reader/end user that it uses the GRA's sha'ah zmanis rather than a calculation method.
  * */
+@Serializable
 open class ZmanAuthority(val name: String): ZmanCalculationMethod {
     data class AccordingTo(val authority: ZmanAuthority? = null, val accordingTo: ZmanAuthority, val calculationMethod: ZmanCalculationMethod? = null): ZmanAuthority("${authority?.name ?: calculationMethod?.valueToString()} according to ${accordingTo.name}")
     infix fun accordingTo(accordingTo: ZmanAuthority) = AccordingTo(this, accordingTo)

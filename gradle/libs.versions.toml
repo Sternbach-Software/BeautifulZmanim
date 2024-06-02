@@ -42,6 +42,7 @@ composeIcons-featherIcons = { module = "br.com.devsrsouza.compose.icons:feather"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
+multiplatformNoArgSettings = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
 kstore = { module = "io.github.xxfast:kstore", version.ref = "kstore" }
 play-services-base = { group = "com.google.android.gms", name = "play-services-base", version = "18.2.0" }
 sqlDelight-driver-sqlite = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqlDelight" }

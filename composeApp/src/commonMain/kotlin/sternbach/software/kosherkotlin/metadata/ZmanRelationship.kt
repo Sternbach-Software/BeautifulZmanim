@@ -1,5 +1,7 @@
 package sternbach.software.kosherkotlin.metadata
 
+import kotlinx.serialization.Serializable
+
 /**
  * A [ZmanRelationship] is a relationship between two [ZmanType]s, dictating when [subject] occurs relative to [relativeToZman].
  * ZmanType.TZAIS  occurs 45.minutes          after  ZmanType.SHKIAH
@@ -11,6 +13,7 @@ package sternbach.software.kosherkotlin.metadata
  * ZmanType.BAIN_HASHMASHOS occurs 13.5.minutes before tzaisGeonim7Point083Degrees.definition
  *
  * */
+@Serializable
 data class ZmanRelationship(
     val subject: ZmanType,
     val calculation: ZmanCalculationMethod,

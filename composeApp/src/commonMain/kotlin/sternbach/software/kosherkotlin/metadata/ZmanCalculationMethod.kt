@@ -1,5 +1,6 @@
 package sternbach.software.kosherkotlin.metadata
 
+import kotlinx.serialization.Serializable
 import sternbach.software.kosherkotlin.ComplexZmanimCalendar
 import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
 import kotlin.math.absoluteValue
@@ -42,6 +43,7 @@ import kotlin.time.Duration.Companion.minutes
  *
  *
  * */
+@Serializable
 sealed interface ZmanCalculationMethod {
     companion object {
         val Duration.fixed get() = FixedDuration(this)
@@ -76,6 +78,7 @@ sealed interface ZmanCalculationMethod {
      * A form of empty set/placeholder indicating that the calculation method was not specified/is irrelevant.
      * Almost exclusively used when defining a [ZmanDefinition] that is reused across zmanim.
      * */
+    @Serializable
     data object Unspecified : ZmanCalculationMethod {
         override fun valueToString(): String = format()
         override fun format(): String = "Unspecified"
@@ -98,6 +101,7 @@ sealed interface ZmanCalculationMethod {
      * @see ZmanType.occurs
      * @see Occurrence
      * */
+    @Serializable
     data class Relationship(val relationship: ZmanRelationship) : ZmanCalculationMethod {
         override fun valueToString(): String = format()
         override fun format(): String = relationship.toString()
@@ -107,6 +111,7 @@ sealed interface ZmanCalculationMethod {
      * A method of calculation in which the later of two zmanim is used.
      * Meaning that if [zman1] occurs at 6:00 AM and [zman2] occurs at 6:05 AM, this zman takes on the value of 6:00 AM.
      * */
+    @Serializable
     data class LaterOf(val zman1: ZmanDefinition, val zman2: ZmanDefinition): ZmanCalculationMethod {
         override fun valueToString(): String = "Later of: ${zman1.calculationMethod.valueToString()} or ${zman2.calculationMethod.valueToString()}"
         override fun format(): String = "Later of: ${zman1.calculationMethod.format()} or ${zman2.calculationMethod.format()}"
@@ -115,6 +120,7 @@ sealed interface ZmanCalculationMethod {
     /**
      * @see ComplexZmanimCalendar.fixedLocalChatzos
      * */
+    @Serializable
     object FixedLocalChatzos : ZmanCalculationMethod {
 
         override fun valueToString(): String = format()
@@ -125,6 +131,7 @@ sealed interface ZmanCalculationMethod {
      * Dawn for this calculation is X zmaniyos minutes before sunrise.
      * Dusk is X zmaniyos minutes after sunset.
      * */
+    @Serializable
     data class ZmaniyosDuration(val duration: Duration): ZmanCalculationMethod {
 
         companion object {
@@ -158,6 +165,7 @@ sealed interface ZmanCalculationMethod {
      * Dawn is when the sun is x degrees below the eastern geometric horizon before sunrise.
      * Dusk is when the sun is x degrees below the western geometric horizon after sunset.
      * */
+    @Serializable
     data class Degrees(val degrees: Float) :
         ZmanCalculationMethod {
         companion object {
@@ -253,6 +261,7 @@ sealed interface ZmanCalculationMethod {
      *
      * @param duration if negative, this zman is [duration] before what this is relative to . If positive, after.
      * */
+    @Serializable
     data class FixedDuration(val duration: Duration) :
         ZmanCalculationMethod {
         /**
@@ -313,6 +322,7 @@ sealed interface ZmanCalculationMethod {
      * - The [Raze"h/Menorah HaTehorah][ZmanAuthority.RAZEH] holds that the day starts at [*alos* 16.1˚][ComplexZmanimCalendar.alos16Point1Degrees] and ends at
      * [sea level sunset][ComplexZmanimCalendar.seaLevelSunset]
      * */
+    @Serializable
     data class DayDefinition(
         val dayStart: ZmanDefinition,
         val dayEnd: ZmanDefinition,
@@ -363,7 +373,7 @@ sealed interface ZmanCalculationMethod {
             fun dawn72ZmanisToDuskAteretTorah(offset: Double = ComplexZmanimCalendar.ATERET_TORAH_DEFAULT_OFFSET) =
                 DayDefinition(
                     ZmanDefinition(
-                        ZmanType.ALOS, 
+                        ZmanType.ALOS,
                         Relationship(ZmanType.ALOS occurs 72.minutes.zmaniyos before ZmanType.HANAITZ), UsesElevation.IF_SET
 
                     ), ZmanDefinition(

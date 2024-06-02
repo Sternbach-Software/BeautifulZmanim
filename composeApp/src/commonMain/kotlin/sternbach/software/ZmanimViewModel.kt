@@ -1,5 +1,7 @@
 package sternbach.software
 
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.set
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
@@ -18,12 +20,14 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import presentation.ZmanCardModel
 import sternbach.software.kosherkotlin.ComplexZmanimCalendar
 import sternbach.software.kosherkotlin.Zman
 import sternbach.software.kosherkotlin.ZmanimCalendar
 import sternbach.software.kosherkotlin.metadata.ZmanCalculationMethod
+import sternbach.software.kosherkotlin.metadata.ZmanDefinition
 import sternbach.software.kosherkotlin.metadata.ZmanType
 import sternbach.software.kosherkotlin.util.GeoLocation
 import sternbach.software.kosherkotlin.util.Location
@@ -242,15 +246,23 @@ class ZmanimViewModel {
 
     private suspend fun calculateAndEmitZmanim(cal: ZmanimCalendar) {
         println("Calculating zmanim for $cal")
-        allShaosZmaniyos.emit(cal.allShaosZmaniyos.sortedBy { it.duration })
-        allZmanim.emit(cal.allZmanim.sortedBy { it.momentOfOccurrence })
+        val allShaosZmaniyos = cal.allShaosZmaniyos.sortedBy { it.duration }
+        val allZmanim = cal.allZmanim.sortedBy { it.momentOfOccurrence }
+        this.allShaosZmaniyos.emit(allShaosZmaniyos)
+        this.allZmanim.emit(allZmanim)
+        val favoriteZmanimString = settings.getStringOrNull(FAVORITE_ZMANIM_PREF_KEY) ?: "[]"
+        println("Favorite zmanim string: $favoriteZmanimString")
+        val favoritedZmanimFromPersistedStorage = Json.Default.decodeFromString<List<ZmanDefinition>>(
+            favoriteZmanimString
+        )
+        favoriteZmanim.emit((allZmanim + allShaosZmaniyos).filter { it.definition in favoritedZmanimFromPersistedStorage })
         //println("To freq map: ${listOfZmanim.map { it.type }.toFrequencyMap().toList().sortedByDescending { it.second }}")
-        println("Got zmanim: values=$allShaosZmaniyos, listOfZmanim=$allZmanim")
+        println("Got zmanim: values=$allShaosZmaniyos, listOfZmanim=${this.allZmanim}")
         _shaaZmanisValuesToDisplay.emit(
-            allShaosZmaniyos.value
+            allShaosZmaniyos
         )
         _allZmanimToDisplay.emit(
-            allZmanim.value
+            allZmanim
         )
         _calculatingZmanim.emit(false)
         println("Emitted all values")
@@ -402,12 +414,27 @@ class ZmanimViewModel {
     }
 
     fun favoriteZman(it: Zman<*>) = scope.launch(Dispatchers.Default) {
-
+        val prefsString = settings.getStringOrNull(FAVORITE_ZMANIM_PREF_KEY)
+        if(prefsString != null) {
+            val zmanim = Json.Default.decodeFromString<List<ZmanDefinition>>(prefsString)
+            val newPrefsString = Json.Default.encodeToString(zmanim + it.definition)
+            settings[FAVORITE_ZMANIM_PREF_KEY] = newPrefsString
+            println("Zmanim saved correctly: ${settings.getStringOrNull(FAVORITE_ZMANIM_PREF_KEY) == newPrefsString}")
+        } else {
+            val newPrefsString = Json.Default.encodeToString(listOf(it.definition))
+            settings[FAVORITE_ZMANIM_PREF_KEY] = newPrefsString
+            println("Zmanim saved correctly: ${settings.getStringOrNull(FAVORITE_ZMANIM_PREF_KEY) == newPrefsString}")
+        }
         favoriteZmanim.emit((favoriteZmanim.value ?: emptyList()) + it)
     }
 
-    fun unfavoriteZman(zman: Zman<*>) = scope.launch(Dispatchers.Default) {
-        favoriteZmanim.emit((favoriteZmanim.value ?: emptyList()) - zman)
+    fun unfavoriteZman(it: Zman<*>) = scope.launch(Dispatchers.Default) {
+        val prefsString = settings.getStringOrNull(FAVORITE_ZMANIM_PREF_KEY)
+        if(prefsString != null) {
+            val zmanim = Json.Default.decodeFromString<List<ZmanDefinition>>(prefsString)
+            settings[FAVORITE_ZMANIM_PREF_KEY] = Json.Default.encodeToString(zmanim - it.definition)
+        }
+        favoriteZmanim.emit((favoriteZmanim.value ?: emptyList()) - it)
     }
 
     companion object {
@@ -429,5 +456,8 @@ class ZmanimViewModel {
             elevation ?: 0.0,
             tz ?: this@Companion.tz
         )
+
+        val settings = Settings()
+        const val FAVORITE_ZMANIM_PREF_KEY = "favorite"
     }
 }

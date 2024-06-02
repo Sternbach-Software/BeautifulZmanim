@@ -1,8 +1,11 @@
 package sternbach.software.kosherkotlin.metadata
 
+import kotlinx.serialization.Serializable
+
 /**
  *
  * */
+@Serializable
 data class ZmanDefinition(
     val type: ZmanType,
     val calculationMethod: ZmanCalculationMethod,

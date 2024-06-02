@@ -1,8 +1,10 @@
 package sternbach.software.kosherkotlin.metadata
 
+import kotlinx.serialization.Serializable
 import sternbach.software.kosherkotlin.Zman
 import kotlin.math.absoluteValue
 
+@Serializable
 data class Occurrence(val subject: ZmanType, val calculationMethod: ZmanCalculationMethod) {
 
     infix fun after(zmanType: ZmanType): ZmanRelationship = ZmanRelationship(
