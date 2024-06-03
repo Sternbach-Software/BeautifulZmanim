@@ -411,8 +411,9 @@ class ZmanimViewModel {
                     header(HttpHeaders.AccessControlAllowOrigin, "no-cors")
                 }.status.value
                 println("Got code: $code")
-                onResult(code in 200 until 300)
+                onResult(true)
             }
+                .onFailure { onResult(false) }
                 .exceptionOrNull()
                 ?.printStackTrace()
         }
