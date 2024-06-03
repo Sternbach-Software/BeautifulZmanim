@@ -101,7 +101,17 @@ internal fun App(
                     }
 
                     is Screen.MultipleLocations -> MultipleLocationsList(it.locations) {
-                        vm.getZmanimByLocationString(it.display_name) //TODO if this somehow has multiple options, the user is screwed because they can't see the screen. TODO what if they lose connection between the beggining of onClick and when this function is called again?
+                        println("Location selected: ${it.display_name}")
+                        vm.getZmanimByLocationString(
+                            it.display_name,
+                            onLocationFound = {
+                                nav.navigateTo(Screen.ZmanimScreen(null, it.display_name))
+                            },
+                            onNoLocations = {},
+                            onMultipleLocations = {
+                                nav.navigateTo(Screen.ZmanimScreen(null, it.firstOrNull()?.display_name))
+                            }
+                        ) //TODO if this somehow has multiple options, the user is screwed because they can't see the screen. TODO what if they lose connection between the beggining of onClick and when this function is called again?
                     }
 
                     is Screen.Settings -> when (it) {
