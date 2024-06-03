@@ -4,7 +4,10 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.Headers
+import io.ktor.http.HttpHeaders
 import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -404,7 +407,9 @@ class ZmanimViewModel {
     private fun getIsOnline(onResult: suspend (isOnline: Boolean) -> Unit) {
         scope.launch(Dispatchers.Default) {
             kotlin.runCatching {
-                val code = client.get(OPEN_STREET_MAP_BASE_URL).status.value
+                val code = client.get(OPEN_STREET_MAP_BASE_URL) {
+                    header(HttpHeaders.AccessControlAllowOrigin, "no-cors")
+                }.status.value
                 println("Got code: $code")
                 onResult(code in 200 until 300)
             }
