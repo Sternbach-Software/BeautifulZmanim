@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import sternbach.software.kosherkotlin.Zman
 import sternbach.software.kosherkotlin.ZmanDescriptionFormatter
 import kotlinx.datetime.Instant
@@ -176,7 +177,7 @@ internal fun ZmanCard(
                 }) {
                     Icon(Icons.Default.Info, "description")
                 }*/
-                if (displayDescription) Dialog({ displayDescription = false }) {
+                if (displayDescription) Dialog({ displayDescription = false }, DialogProperties()) {
                     Card {
                         Column(Modifier.padding(8.dp)) {
                             Text(formatter.formatLongDescription(zman.definition))
