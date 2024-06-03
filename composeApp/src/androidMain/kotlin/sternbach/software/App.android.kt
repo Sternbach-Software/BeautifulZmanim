@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import sternbach.software.ZmanimViewModel.Companion.toLocation
 import java.util.Locale
 import java.util.concurrent.Executors
+import kotlin.time.Duration.Companion.seconds
 
 
 class AndroidApp : Application() {
@@ -151,7 +152,7 @@ private suspend fun getLocation(locationManager: LocationManager, context: Conte
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
                 getCurrentLocation(
                     LocationManager.GPS_PROVIDER,
-                    LocationRequest.Builder(LocationRequest.PASSIVE_INTERVAL).build(),
+                    LocationRequest.Builder(LocationRequest.PASSIVE_INTERVAL).setMinUpdateIntervalMillis(30.seconds.inWholeMilliseconds).build(),
                     null,
                     Executors.newSingleThreadExecutor()
                 ) {
