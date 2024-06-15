@@ -119,8 +119,8 @@ android {
         targetSdk = 34
 
         applicationId = "sternbach.software.beautifulzmanim.androidApp"
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.3"
     }
     sourceSets["main"].apply {
         manifest.srcFile("src/androidMain/AndroidManifest.xml")
